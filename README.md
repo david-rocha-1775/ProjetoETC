@@ -14,3 +14,4 @@ Este projeto utiliza a arquitetura **Model-View-Controller (MVC)** para separar 
 - **model/**: Camada de dados e conexão.
 - **view/**: Interface do usuário.
 - **assets/**: Arquivos estáticos (CSS, JS, Imagens).
+- teste
