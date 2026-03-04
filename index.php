@@ -32,6 +32,12 @@ switch ($rota) {
         session_destroy();
         header("Location: index.php?rota=inicio");
         break;
+    case 'nova_denuncia':
+        include 'view/NovaDenunciaView.php';  
+        break;
+     case 'processar_denuncia':
+        require 'controller/ProcessarDenunciaController.php';
+        break;   
     default:
         echo "<h1>Erro 404 - Página não encontrada</h1>";
         echo "<a href='index.php?rota=inicio'>Voltar ao Início</a>";
