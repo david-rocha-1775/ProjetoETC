@@ -1,5 +1,5 @@
 <?php
-require_once"../model/dao/conexao.php";
+require_once"model/dao/Conexao.php";
 try {
     //pegar dados formulario
     $nome = $_POST['nome'];
@@ -17,9 +17,9 @@ try {
     $stmt = $conexao->prepare($sql);
 
     //vincular os valores
-    $stmt->bindParam('nome', $nome,) ;
-    $stmt->bindParam('email', $email,) ;
-    $stmt->bindParam('senha', $senha, );
+    $stmt->bindParam('nome', $nome) ;
+    $stmt->bindParam('email', $email) ;
+    $stmt->bindParam('senha', $senha);
 
     //executar
     $stmt->execute() ;
@@ -32,10 +32,10 @@ try {
 ?>
 
 <br>
-<a href="../view/CadastrarUsuarioView.php">
+<a href="index.php?rota=cadastrar">
     <button>Cadastrar outro</button>
 </a>
 
-<a href="../index.php">
+<a href="index.php?rota=inicio">
     <button>Voltar ao inicio</button>
 </a>

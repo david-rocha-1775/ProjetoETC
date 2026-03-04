@@ -1,8 +1,5 @@
 <?php
-require_once "../model/dao/conexao.php";
-
-// Iniciamos a sessão para salvar o usuário logado
-session_start();
+require_once "model/dao/Conexao.php";
 
 try {
     // 1. Pegar dados do formulário
@@ -32,17 +29,19 @@ try {
             // Login com sucesso! Guardamos os dados na sessão
             $_SESSION['usuario_id'] = $usuario['id_usuario'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
+            $_SESSION['logado'] = true;
 
-            echo "<p>Login realizado com sucesso! Bem-vindo, " . $usuario['nome'] . ".</p>";
-            echo "<a href='../view/PainelUsuario.php'><button>Ir para o Painel</button></a>";
+            // Redireciona direto para o painel
+            header("Location: index.php?rota=painel");
+            exit(); // Interrompe a execução para garantir o redirecionamento
             
         } else {
             echo "<p style='color:red;'>Senha incorreta.</p>";
-            echo "<a href='../view/LoginUsuarioView.php'><button>Tentar novamente</button></a>";
+            echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
         }
     } else {
         echo "<p style='color:red;'>Usuário não encontrado.</p>";
-        echo "<a href='../view/LoginUsuarioView.php'><button>Tentar novamente</button></a>";
+        echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
     }
 
 } catch (Exception $e) {
