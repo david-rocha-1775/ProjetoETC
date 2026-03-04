@@ -1,5 +1,5 @@
 <?php
-require_once"../model/dao/conexao.php";
+require_once"model/dao/Conexao.php";
 try {
     //pegar dados formulario
     $nome = $_POST['nome'];

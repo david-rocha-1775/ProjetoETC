@@ -1,8 +1,5 @@
 <?php
-require_once "../model/dao/conexao.php";
-
-// Iniciamos a sessão para salvar o usuário logado
-session_start();
+require_once "model/dao/Conexao.php";
 
 try {
     // 1. Pegar dados do formulário
@@ -32,9 +29,11 @@ try {
             // Login com sucesso! Guardamos os dados na sessão
             $_SESSION['usuario_id'] = $usuario['id_usuario'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
+            $_SESSION['logado'] = true;
 
-            echo "<p>Login realizado com sucesso! Bem-vindo, " . $usuario['nome'] . ".</p>";
-            echo "<a href='../view/PainelUsuario.php'><button>Ir para o Painel</button></a>";
+            // Redireciona direto para o painel
+            header("Location: ../controller/PainelUsuarioController.php");
+            exit(); // Interrompe a execução para garantir o redirecionamento
             
         } else {
             echo "<p style='color:red;'>Senha incorreta.</p>";
