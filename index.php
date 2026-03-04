@@ -10,5 +10,8 @@
     <a href="control/TestarConexao.php">
         <button>Testar Conexão</button>
     </a>
+    <a href="view/CadastrarUsuarioView.php">
+        <button>Cadastrar Usuário</button>
+    </a>
 </body>
 </html>
