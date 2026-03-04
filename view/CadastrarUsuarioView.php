@@ -10,19 +10,26 @@
 
     <form action="../control/CadastrarUsuarioControl.php" method="POST">
 
-        <label>Nome:</label><br>
-        <input type="text" name="nome" required><br><br>
+        <label for="nome">Nome:</label><br>
+        <input type="text" name="nome" id="nome" required placeholder="digite seu nome">
+        <br><br>
 
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+        <label for="email">Email:</label><br>
+        <input type="email" name="email" id="email" required placeholder="digite seu email">
+        <br><br>
 
-        <label>Senha:</label><br>
-        <input type="password" name="senha" required><br><br>
+        <label for="senha">Senha:</label><br>
+        <input type="password" name="senha" id="senha" required placeholder="digite sua senha">
+        <br><br>
 
         <button type="submit">Cadastrar</button>
+        <button type="reset">Limpar</button>
     </form>
 
-    <br>
+    <hr>
+    <p>Já tem conta? 
+        <a href="LoginUsuarioView.php">Faça login aqui</a>
+    </p>
     <a href="../index.php">
         <button>Voltar</button>
     </a>
