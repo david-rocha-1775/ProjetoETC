@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Projeto ETC</h1>
-    <a href="control/TestarConexao.php">
+    <a href="controller/TestarConexaoController.php">
         <button>Testar Conexão</button>
     </a>
     <a href="view/CadastrarUsuarioView.php">

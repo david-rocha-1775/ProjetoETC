@@ -8,7 +8,7 @@
 <body>
     <h1>Cadastrar Usuário</h1>
 
-    <form action="../control/CadastrarUsuarioControl.php" method="POST">
+    <form action="../controller/CadastrarUsuarioController.php" method="POST">
 
         <label for="nome">Nome:</label><br>
         <input type="text" name="nome" id="nome" required placeholder="digite seu nome">

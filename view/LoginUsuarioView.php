@@ -8,7 +8,7 @@
 <body>
     <h1>Acessar Sistema</h1>
 
-    <form action="../control/LoginUsuarioControl.php" method="POST">
+    <form action="../controller/LoginUsuarioController.php" method="POST">
         
         <label for="email">E-mail:</label><br>
         <input type="email" name="email" id="email" required placeholder="Digite seu e-mail">
