@@ -8,6 +8,6 @@ try {
 }
 ?>
 <br>
-<a href="../index.php">
+<a href="index.php?rota=inicio">
     <button>Voltar para o Inicio</button>
 </a>

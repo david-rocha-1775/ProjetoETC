@@ -32,16 +32,16 @@ try {
             $_SESSION['logado'] = true;
 
             // Redireciona direto para o painel
-            header("Location: ../controller/PainelUsuarioController.php");
+            header("Location: index.php?rota=painel");
             exit(); // Interrompe a execução para garantir o redirecionamento
             
         } else {
             echo "<p style='color:red;'>Senha incorreta.</p>";
-            echo "<a href='../view/LoginUsuarioView.php'><button>Tentar novamente</button></a>";
+            echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
         }
     } else {
         echo "<p style='color:red;'>Usuário não encontrado.</p>";
-        echo "<a href='../view/LoginUsuarioView.php'><button>Tentar novamente</button></a>";
+        echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
     }
 
 } catch (Exception $e) {

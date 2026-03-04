@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login de Usuário</title>
+    <title>Login</title>
 </head>
 <body>
     <h1>Acessar Sistema</h1>
 
-    <form action="../controller/LoginUsuarioController.php" method="POST">
+    <form action="index.php?rota=processar_login" method="POST">
         
         <label for="email">E-mail:</label><br>
         <input type="email" name="email" id="email" required placeholder="Digite seu e-mail">
@@ -26,10 +26,10 @@
     <hr>
     
     <p>Ainda não tem conta? 
-        <a href="CadastrarUsuarioView.php">Cadastre-se aqui</a>
+        <a href="index.php?rota=cadastrar">Cadastre-se aqui</a>
     </p>
     
-    <a href="../index.php">
+    <a href="index.php?rota=inicio">
         <button>voltar</button>
     </a>
 

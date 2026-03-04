@@ -32,10 +32,10 @@ try {
 ?>
 
 <br>
-<a href="../view/CadastrarUsuarioView.php">
+<a href="index.php?rota=cadastrar">
     <button>Cadastrar outro</button>
 </a>
 
-<a href="../index.php">
+<a href="index.php?rota=inicio">
     <button>Voltar ao inicio</button>
 </a>

@@ -8,7 +8,7 @@
 <body>
     <h1>Cadastrar Usuário</h1>
 
-    <form action="../controller/CadastrarUsuarioController.php" method="POST">
+    <form action="index.php?rota=processar_cadastro" method="POST">
 
         <label for="nome">Nome:</label><br>
         <input type="text" name="nome" id="nome" required placeholder="digite seu nome">
@@ -28,9 +28,9 @@
 
     <hr>
     <p>Já tem conta? 
-        <a href="LoginUsuarioView.php">Faça login aqui</a>
+        <a href="index.php?rota=login">Faça login aqui</a>
     </p>
-    <a href="../index.php">
+    <a href="index.php?rota=inicio">
         <button>Voltar</button>
     </a>
 </body>
