@@ -32,7 +32,7 @@ try {
 ?>
 
 <br>
-<a href="../view/CadastrarUsuario.php">
+<a href="../view/CadastrarUsuarioView.php">
     <button>Cadastrar outro</button>
 </a>
 
