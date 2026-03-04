@@ -6,7 +6,6 @@
     <title>Login de Usuário</title>
 </head>
 <body>
-
     <h1>Acessar Sistema</h1>
 
     <form action="../control/LoginUsuarioControl.php" method="POST">
@@ -25,7 +24,7 @@
     </form>
 
     <hr>
-
+    
     <p>Ainda não tem conta? 
         <a href="CadastrarUsuarioView.php">Cadastre-se aqui</a>
     </p>
