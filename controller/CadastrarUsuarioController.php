@@ -17,9 +17,9 @@ try {
     $stmt = $conexao->prepare($sql);
 
     //vincular os valores
-    $stmt->bindParam('nome', $nome,) ;
-    $stmt->bindParam('email', $email,) ;
-    $stmt->bindParam('senha', $senha, );
+    $stmt->bindParam('nome', $nome) ;
+    $stmt->bindParam('email', $email) ;
+    $stmt->bindParam('senha', $senha);
 
     //executar
     $stmt->execute() ;

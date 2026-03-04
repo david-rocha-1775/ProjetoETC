@@ -1,6 +1,6 @@
 <?php
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-    header("Location: ../view/LoginUsuarioView.php");
+    header("Location: index.php?rota=login");
     exit();
 }
 
