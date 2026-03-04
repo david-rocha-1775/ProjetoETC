@@ -13,5 +13,8 @@
     <a href="view/CadastrarUsuarioView.php">
         <button>Cadastrar Usuário</button>
     </a>
+    <a href="view/LoginUsuarioView.php">
+        <button>Login</button>
+    </a>
 </body>
 </html>
