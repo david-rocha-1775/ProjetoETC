@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Acessar Sistema</h1>
+<?php $tituloPagina = "Login"; ?>
+<?php include "view/templates/header.php"; ?>
+
+<section>
+    <h2>Acessar Sistema</h2>
 
     <form action="index.php?rota=processar_login" method="POST">
-        
+
         <label for="email">E-mail:</label><br>
         <input type="email" name="email" id="email" required placeholder="Digite seu e-mail">
         <br><br>
@@ -24,14 +20,10 @@
     </form>
 
     <hr>
-    
-    <p>Ainda não tem conta? 
+
+    <p>Ainda não tem conta?
         <a href="index.php?rota=cadastrar">Cadastre-se aqui</a>
     </p>
-    
-    <a href="index.php?rota=inicio">
-        <button>voltar</button>
-    </a>
+</section>
 
-</body>
-</html>
+<?php include "view/templates/footer.php"; ?>

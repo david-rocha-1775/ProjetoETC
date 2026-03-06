@@ -1,50 +1,52 @@
 <?php
-require_once "model/dao/Conexao.php";
+// Controller de Login do Usuário
+// Responsabilidade: receber dados do formulário, validar com o DAO, e redirecionar.
+// SEM HTML e SEM SQL aqui!
+
+require_once "model/dao/UsuarioDAO.php";
 
 try {
     // 1. Pegar dados do formulário
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
-    // 2. Conectar ao banco
-    $conexao = Conexao::getInstance();
+    // 2. Buscar usuário pelo e-mail usando o DAO
+    $usuarioDAO = new UsuarioDAO();
+    $usuario = $usuarioDAO->buscarPorEmail($email);
 
-    // 3. Preparar o comando SQL (SELECT)
-    // Buscamos o usuário pelo e-mail
-    $sql = "SELECT id_usuario, nome, senha FROM usuarios WHERE email = :email";
+    // 3. Verificar se o usuário foi encontrado
+    if ($usuario !== null) {
 
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
+        // 4. Verificar a senha
+        // Compara a senha digitada com o hash salvo no banco
+        if (password_verify($senha, $usuario->getSenha())) {
 
-    // 4. Verificar se o usuário foi encontrado
-    if ($stmt->rowCount() > 0) {
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // 5. Verificar a senha 
-        // Se você usou password_hash no cadastro, use password_verify aqui.
-        // Se salvou texto puro (não recomendado), use: if ($senha == $usuario['senha'])
-        if ($senha == $usuario['senha']) {
-            
             // Login com sucesso! Guardamos os dados na sessão
-            $_SESSION['usuario_id'] = $usuario['id_usuario'];
-            $_SESSION['usuario_nome'] = $usuario['nome'];
+            $_SESSION['usuario_id'] = $usuario->getId();
+            $_SESSION['usuario_nome'] = $usuario->getNome();
             $_SESSION['logado'] = true;
 
-            // Redireciona direto para o painel
+            // Redireciona para o painel
             header("Location: index.php?rota=painel");
-            exit(); // Interrompe a execução para garantir o redirecionamento
-            
+            exit();
+
         } else {
-            echo "<p style='color:red;'>Senha incorreta.</p>";
-            echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
+            $_SESSION['mensagem'] = "Senha incorreta.";
+            $_SESSION['tipo_mensagem'] = "erro";
+            header("Location: index.php?rota=login");
+            exit();
         }
     } else {
-        echo "<p style='color:red;'>Usuário não encontrado.</p>";
-        echo "<a href='index.php?rota=login'><button>Tentar novamente</button></a>";
+        $_SESSION['mensagem'] = "Usuário não encontrado.";
+        $_SESSION['tipo_mensagem'] = "erro";
+        header("Location: index.php?rota=login");
+        exit();
     }
 
 } catch (Exception $e) {
-    echo "<p>Erro ao processar login: " . $e->getMessage() . "</p>";
+    $_SESSION['mensagem'] = "Erro ao processar login: " . $e->getMessage();
+    $_SESSION['tipo_mensagem'] = "erro";
+    header("Location: index.php?rota=login");
+    exit();
 }
 ?>
