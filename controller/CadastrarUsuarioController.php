@@ -1,41 +1,37 @@
 <?php
-require_once"model/dao/Conexao.php";
+// Controller de Cadastro de Usuário
+// Responsabilidade: receber dados do formulário, chamar o DAO, e redirecionar.
+// SEM HTML e SEM SQL aqui!
+
+require_once "model/dao/UsuarioDAO.php";
+
 try {
-    //pegar dados formulario
+    // 1. Pegar dados do formulário
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
-    //conectar ao banco
-    $conexao = Conexao::getInstance();
+    // 2. Criar o objeto DTO com os dados
+    $usuario = new UsuarioDTO();
+    $usuario->setNome($nome);
+    $usuario->setEmail($email);
+    $usuario->setSenha(password_hash($senha, PASSWORD_DEFAULT));
 
-    //preparar o comando sql (insert)
-    // o id é auto increment, entao nao precisa enviar
-    $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
+    // 3. Chamar o DAO para salvar no banco
+    $usuarioDAO = new UsuarioDAO();
+    $usuarioDAO->cadastrar($usuario);
 
-    //Preparar a consulta
-    $stmt = $conexao->prepare($sql);
-
-    //vincular os valores
-    $stmt->bindParam('nome', $nome) ;
-    $stmt->bindParam('email', $email) ;
-    $stmt->bindParam('senha', $senha);
-
-    //executar
-    $stmt->execute() ;
-
-    echo"<p>usuario cadastrado com sucesso</p>";
+    // 4. Redirecionar com mensagem de sucesso (via sessão)
+    $_SESSION['mensagem'] = "Usuário cadastrado com sucesso!";
+    $_SESSION['tipo_mensagem'] = "sucesso";
+    header("Location: index.php?rota=login");
+    exit();
 
 } catch (Exception $e) {
-    echo"<p>Erro ao conectar:". $e->getMessage() ."</p>";
+    // Redirecionar com mensagem de erro (via sessão)
+    $_SESSION['mensagem'] = "Erro ao cadastrar: " . $e->getMessage();
+    $_SESSION['tipo_mensagem'] = "erro";
+    header("Location: index.php?rota=cadastrar");
+    exit();
 }
 ?>
-
-<br>
-<a href="index.php?rota=cadastrar">
-    <button>Cadastrar outro</button>
-</a>
-
-<a href="index.php?rota=inicio">
-    <button>Voltar ao inicio</button>
-</a>
