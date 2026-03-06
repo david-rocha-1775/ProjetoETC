@@ -13,6 +13,6 @@ try {
     $_SESSION['tipo_mensagem'] = "erro";
 }
 
-header("Location: index.php?rota=inicio");
+// header("Location: index.php?rota=inicio");
 exit();
 ?>
