@@ -12,6 +12,8 @@ class DenunciaDTO
     private $fotoPath;
     private $status;
     private $idUsuario;
+    private $idCategoria;
+    private $dataCriacao;
 
     // --- GETTERS ---
 
@@ -45,9 +47,19 @@ class DenunciaDTO
         return $this->status;
     }
 
+    public function getDataCriacao()
+    {
+        return $this->dataCriacao;
+    }
+
     public function getIdUsuario()
     {
         return $this->idUsuario;
+    }
+
+    public function getIdCategoria()
+    {
+        return $this->idCategoria;
     }
 
     // --- SETTERS ---
@@ -82,9 +94,19 @@ class DenunciaDTO
         $this->status = $status;
     }
 
+    public function setDataCriacao($dataCriacao)
+    {
+        $this->dataCriacao = $dataCriacao;
+    }
+
     public function setIdUsuario($idUsuario)
     {
         $this->idUsuario = $idUsuario;
+    }
+
+    public function setIdCategoria($idCategoria)
+    {
+        $this->idCategoria = $idCategoria;
     }
 }
 ?>

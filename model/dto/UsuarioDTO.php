@@ -9,6 +9,9 @@ class UsuarioDTO
     private $nome;
     private $email;
     private $senha;
+    private $tipo;
+
+    private $dataCadastro;
 
     // --- GETTERS ---
 
@@ -32,6 +35,16 @@ class UsuarioDTO
         return $this->senha;
     }
 
+    public function getTipo()
+    {
+        return $this->tipo;
+    }
+
+    public function getDataCadastro()
+    {
+        return $this->dataCadastro;
+    }
+
     // --- SETTERS ---
 
     public function setId($id)
@@ -52,6 +65,16 @@ class UsuarioDTO
     public function setSenha($senha)
     {
         $this->senha = $senha;
+    }
+
+    public function setTipo($tipo)
+    {
+        $this->tipo = $tipo;
+    }
+
+    public function setDataCadastro($dataCadastro)
+    {
+        $this->dataCadastro = $dataCadastro;
     }
 }
 ?>
