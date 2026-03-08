@@ -1,7 +1,5 @@
 <?php
-// DAO (Data Access Object) do Usuário
-// Contém TODOS os comandos SQL relacionados à tabela 'usuarios'
-// Nenhum outro lugar do sistema deve ter SQL de usuário!
+// DAO (Data Access Object) da tabela 'usuarios'
 
 require_once "model/dao/Conexao.php";
 require_once "model/dto/UsuarioDTO.php";
@@ -15,7 +13,11 @@ class UsuarioDAO
         $this->conexao = Conexao::getInstance();
     }
 
-    // Cadastrar um novo usuário no banco
+    /**
+     * Cadastra um novo usuário no banco de dados.
+     *
+     * @param UsuarioDTO $usuario Objeto contendo os dados do usuário.
+     */
     public function cadastrar(UsuarioDTO $usuario)
     {
         $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
@@ -33,7 +35,12 @@ class UsuarioDAO
         $stmt->execute();
     }
 
-    // Buscar um usuário pelo e-mail (usado no login)
+    /**
+     * Busca um usuário pelo endereço de e-mail (usado no login).
+     *
+     * @param string $email
+     * @return UsuarioDTO|null Retorna o objeto DTO ou null se não encontrado.
+     */
     public function buscarPorEmail($email)
     {
         $sql = "SELECT id_usuario, nome, email, senha FROM usuarios WHERE email = :email";
@@ -54,7 +61,7 @@ class UsuarioDAO
             return $usuario;
         }
 
-        return null; // Usuário não encontrado
+        return null;
     }
 }
 ?>

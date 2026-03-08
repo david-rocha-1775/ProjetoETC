@@ -1,4 +1,7 @@
-<?php $tituloPagina = "Login"; ?>
+<?php
+// View do Formulário de Login
+$tituloPagina = "Login";
+?>
 <?php include "view/templates/header.php"; ?>
 
 <section>

@@ -1,4 +1,6 @@
-<?php // Esta View é chamada pelo PainelUsuarioController.php que já passou os dados ?>
+<?php
+// View do Painel do Usuário (Dashboard)
+?>
 <?php include "view/templates/header.php"; ?>
 
 <section class="boas-vindas">

@@ -1,6 +1,5 @@
 <?php
-// DAO (Data Access Object) da Denúncia
-// Contém TODOS os comandos SQL relacionados à tabela 'denuncias'
+// DAO (Data Access Object) da tabela 'denuncias'
 
 require_once "model/dao/Conexao.php";
 require_once "model/dto/DenunciaDTO.php";
@@ -14,7 +13,12 @@ class DenunciaDAO
         $this->conexao = Conexao::getInstance();
     }
 
-    // Listar as últimas denúncias (para o painel)
+    /**
+     * Retorna a lista das últimas denúncias registradas.
+     *
+     * @param int $limite Quantidade máxima de registros.
+     * @return DenunciaDTO[] Array de objetos DenunciaDTO.
+     */
     public function listarUltimas($limite = 10)
     {
         $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status 
@@ -43,7 +47,11 @@ class DenunciaDAO
         return $denuncias;
     }
 
-    // Cadastrar uma nova denúncia
+    /**
+     * Insere uma nova denúncia no banco.
+     *
+     * @param DenunciaDTO $denuncia
+     */
     public function cadastrar(DenunciaDTO $denuncia)
     {
         $sql = "INSERT INTO denuncias (titulo, descricao, localizacao, foto_path, status, id_usuario) 
