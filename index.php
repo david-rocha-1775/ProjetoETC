@@ -1,43 +1,65 @@
 <?php
-// A sessão agora é iniciada aqui para TODO o sistema!
+// Arquivo de Roteamento (Front Controller)
+// Ponto de entrada do sistema que direciona a requisição para o Controller específico
+
 session_start();
 
-// Pega a rota da URL. Se a URL estiver vazia, o padrão é 'inicio'
 $rota = isset($_GET['rota']) ? $_GET['rota'] : 'inicio';
 
-// Decide qual arquivo carregar com base na rota
 switch ($rota) {
+
+    // --- Rotas Públicas ---
     case 'inicio':
-        include 'view/HomeView.php';
+        include 'view/public/home.php';
         break;
+
     case 'testar_conexao':
         require 'controller/TestarConexao.php';
         break;
+
+    // --- Autenticação ---
     case 'login':
-        include 'view/LoginUsuarioView.php';
+        include 'view/auth/login.php';
         break;
+
     case 'processar_login':
-        require 'controller/LoginUsuarioController.php';
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->login();
         break;
+
     case 'cadastrar':
-        include 'view/CadastrarUsuarioView.php';
+        include 'view/auth/cadastrar.php';
         break;
+
     case 'processar_cadastro':
-        require 'controller/CadastrarUsuarioController.php';
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->cadastrar();
         break;
-    case 'painel':
-        require 'controller/PainelUsuarioController.php';
-        break;
+
     case 'sair':
-        session_destroy();
-        header("Location: index.php?rota=inicio");
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->logout();
         break;
+
+    // --- Rotas Protegidas ---
+    case 'painel':
+        require_once 'controller/PainelController.php';
+        $controller = new PainelController();
+        $controller->index();
+        break;
+
     case 'nova_denuncia':
-        include 'view/NovaDenunciaView.php';  
+        include 'view/painel/nova_denuncia.php';
         break;
-     case 'processar_denuncia':
+
+    case 'processar_denuncia':
         require 'controller/ProcessarDenunciaController.php';
-        break;   
+        break;
+
+    // --- Not Found ---
     default:
         echo "<h1>Erro 404 - Página não encontrada</h1>";
         echo "<a href='index.php?rota=inicio'>Voltar ao Início</a>";

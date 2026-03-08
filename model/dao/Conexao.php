@@ -1,18 +1,22 @@
 <?php
+// Classe de Conexão com o Banco de Dados (Padrão Singleton)
 
 class Conexao
 {
     private static $conexao;
 
-    public function __construct()
+    // Construtor privado para evitar instanciação direta
+    private function __construct()
     {
     }
 
+    /**
+     * Retorna a instância única da conexão PDO.
+     */
     public static function getInstance(): mixed
     {
         if (!isset(self::$conexao)) {
             try {
-                // Carrega as configurações do arquivo separado
                 $config = require "config/database.php";
 
                 $opcoes = [
@@ -20,6 +24,7 @@ class Conexao
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . $config['charset']
                 ];
+
                 self::$conexao = new PDO(
                     dsn: "mysql:host=" . $config['host'] . ";dbname=" . $config['dbname'],
                     username: $config['usuario'],
@@ -27,7 +32,7 @@ class Conexao
                     options: $opcoes,
                 );
             } catch (PDOException $e) {
-                throw new Exception(message: "Erro de conexão: " . $e->getMessage());
+                throw new Exception("Erro de conexão: " . $e->getMessage());
             }
         }
 
