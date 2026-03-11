@@ -13,7 +13,7 @@
 <body>
 
     <header>
-        <h1><a href="index.php?rota=inicio" style="text-decoration:none; color:inherit;">Cidade Limpa & Segura</a></h1>
+        <h1><a href="index.php?rota=inicio" style="text-decoration:none; color:inherit;">Cidade Atenta</a></h1>
         <nav>
             <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
                 <span>Olá, <strong>
