@@ -52,11 +52,9 @@ switch ($rota) {
         break;
 
     case 'nova_denuncia':
-        include 'view/painel/nova_denuncia.php';
-        break;
-
-    case 'processar_denuncia':
-        require 'controller/ProcessarDenunciaController.php';
+        require_once 'controller/PainelController.php';
+        $controller = new PainelController();
+        $controller->cadastrarDenuncia();
         break;
 
     // --- Not Found ---
