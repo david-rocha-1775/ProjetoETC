@@ -54,8 +54,8 @@ class DenunciaDAO
      */
     public function cadastrar(DenunciaDTO $denuncia)
     {
-        $sql = "INSERT INTO denuncias (titulo, descricao, localizacao, foto_path, status, id_usuario) 
-                VALUES (:titulo, :descricao, :localizacao, :foto_path, :status, :id_usuario)";
+        $sql = "INSERT INTO denuncias (titulo, descricao, localizacao, foto_path, status, fk_usuario, fk_categoria) 
+                VALUES (:titulo, :descricao, :localizacao, :foto_path, :status, :fk_usuario, :fk_categoria)";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -65,13 +65,15 @@ class DenunciaDAO
         $fotoPath = $denuncia->getFotoPath();
         $status = $denuncia->getStatus();
         $idUsuario = $denuncia->getIdUsuario();
+        $idCategoria = $denuncia->getIdCategoria();
 
         $stmt->bindParam(':titulo', $titulo);
         $stmt->bindParam(':descricao', $descricao);
         $stmt->bindParam(':localizacao', $localizacao);
         $stmt->bindParam(':foto_path', $fotoPath);
         $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':id_usuario', $idUsuario);
+        $stmt->bindParam(':fk_usuario', $idUsuario);
+        $stmt->bindParam(':fk_categoria', $idCategoria);
 
         $stmt->execute();
     }

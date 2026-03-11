@@ -2,7 +2,7 @@
 
 <footer>
     <p>&copy;
-        <?= date('Y') ?> Cidade Limpa & Segura — Projeto ETC
+        <?= date('Y') ?> Cidade Atenta — Projeto ETC
     </p>
 </footer>
 
