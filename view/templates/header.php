@@ -25,34 +25,26 @@
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
 
                     <li><a href="index.php?rota=inicio" class="nav-link px-2">Inicio</a></li>
-
                     <li><a href="#" class="nav-link px-2">Mapa?</a></li>
-
                     <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2">Nova Denuncia</a></li>
 
                 </ul>
 
-                <div class="col-md-3 mb-2 mb-md-0">
-                    <nav>
-                        <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
-                            <span>Olá, <strong>
-                                    <?= $_SESSION['usuario_nome'] ?>
-                                </strong>!</span>
-                            <a href="index.php?rota=painel">
-                                <button class="btn btn-primary">Meu Painel</button>
-                            </a>
-                            <a href="index.php?rota=sair">
-                                <button class="btn btn-outline-primary">Sair</button>
-                            </a>
-                        <?php else: ?>
-                            <a href="index.php?rota=login">
-                                <button class="btn btn-outline-primary">Entrar</button>
-                            </a>
-                            <a href="index.php?rota=cadastrar">
-                                <button class="btn btn-primary">Cadastrar-se</button>
-                            </a>
-                        <?php endif; ?>
-                    </nav>
+                <div class="col-md-3 text-end">
+                    <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
+                        <span class="me-3">Olá, <strong>
+                                <?= $_SESSION['usuario_nome'] ?>
+                            </strong>!</span>
+                        <a href="index.php?rota=painel" class="btn btn-primary me-1 ">Meu Painel</a>
+
+                        <a href="index.php?rota=sair" class="btn btn-outline-primary">Sair</a>
+                    <?php else: ?>
+
+                        <a href="index.php?rota=login" class="btn btn-outline-primary me-1">Entrar</a>
+                        
+                        <a href="index.php?rota=cadastrar" class="btn btn-primary">Cadastrar-se</a>
+
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
