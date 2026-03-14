@@ -16,7 +16,7 @@
 
 <body class="d-flex flex-column min-vh-100">
 
-    <header class="border-bottom fixed-top w-100 bg-body">
+    <header class="border-bottom sticky-top w-100 bg-body">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
 
@@ -58,7 +58,7 @@
         </div>
     </header>
 
-    <main class="flex-grow-1 pt-5">
+    <main class="flex-grow-1 pt-3">
 
         <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
         <?php if (isset($_SESSION['mensagem'])): ?>
