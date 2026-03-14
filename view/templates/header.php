@@ -7,7 +7,11 @@
     <title>
         <?= isset($tituloPagina) ? $tituloPagina : 'Projeto ETC' ?>
     </title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/estilo.css">
+    <!-- Bootstrap JS Bundle -->
+    <script src="assets/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
 <body>
