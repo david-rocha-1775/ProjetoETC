@@ -9,24 +9,26 @@ $tituloPagina = "Login";
         <form action="index.php?rota=processar_login" method="POST">
 
             <h2 class="h3 mb-3 fw-normal">Acessar Sistema</h2>
-    
+
             <div class="form-floating">
-                <input type="email" class="form-control" name="email" id="email" required placeholder="Digite seu e-mail">
+                <input type="email" class="form-control mb-2" name="email" id="email" required
+                    placeholder="Digite seu e-mail">
                 <label for="email">E-mail:</label>
             </div>
-    
+
             <div class="form-floating">
-                <input type="password" class="form-control mb-2" name="senha" id="senha" required placeholder="Digite sua senha">
+                <input type="password" class="form-control mb-2" name="senha" id="senha" required
+                    placeholder="Digite sua senha">
                 <label for="senha">Senha:</label>
             </div>
-    
+
             <button class="btn btn-primary w-100 py-2 mb-2" type="submit">Entrar</button>
             <button class="btn btn-secondary w-100 py-2 mb-2" type="reset">Limpar</button>
 
         </form>
-    
+
         <hr>
-    
+
         <p class="mt-5 mb-3 text-body-secondary">Ainda não tem conta?
 
             <a href="index.php?rota=cadastrar">Cadastre-se aqui</a>
