@@ -7,20 +7,20 @@
 
             <h2 class="h3 mb-3 fw-normal">Criar Conta</h2>
 
-            <div class="form-floating">
-                <input type="text" class="form-control mb-2" name="nome" id="nome" required
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="nome" id="nome" required
                     placeholder="Digite seu nome completo">
                 <label for="nome">Nome Completo</label>
             </div>
 
-            <div class="form-floating">
-                <input type="email" class="form-control mb-2" name="email" id="email" required
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" name="email" id="email" required
                     placeholder="Digite seu email">
                 <label for="email">Email</label>
             </div>
 
-            <div class="form-floating">
-                <input type="password" class="form-control mb-2" name="senha" id="senha" required
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="senha" id="senha" required
                     placeholder="Digite sua senha">
                 <label for="senha">Senha</label>
             </div>
