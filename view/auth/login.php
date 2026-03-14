@@ -10,16 +10,16 @@ $tituloPagina = "Login";
 
             <h2 class="h3 mb-3 fw-normal">Acessar Sistema</h2>
 
-            <div class="form-floating">
-                <input type="email" class="form-control mb-2" name="email" id="email" required
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" name="email" id="email" required
                     placeholder="Digite seu e-mail">
-                <label for="email">E-mail:</label>
+                <label for="email">E-mail</label>
             </div>
 
-            <div class="form-floating">
-                <input type="password" class="form-control mb-2" name="senha" id="senha" required
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="senha" id="senha" required
                     placeholder="Digite sua senha">
-                <label for="senha">Senha:</label>
+                <label for="senha">Senha</label>
             </div>
 
             <button class="btn btn-primary w-100 py-2 mb-2" type="submit">Entrar</button>
