@@ -1,0 +1,17 @@
+/* Estilo.css - Customizações Mínimas
+   A estrutura do layout usa classes Bootstrap (d-flex, flex-column, min-vh-100, mt-auto)
+   Para manter o header fixo ou adicionar estilos personalizados, adicione-os aqui.
+   Mantenha mínimo para aproveitar o máximo do Bootstrap.
+*/
+
+/* Garante que o header fixed-top não se misture com bg-body */
+header {
+    z-index: 1030;
+
+}
+
+/* Adiciona espaço suficiente para o header fixed-top */
+main {
+    padding-top: 60px !important;
+    background-color: inherit;
+}
