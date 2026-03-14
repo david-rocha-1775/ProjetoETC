@@ -41,7 +41,7 @@
                     <?php else: ?>
 
                         <a href="index.php?rota=login" class="btn btn-outline-primary me-1">Entrar</a>
-                        
+
                         <a href="index.php?rota=cadastrar" class="btn btn-primary">Cadastrar-se</a>
 
                     <?php endif; ?>
