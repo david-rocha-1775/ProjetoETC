@@ -14,31 +14,47 @@
     <script src="assets/js/bootstrap.bundle.min.js" defer></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <header>
-        <h1><a href="index.php?rota=inicio" style="text-decoration:none; color:inherit;">Cidade Atenta</a></h1>
-        <nav>
-            <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
-                <span>Olá, <strong>
-                        <?= $_SESSION['usuario_nome'] ?>
-                    </strong>!</span>
-                <a href="index.php?rota=painel">
-                    <button>Meu Painel</button>
-                </a>
-                <a href="index.php?rota=sair">
-                    <button>Sair</button>
-                </a>
-            <?php else: ?>
-                <a href="index.php?rota=login">
-                    <button>Entrar</button>
-                </a>
-                <a href="index.php?rota=cadastrar">
-                    <button>Cadastrar-se</button>
-                </a>
-            <?php endif; ?>
-        </nav>
+    <header class="border-bottom fixed-top w-100 bg-body">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
+
+                <h1><a href="index.php?rota=inicio" style="text-decoration:none; color:inherit;">Cidade Atenta</a></h1>
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="index.php?rota=inicio" class="nav-link px-2">Inicio</a></li>
+                    <li><a href="#" class="nav-link px-2">Mapa?</a></li>
+                    <li><a href="#" class="nav-link px-2">Nova Denuncia</a></li>
+                </ul>
+        
+            <div class="col-md-3 mb-2 mb-md-0">
+                <nav>
+                    <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
+                        <span>Olá, <strong>
+                                <?= $_SESSION['usuario_nome'] ?>
+                            </strong>!</span>
+                        <a href="index.php?rota=painel">
+                            <button class="btn btn-primary">Meu Painel</button>
+                        </a>
+                        <a href="index.php?rota=sair">
+                            <button class="btn btn-outline-primary">Sair</button>
+                        </a>
+                    <?php else: ?>
+                        <a href="index.php?rota=login">
+                            <button class="btn btn-outline-primary">Entrar</button>
+                        </a>
+                        <a href="index.php?rota=cadastrar">
+                            <button class="btn btn-primary">Cadastrar-se</button>
+                        </a>
+                    <?php endif; ?>
+                </nav>
+            </div>
+            </div>
+        </div>
     </header>
+
+    <main class="flex-grow-1 pt-5">
+    </div>
 
     <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
     <?php if (isset($_SESSION['mensagem'])): ?>

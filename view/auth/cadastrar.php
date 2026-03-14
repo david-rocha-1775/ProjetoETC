@@ -1,31 +1,42 @@
 <?php $tituloPagina = "Cadastro"; ?>
 <?php include "view/templates/header.php"; ?>
 
-<section>
-    <h2>Cadastrar Usuário</h2>
+<div class="d-flex align-items-center py-4 bg-body-tertiary" style="min-height: calc(100vh - 120px);">
+    <section class="form-signin w-100 m-auto" style="max-width: 330px;">
+        <form action="index.php?rota=processar_cadastro" method="POST">
+            
+            <h2 class="h3 mb-3 fw-normal">Criar Conta</h2>
 
-    <form action="index.php?rota=processar_cadastro" method="POST">
+            <div class="form-floating">
+                <input type="text" class="form-control" name="nome" id="nome" required placeholder="Digite seu nome completo">
+                <label for="nome">Nome Completo</label>
+            </div>
 
-        <label for="nome">Nome:</label><br>
-        <input type="text" name="nome" id="nome" required placeholder="Digite seu nome">
-        <br><br>
+            <div class="form-floating">
+                <input type="email" class="form-control" name="email" id="email" required placeholder="Digite seu email">
+                <label for="email">Email</label>
+            </div>
+            
+            <div class="form-floating">
+                <input type="password" class="form-control" name="senha" id="senha" required placeholder="Digite sua senha">
+                <label for="senha">Senha</label>
+            </div>
 
-        <label for="email">Email:</label><br>
-        <input type="email" name="email" id="email" required placeholder="Digite seu email">
-        <br><br>
+            <div class="form-check text-start my-3">
+                <input class="form-check-input" type="checkbox" value="agree-terms" id="agreeTerms">
+                <label class="form-check-label" for="agreeTerms">
+                    Concordo com os termos
+                </label>
+            </div>
+            
 
-        <label for="senha">Senha:</label><br>
-        <input type="password" name="senha" id="senha" required placeholder="Digite sua senha">
-        <br><br>
+            <button class="btn btn-primary w-100 py-2 mb-2" type="submit">Cadastrar</button>
+            <button class="btn btn-secondary w-100 py-2" type="reset">Limpar</button>
 
-        <button type="submit">Cadastrar</button>
-        <button type="reset">Limpar</button>
-    </form>
-
-    <hr>
-    <p>Já tem conta?
-        <a href="index.php?rota=login">Faça login aqui</a>
-    </p>
-</section>
+            <p class="mt-5 mb-3 text-body-secondary">Já tem conta? <a href="index.php?rota=login">Faça login aqui</a></p>
+            
+        </form>
+    </section>
+</div>
 
 <?php include "view/templates/footer.php"; ?>
