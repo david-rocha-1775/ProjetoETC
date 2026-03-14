@@ -1,7 +1,7 @@
 <?php $tituloPagina = "Cadastro"; ?>
 <?php include "view/templates/header.php"; ?>
 
-<div class="d-flex align-items-center py-4 bg-body-tertiary" style="min-height: calc(100vh - 120px);">
+<div class="d-flex py-4 bg-body-tertiary" style="min-height: calc(100vh - 120px);">
     <section class="form-signin w-100 m-auto" style="max-width: 330px;">
         <form action="index.php?rota=processar_cadastro" method="POST">
 
