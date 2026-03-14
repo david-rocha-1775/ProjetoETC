@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/css/estilo.css">
     <!-- Bootstrap JS Bundle -->
     <script src="assets/js/bootstrap.bundle.min.js" defer></script>
+    <link rel="icon" href="assets/images/favicon.ico">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
