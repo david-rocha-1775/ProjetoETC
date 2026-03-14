@@ -24,7 +24,7 @@
     </ul>
 </div>
 
-    <p class="text-center text-body-secondary">&copy;
+    <p class="text-center text-body-secondary mb-0">&copy;
         <?= date('Y') ?> Cidade Atenta — Projeto ETC
     </p>
 </footer>
