@@ -59,7 +59,6 @@
     </header>
 
     <main class="flex-grow-1 pt-5">
-        </div>
 
         <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
         <?php if (isset($_SESSION['mensagem'])): ?>
@@ -74,5 +73,3 @@
             unset($_SESSION['tipo_mensagem']);
             ?>
         <?php endif; ?>
-
-        <main>
