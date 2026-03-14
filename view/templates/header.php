@@ -50,7 +50,7 @@
         </div>
     </header>
 
-    <main class="flex-grow-1 pt-3">
+    <main class="flex-grow-1">
 
         <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
         <?php if (isset($_SESSION['mensagem'])): ?>
