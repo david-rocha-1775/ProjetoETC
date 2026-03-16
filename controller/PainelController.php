@@ -74,9 +74,7 @@ class PainelController
                     }
 
                     // Validação de MIME type real (lê bytes do arquivo, não confia no nome)
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $mimeType = finfo_file($finfo, $_FILES['foto']['tmp_name']);
-                    finfo_close($finfo);
+                    $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($_FILES['foto']['tmp_name']);
                     $mimesPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                     if (!in_array($mimeType, $mimesPermitidos)) {
                         throw new Exception("O arquivo enviado não é uma imagem válida.");
@@ -102,7 +100,7 @@ class PainelController
                 $denuncia->setLocalizacao($localizacao);
                 $denuncia->setFotoPath($fotoPath);
                 $denuncia->setIdCategoria($idCategoria);
-                $denuncia->setStatus('Pendente'); // Status inicial de toda denúncia cadastrada
+                $denuncia->setStatus('Aberto'); // Status inicial deve respeitar o ENUM do banco
                 // A sessão deve possuir o id do usuário no momento do login ("usuario_id")
                 $denuncia->setIdUsuario($_SESSION['usuario_id'] ?? null);
 
