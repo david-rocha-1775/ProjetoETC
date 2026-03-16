@@ -34,12 +34,19 @@ class DenunciaDAO
 
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $denuncia = new DenunciaDTO();
+            $status = $dados['status'];
+            $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
+
+            if (!in_array($status, $statusValido, true)) {
+                $status = 'Aberto';
+            }
+
             $denuncia->setId($dados['id_denuncia']);
             $denuncia->setTitulo($dados['titulo']);
             $denuncia->setDescricao($dados['descricao']);
             $denuncia->setLocalizacao($dados['localizacao']);
             $denuncia->setFotoPath($dados['foto_path']);
-            $denuncia->setStatus($dados['status']);
+            $denuncia->setStatus($status);
 
             $denuncias[] = $denuncia;
         }

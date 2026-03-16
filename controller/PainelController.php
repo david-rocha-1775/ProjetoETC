@@ -60,12 +60,31 @@ class PainelController
                 $fotoPath = null;
                 // Processa o upload da foto se ela for enviada
                 if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                    // Validação de tamanho (máx. 5 MB)
+                    $tamanhoMaximo = 5 * 1024 * 1024;
+                    if ($_FILES['foto']['size'] > $tamanhoMaximo) {
+                        throw new Exception("A foto deve ter no máximo 5 MB.");
+                    }
+
+                    // Validação de extensão (whitelist)
+                    $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+                    if (!in_array($extensao, $extensoesPermitidas)) {
+                        throw new Exception("Formato de arquivo não permitido. Use JPG, PNG, GIF ou WEBP.");
+                    }
+
+                    // Validação de MIME type real (lê bytes do arquivo, não confia no nome)
+                    $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($_FILES['foto']['tmp_name']);
+                    $mimesPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!in_array($mimeType, $mimesPermitidos)) {
+                        throw new Exception("O arquivo enviado não é uma imagem válida.");
+                    }
+
                     $diretorioDestino = 'uploads/';
                     if (!is_dir($diretorioDestino)) {
-                        mkdir($diretorioDestino, 0777, true);
+                        mkdir($diretorioDestino, 0755, true);
                     }
-                    $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-                    $nomeArquivo = uniqid('denuncia_') . '.' . $extensao;
+                    $nomeArquivo = bin2hex(random_bytes(16)) . '.' . $extensao;
                     $caminhoCompleto = $diretorioDestino . $nomeArquivo;
 
                     if (move_uploaded_file($_FILES['foto']['tmp_name'], $caminhoCompleto)) {
@@ -81,7 +100,7 @@ class PainelController
                 $denuncia->setLocalizacao($localizacao);
                 $denuncia->setFotoPath($fotoPath);
                 $denuncia->setIdCategoria($idCategoria);
-                $denuncia->setStatus('Pendente'); // Status inicial de toda denúncia cadastrada
+                $denuncia->setStatus('Aberto'); // Status inicial deve respeitar o ENUM do banco
                 // A sessão deve possuir o id do usuário no momento do login ("usuario_id")
                 $denuncia->setIdUsuario($_SESSION['usuario_id'] ?? null);
 

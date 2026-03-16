@@ -1,24 +1,27 @@
 <?php $tituloPagina = "Cadastro"; ?>
 <?php include "view/templates/header.php"; ?>
 
-<div class="d-flex align-items-center py-4 bg-body-tertiary" style="min-height: calc(100vh - 120px);">
+<div class="d-flex py-4 bg-body-tertiary" style="min-height: calc(100vh - 120px);">
     <section class="form-signin w-100 m-auto" style="max-width: 330px;">
         <form action="index.php?rota=processar_cadastro" method="POST">
-            
+
             <h2 class="h3 mb-3 fw-normal">Criar Conta</h2>
 
-            <div class="form-floating">
-                <input type="text" class="form-control" name="nome" id="nome" required placeholder="Digite seu nome completo">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="nome" id="nome" required
+                    placeholder="Digite seu nome completo">
                 <label for="nome">Nome Completo</label>
             </div>
 
-            <div class="form-floating">
-                <input type="email" class="form-control" name="email" id="email" required placeholder="Digite seu email">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" name="email" id="email" required
+                    placeholder="Digite seu email">
                 <label for="email">Email</label>
             </div>
-            
-            <div class="form-floating">
-                <input type="password" class="form-control" name="senha" id="senha" required placeholder="Digite sua senha">
+
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="senha" id="senha" required
+                    placeholder="Digite sua senha">
                 <label for="senha">Senha</label>
             </div>
 
@@ -28,13 +31,14 @@
                     Concordo com os termos
                 </label>
             </div>
-            
+
 
             <button class="btn btn-primary w-100 py-2 mb-2" type="submit">Cadastrar</button>
             <button class="btn btn-secondary w-100 py-2" type="reset">Limpar</button>
 
-            <p class="mt-5 mb-3 text-body-secondary">Já tem conta? <a href="index.php?rota=login">Faça login aqui</a></p>
-            
+            <p class="mt-3 mb-3 text-body-secondary">Já tem conta? <a href="index.php?rota=login">Faça login aqui</a>
+            </p>
+
         </form>
     </section>
 </div>

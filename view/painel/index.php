@@ -19,9 +19,18 @@
         <?php foreach ($denuncias as $d): ?>
             <div style="border: 1px solid #ccc; margin-bottom: 10px; padding: 10px;">
                 <h4><?= htmlspecialchars($d->getTitulo()) ?></h4>
+
                 <p><strong>Localização:</strong> <?= htmlspecialchars($d->getLocalizacao()) ?></p>
+
                 <p><strong>Status:</strong> <?= htmlspecialchars($d->getStatus()) ?></p>
+
+                <?php if ($d->getFotoPath()): ?>
+
+                    <img src="<?= htmlspecialchars($d->getFotoPath()) ?>" alt="Foto da denúncia" style="max-width: 300px; max-height: 200px; display: block; margin-top: 8px;">
+
+                <?php endif; ?>
             </div>
+            
         <?php endforeach; ?>
     <?php else: ?>
         <p>Nenhuma denúncia registrada ainda. Seja o primeiro!</p>
