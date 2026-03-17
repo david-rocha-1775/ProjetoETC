@@ -67,15 +67,15 @@ class PainelController
                     }
 
                     // Validação de extensão (whitelist)
-                    $extensoesPermitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    $extensoesPermitidas = ['jpg', 'jpeg', 'png',];
                     $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
                     if (!in_array($extensao, $extensoesPermitidas)) {
-                        throw new Exception("Formato de arquivo não permitido. Use JPG, PNG, GIF ou WEBP.");
+                        throw new Exception("Formato de arquivo não permitido. Use JPG e PNG,.");
                     }
 
                     // Validação de MIME type real (lê bytes do arquivo, não confia no nome)
                     $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($_FILES['foto']['tmp_name']);
-                    $mimesPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    $mimesPermitidos = ['image/jpeg', 'image/png',];
                     if (!in_array($mimeType, $mimesPermitidos)) {
                         throw new Exception("O arquivo enviado não é uma imagem válida.");
                     }
