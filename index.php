@@ -44,6 +44,24 @@ switch ($rota) {
         $controller->logout();
         break;
 
+    case 'processar_edicao_usuario':
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->atualizarPerfil();
+        break;
+
+    case 'processar_exclusao_usuario':
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->excluirConta();
+        break;
+
+    case 'listar_usuarios':
+        require_once 'controller/AdminController.php';
+        $controller = new AdminController();
+        $controller->listarUsuarios();
+        break;
+
     // --- Rotas Protegidas ---
     case 'painel':
         require_once 'controller/PainelController.php';
