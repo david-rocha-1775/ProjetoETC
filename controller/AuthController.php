@@ -87,6 +87,29 @@ class AuthController
     }
 
     /**
+     * Exibe a tela de perfil do usuário logado.
+     */
+    public function exibirPerfil()
+    {
+        $this->exigirLogin();
+
+        try {
+            $idUsuario = (int) $_SESSION['usuario_id'];
+            $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
+
+            if ($usuario === null) {
+                throw new Exception("Usuário não encontrado.");
+            }
+
+            $tituloPagina = "Meu Perfil";
+            include "view/auth/perfil.php";
+
+        } catch (Exception $e) {
+            $this->redirecionarComErro("Erro ao carregar perfil: " . $e->getMessage(), "painel");
+        }
+    }
+
+    /**
      * Atualiza os dados do usuário logado (nome, e-mail e senha opcional).
      */
     public function atualizarPerfil()

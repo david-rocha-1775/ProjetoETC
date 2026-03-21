@@ -56,6 +56,12 @@ switch ($rota) {
         $controller->excluirConta();
         break;
 
+    case 'perfil_usuario':
+        require_once 'controller/AuthController.php';
+        $controller = new AuthController();
+        $controller->exibirPerfil();
+        break;
+
     case 'listar_usuarios':
         require_once 'controller/AdminController.php';
         $controller = new AdminController();

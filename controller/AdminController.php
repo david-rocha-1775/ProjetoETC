@@ -22,30 +22,12 @@ class AdminController
 
         try {
             $usuarios = $this->usuarioDAO->listarUsuarios();
-            $resposta = [];
-
-            foreach ($usuarios as $usuario) {
-                $resposta[] = [
-                    'id_usuario' => $usuario->getId(),
-                    'nome' => $usuario->getNome(),
-                    'email' => $usuario->getEmail(),
-                    'tipo' => $usuario->getTipo(),
-                    'data_cadastro' => $usuario->getDataCadastro(),
-                ];
-            }
-
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode($resposta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            exit();
+            $tituloPagina = 'Usuários Cadastrados';
+            include 'view/admin/usuarios.php';
+            return;
 
         } catch (Exception $e) {
-            header('Content-Type: application/json; charset=utf-8');
-            http_response_code(500);
-            echo json_encode([
-                'erro' => 'Erro ao listar usuarios.',
-                'detalhe' => $e->getMessage(),
-            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            exit();
+            $this->redirecionarComErro('Erro ao listar usuários: ' . $e->getMessage(), 'painel');
         }
     }
 
