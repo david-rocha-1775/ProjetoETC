@@ -4,6 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            try {
+                var temaSalvo = localStorage.getItem('tema_preferido');
+                if (temaSalvo === 'light' || temaSalvo === 'dark') {
+                    document.documentElement.setAttribute('data-bs-theme', temaSalvo);
+                } else {
+                    document.documentElement.removeAttribute('data-bs-theme');
+                }
+            } catch (e) {
+                document.documentElement.removeAttribute('data-bs-theme');
+            }
+        })();
+    </script>
     <title>
         <?= isset($tituloPagina) ? $tituloPagina : 'Projeto ETC' ?>
     </title>

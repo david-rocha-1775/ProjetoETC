@@ -7,18 +7,13 @@
     </button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme">
         <li>
-            <button type="button" class="dropdown-item" onclick="document.documentElement.setAttribute('data-bs-theme', 'light')">
+            <button type="button" class="dropdown-item" onclick="setTema('light')">
                 ☀️ Claro
             </button>
         </li>
         <li>
-            <button type="button" class="dropdown-item" onclick="document.documentElement.setAttribute('data-bs-theme', 'dark')">
+            <button type="button" class="dropdown-item" onclick="setTema('dark')">
                 🌙 Escuro
-            </button>
-        </li>
-        <li>
-            <button type="button" class="dropdown-item" onclick="document.documentElement.removeAttribute('data-bs-theme')">
-                ⚙️ Automático
             </button>
         </li>
     </ul>
@@ -28,6 +23,19 @@
         <?= date('Y') ?> Cidade Atenta — Projeto ETC
     </p>
 </footer>
+
+<script>
+    function setTema(tema) {
+        if (tema === 'light' || tema === 'dark') {
+            document.documentElement.setAttribute('data-bs-theme', tema);
+            localStorage.setItem('tema_preferido', tema);
+            return;
+        }
+
+        document.documentElement.removeAttribute('data-bs-theme');
+        localStorage.removeItem('tema_preferido');
+    }
+</script>
 
 </body>
 
