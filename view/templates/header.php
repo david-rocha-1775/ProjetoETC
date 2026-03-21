@@ -21,29 +21,43 @@
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
 
-                <h1><a href="index.php?rota=inicio" style="text-decoration:none; color:inherit;">Cidade Atenta</a></h1>
+                <h1>
+                    <a href="index.php?rota=<?= (isset($_SESSION['logado']) && $_SESSION['logado'] === true) ? 'painel' : 'inicio' ?>"
+                        style="text-decoration:none; color:inherit;">
+                        Cidade Atenta
+                    </a>
+                </h1>
 
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
 
-                    <li><a href="index.php?rota=inicio" class="nav-link px-2">Inicio</a></li>
+                    <li><a href="index.php?rota=<?= (isset($_SESSION['logado']) && $_SESSION['logado'] === true) ? 'painel' : 'inicio' ?>"
+                            class="nav-link px-2">Inicio</a></li>
                     <li><a href="#" class="nav-link px-2">Mapa?</a></li>
                     <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2">Nova Denuncia</a></li>
 
                 </ul>
 
-                <div class="col-md-3 text-end">
+                <div class="col-md-auto text-end">
                     <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
-                        <span class="me-3">Olá, <strong>
-                                <?= $_SESSION['usuario_nome'] ?>
-                            </strong>!</span>
-                        <a href="index.php?rota=painel" class="btn btn-primary me-1 ">Meu Painel</a>
+                        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-end gap-1">
+                            <span class="text-center text-md-end me-md-2 mb-1 mb-md-0">Olá, <strong>
+                                    <?= $_SESSION['usuario_nome'] ?>
+                                </strong>!</span>
 
-                        <a href="index.php?rota=sair" class="btn btn-outline-primary">Sair</a>
+                            <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
+                                <a href="index.php?rota=listar_usuarios" class="btn btn-secondary flex-fill text-nowrap">Usuários</a>
+                            <?php endif; ?>
+
+                            <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu Perfil</a>
+                            
+                            <a href="index.php?rota=sair" class="btn btn-outline-primary flex-fill text-nowrap">Sair</a>
+                        </div>
                     <?php else: ?>
 
-                        <a href="index.php?rota=login" class="btn btn-outline-primary me-1">Entrar</a>
-
-                        <a href="index.php?rota=cadastrar" class="btn btn-primary">Cadastrar-se</a>
+                        <div class="d-flex flex-column flex-md-row align-items-stretch justify-content-end gap-1">
+                            <a href="index.php?rota=login" class="btn btn-outline-primary flex-fill text-nowrap">Entrar</a>
+                            <a href="index.php?rota=cadastrar" class="btn btn-primary flex-fill text-nowrap">Cadastrar-se</a>
+                        </div>
 
                     <?php endif; ?>
                 </div>
