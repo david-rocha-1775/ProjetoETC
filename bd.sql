@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS denuncias (
     titulo VARCHAR(150) NOT NULL,
     descricao TEXT NOT NULL,
     localizacao VARCHAR(255) NOT NULL,
+    latitude DECIMAL(10,8) NULL,
+    longitude DECIMAL(11,8) NULL,
     foto_path VARCHAR(255),
     status ENUM('Aberto', 'Em Andamento', 'Resolvido') DEFAULT 'Aberto',
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
