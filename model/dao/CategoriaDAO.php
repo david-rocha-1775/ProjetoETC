@@ -37,5 +37,62 @@ class CategoriaDAO
 
         return $categorias;
     }
+
+    /**
+     * Cadastra uma nova categoria no banco.
+     *
+     * @param CategoriaDTO $categoria
+     * @return bool
+     */
+    public function cadastrar(CategoriaDTO $categoria)
+    {
+        $sql = "INSERT INTO categorias (nome_categoria) VALUES (:nome_categoria)";
+
+        $stmt = $this->conexao->prepare($sql);
+
+        $nomeCategoria = $categoria->getNomeCategoria();
+        $stmt->bindParam(':nome_categoria', $nomeCategoria);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Atualiza os dados de uma categoria.
+     *
+     * @param CategoriaDTO $categoria
+     * @return bool
+     */
+    public function atualizar(CategoriaDTO $categoria)
+    {
+        $sql = "UPDATE categorias
+                SET nome_categoria = :nome_categoria
+                WHERE id_categoria = :id_categoria";
+
+        $stmt = $this->conexao->prepare($sql);
+
+        $idCategoria = $categoria->getId();
+        $nomeCategoria = $categoria->getNomeCategoria();
+
+        $stmt->bindParam(':id_categoria', $idCategoria, PDO::PARAM_INT);
+        $stmt->bindParam(':nome_categoria', $nomeCategoria);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Exclui uma categoria pelo ID.
+     *
+     * @param int $idCategoria
+     * @return bool
+     */
+    public function excluirPorId($idCategoria)
+    {
+        $sql = "DELETE FROM categorias WHERE id_categoria = :id_categoria";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_categoria', $idCategoria, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
 }
 ?>
