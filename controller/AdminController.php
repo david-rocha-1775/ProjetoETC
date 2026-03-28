@@ -2,14 +2,18 @@
 // Controller Administrativo (Ações restritas a administradores)
 
 require_once "model/dao/UsuarioDAO.php";
+require_once "model/dao/CategoriaDAO.php";
+require_once "model/dto/CategoriaDTO.php";
 
 class AdminController
 {
     private $usuarioDAO;
+    private $categoriaDAO;
 
     public function __construct()
     {
         $this->usuarioDAO = new UsuarioDAO();
+        $this->categoriaDAO = new CategoriaDAO();
     }
 
     /**
@@ -28,6 +32,105 @@ class AdminController
 
         } catch (Exception $e) {
             $this->redirecionarComErro('Erro ao listar usuários: ' . $e->getMessage(), 'painel');
+        }
+    }
+
+    /**
+     * Cadastra uma nova categoria (uso administrativo).
+     */
+    public function cadastrarCategoria()
+    {
+        $this->exigirLogin();
+        $this->exigirAdministrador();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirecionarComErro('Método inválido para cadastro de categoria.', 'painel');
+        }
+
+        try {
+            $nomeCategoria = trim($_POST['nome_categoria'] ?? '');
+            if ($nomeCategoria === '') {
+                throw new Exception('Informe o nome da categoria.');
+            }
+
+            $categoria = new CategoriaDTO();
+            $categoria->setNomeCategoria($nomeCategoria);
+
+            $salvou = $this->categoriaDAO->cadastrar($categoria);
+            if (!$salvou) {
+                throw new Exception('Não foi possível cadastrar a categoria.');
+            }
+
+            $this->redirecionarComSucesso('Categoria cadastrada com sucesso!', 'painel');
+
+        } catch (Exception $e) {
+            $this->redirecionarComErro('Erro ao cadastrar categoria: ' . $e->getMessage(), 'painel');
+        }
+    }
+
+    /**
+     * Atualiza uma categoria existente (uso administrativo).
+     */
+    public function atualizarCategoria()
+    {
+        $this->exigirLogin();
+        $this->exigirAdministrador();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirecionarComErro('Método inválido para atualização de categoria.', 'painel');
+        }
+
+        try {
+            $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
+            $nomeCategoria = trim($_POST['nome_categoria'] ?? '');
+
+            if ($idCategoria <= 0 || $nomeCategoria === '') {
+                throw new Exception('Dados da categoria inválidos.');
+            }
+
+            $categoria = new CategoriaDTO();
+            $categoria->setId($idCategoria);
+            $categoria->setNomeCategoria($nomeCategoria);
+
+            $atualizou = $this->categoriaDAO->atualizar($categoria);
+            if (!$atualizou) {
+                throw new Exception('Não foi possível atualizar a categoria.');
+            }
+
+            $this->redirecionarComSucesso('Categoria atualizada com sucesso!', 'painel');
+
+        } catch (Exception $e) {
+            $this->redirecionarComErro('Erro ao atualizar categoria: ' . $e->getMessage(), 'painel');
+        }
+    }
+
+    /**
+     * Exclui uma categoria pelo ID (uso administrativo).
+     */
+    public function excluirCategoria()
+    {
+        $this->exigirLogin();
+        $this->exigirAdministrador();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirecionarComErro('Método inválido para exclusão de categoria.', 'painel');
+        }
+
+        try {
+            $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
+            if ($idCategoria <= 0) {
+                throw new Exception('ID da categoria inválido.');
+            }
+
+            $excluiu = $this->categoriaDAO->excluirPorId($idCategoria);
+            if (!$excluiu) {
+                throw new Exception('Não foi possível excluir a categoria.');
+            }
+
+            $this->redirecionarComSucesso('Categoria excluída com sucesso!', 'painel');
+
+        } catch (Exception $e) {
+            $this->redirecionarComErro('Erro ao excluir categoria: ' . $e->getMessage(), 'painel');
         }
     }
 
@@ -58,6 +161,17 @@ class AdminController
     {
         $_SESSION['mensagem'] = $mensagem;
         $_SESSION['tipo_mensagem'] = 'erro';
+        header('Location: index.php?rota=' . $rota);
+        exit();
+    }
+
+    /**
+     * Helper para redirecionamento com mensagens de sucesso.
+     */
+    private function redirecionarComSucesso($mensagem, $rota)
+    {
+        $_SESSION['mensagem'] = $mensagem;
+        $_SESSION['tipo_mensagem'] = 'sucesso';
         header('Location: index.php?rota=' . $rota);
         exit();
     }

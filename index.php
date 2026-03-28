@@ -81,6 +81,36 @@ switch ($rota) {
         $controller->cadastrarDenuncia();
         break;
 
+    case 'processar_edicao_denuncia':
+        require_once 'controller/PainelController.php';
+        $controller = new PainelController();
+        $controller->atualizarDenuncia();
+        break;
+
+    case 'processar_exclusao_denuncia':
+        require_once 'controller/PainelController.php';
+        $controller = new PainelController();
+        $controller->excluirDenuncia();
+        break;
+
+    case 'processar_cadastro_categoria':
+        require_once 'controller/AdminController.php';
+        $controller = new AdminController();
+        $controller->cadastrarCategoria();
+        break;
+
+    case 'processar_edicao_categoria':
+        require_once 'controller/AdminController.php';
+        $controller = new AdminController();
+        $controller->atualizarCategoria();
+        break;
+
+    case 'processar_exclusao_categoria':
+        require_once 'controller/AdminController.php';
+        $controller = new AdminController();
+        $controller->excluirCategoria();
+        break;
+
     // --- Not Found ---
     default:
         echo "<h1>Erro 404 - Página não encontrada</h1>";
