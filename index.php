@@ -3,118 +3,88 @@
 // Ponto de entrada do sistema que direciona a requisição para o Controller específico
 
 session_start();
+require_once 'config/router_helpers.php';
 
+// Lista de arquivos de rotas por contexto (público, autenticação, painel e admin)
+$arquivosDeRota = [
+    'config/routes/public.php',
+    'config/routes/auth.php',
+    'config/routes/painel.php',
+    'config/routes/admin.php',
+];
+
+// Carrega e consolida todas as rotas em uma whitelist única
+$rotas = [];
+foreach ($arquivosDeRota as $arquivoDeRota) {
+    $grupo = require $arquivoDeRota;
+    if (is_array($grupo)) {
+        $rotas = array_merge($rotas, $grupo);
+    }
+}
+
+// Resolve a rota solicitada e o método HTTP da requisição atual
 $rota = isset($_GET['rota']) ? $_GET['rota'] : 'inicio';
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-switch ($rota) {
+// Se a rota não existir na whitelist, retorna 404
+if (!isset($rotas[$rota])) {
+    responder404();
+    exit();
+}
 
-    // --- Rotas Públicas ---
-    case 'inicio':
-        include 'view/public/home.php';
-        break;
+$config = $rotas[$rota];
+$allowedMethods = $config['http_method'] ?? 'GET';
 
-    case 'testar_conexao':
-        require 'controller/TestarConexao.php';
-        break;
+// Se o método HTTP não for permitido para a rota, retorna 405
+if (!metodoPermitido($allowedMethods, $requestMethod)) {
+    responder405();
+    exit();
+}
 
-    // --- Autenticação ---
-    case 'login':
-        include 'view/auth/login.php';
-        break;
+try {
+    // O tipo define como a rota será executada: view, script ou action (controller)
+    $type = $config['type'] ?? '';
 
-    case 'processar_login':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->login();
-        break;
+    if ($type === 'view') {
+        include $config['target'];
+        exit();
+    }
 
-    case 'cadastrar':
-        include 'view/auth/cadastrar.php';
-        break;
+    if ($type === 'script') {
+        require $config['target'];
+        exit();
+    }
 
-    case 'processar_cadastro':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->cadastrar();
-        break;
+    if ($type === 'action') {
+        $controllerFile = $config['controller_file'] ?? '';
+        $controllerClass = $config['controller_class'] ?? '';
+        $controllerMethod = $config['controller_method'] ?? '';
 
-    case 'sair':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->logout();
-        break;
+        // Garante que a configuração da ação está completa
+        if ($controllerFile === '' || $controllerClass === '' || $controllerMethod === '') {
+            throw new RuntimeException('Configuração de rota inválida.');
+        }
 
-    case 'processar_edicao_usuario':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->atualizarPerfil();
-        break;
+        require_once $controllerFile;
 
-    case 'processar_exclusao_usuario':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->excluirConta();
-        break;
+        // Verifica se controller e método existem antes de executar
+        if (!class_exists($controllerClass, false)) {
+            throw new RuntimeException('Controller não encontrado.');
+        }
 
-    case 'perfil_usuario':
-        require_once 'controller/AuthController.php';
-        $controller = new AuthController();
-        $controller->exibirPerfil();
-        break;
+        $controller = new $controllerClass();
+        if (!method_exists($controller, $controllerMethod)) {
+            throw new RuntimeException('Método de controller não encontrado.');
+        }
 
-    case 'listar_usuarios':
-        require_once 'controller/AdminController.php';
-        $controller = new AdminController();
-        $controller->listarUsuarios();
-        break;
+        $controller->{$controllerMethod}();
+        exit();
+    }
 
-    // --- Rotas Protegidas ---
-    case 'painel':
-        require_once 'controller/PainelController.php';
-        $controller = new PainelController();
-        $controller->index();
-        break;
+    throw new RuntimeException('Tipo de rota inválido.');
 
-    case 'nova_denuncia':
-        require_once 'controller/PainelController.php';
-        $controller = new PainelController();
-        $controller->cadastrarDenuncia();
-        break;
-
-    case 'processar_edicao_denuncia':
-        require_once 'controller/PainelController.php';
-        $controller = new PainelController();
-        $controller->atualizarDenuncia();
-        break;
-
-    case 'processar_exclusao_denuncia':
-        require_once 'controller/PainelController.php';
-        $controller = new PainelController();
-        $controller->excluirDenuncia();
-        break;
-
-    case 'processar_cadastro_categoria':
-        require_once 'controller/AdminController.php';
-        $controller = new AdminController();
-        $controller->cadastrarCategoria();
-        break;
-
-    case 'processar_edicao_categoria':
-        require_once 'controller/AdminController.php';
-        $controller = new AdminController();
-        $controller->atualizarCategoria();
-        break;
-
-    case 'processar_exclusao_categoria':
-        require_once 'controller/AdminController.php';
-        $controller = new AdminController();
-        $controller->excluirCategoria();
-        break;
-
-    // --- Not Found ---
-    default:
-        echo "<h1>Erro 404 - Página não encontrada</h1>";
-        echo "<a href='index.php?rota=inicio'>Voltar ao Início</a>";
-        break;
+} catch (Throwable $e) {
+    // Qualquer falha inesperada no roteamento retorna erro interno padronizado
+    responder500();
 }
 ?>
