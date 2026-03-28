@@ -28,6 +28,7 @@ class PainelController
     {
         try {
             $denuncias = $this->denunciaDAO->listarUltimas(10);
+            $categorias = $this->categoriaDAO->listarTodas();
             $tituloPagina = "Painel do Usuário";
             $usuarioNome = $_SESSION['usuario_nome'];
 

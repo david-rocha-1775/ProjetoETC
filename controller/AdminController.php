@@ -26,6 +26,7 @@ class AdminController
 
         try {
             $usuarios = $this->usuarioDAO->listarUsuarios();
+            $categorias = $this->categoriaDAO->listarTodas();
             $tituloPagina = 'Usuários Cadastrados';
             include 'view/admin/usuarios.php';
             return;
@@ -61,10 +62,10 @@ class AdminController
                 throw new Exception('Não foi possível cadastrar a categoria.');
             }
 
-            $this->redirecionarComSucesso('Categoria cadastrada com sucesso!', 'painel');
+            $this->redirecionarComSucesso('Categoria cadastrada com sucesso!', 'listar_usuarios');
 
         } catch (Exception $e) {
-            $this->redirecionarComErro('Erro ao cadastrar categoria: ' . $e->getMessage(), 'painel');
+            $this->redirecionarComErro('Erro ao cadastrar categoria: ' . $e->getMessage(), 'listar_usuarios');
         }
     }
 
@@ -97,10 +98,10 @@ class AdminController
                 throw new Exception('Não foi possível atualizar a categoria.');
             }
 
-            $this->redirecionarComSucesso('Categoria atualizada com sucesso!', 'painel');
+            $this->redirecionarComSucesso('Categoria atualizada com sucesso!', 'listar_usuarios');
 
         } catch (Exception $e) {
-            $this->redirecionarComErro('Erro ao atualizar categoria: ' . $e->getMessage(), 'painel');
+            $this->redirecionarComErro('Erro ao atualizar categoria: ' . $e->getMessage(), 'listar_usuarios');
         }
     }
 
@@ -127,10 +128,10 @@ class AdminController
                 throw new Exception('Não foi possível excluir a categoria.');
             }
 
-            $this->redirecionarComSucesso('Categoria excluída com sucesso!', 'painel');
+            $this->redirecionarComSucesso('Categoria excluída com sucesso!', 'listar_usuarios');
 
         } catch (Exception $e) {
-            $this->redirecionarComErro('Erro ao excluir categoria: ' . $e->getMessage(), 'painel');
+            $this->redirecionarComErro('Erro ao excluir categoria: ' . $e->getMessage(), 'listar_usuarios');
         }
     }
 

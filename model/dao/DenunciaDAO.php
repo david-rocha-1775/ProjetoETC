@@ -21,7 +21,7 @@ class DenunciaDAO
      */
     public function listarUltimas($limite = 10)
     {
-        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status 
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status, fk_usuario, fk_categoria
                 FROM denuncias 
                 ORDER BY id_denuncia DESC 
                 LIMIT :limite";
@@ -47,6 +47,8 @@ class DenunciaDAO
             $denuncia->setLocalizacao($dados['localizacao']);
             $denuncia->setFotoPath($dados['foto_path']);
             $denuncia->setStatus($status);
+            $denuncia->setIdUsuario($dados['fk_usuario']);
+            $denuncia->setIdCategoria($dados['fk_categoria']);
 
             $denuncias[] = $denuncia;
         }

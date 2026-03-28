@@ -59,7 +59,7 @@
                                 </strong>!</span>
 
                             <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
-                                <a href="index.php?rota=listar_usuarios" class="btn btn-secondary flex-fill text-nowrap">Usuários</a>
+                                <a href="index.php?rota=listar_usuarios" class="btn btn-secondary flex-fill text-nowrap">Admin</a>
                             <?php endif; ?>
 
                             <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu Perfil</a>
