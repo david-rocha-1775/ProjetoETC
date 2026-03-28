@@ -28,7 +28,7 @@ class AdminController
             $usuarios = $this->usuarioDAO->listarUsuarios();
             $categorias = $this->categoriaDAO->listarTodas();
             $tituloPagina = 'Usuários Cadastrados';
-            include 'view/admin/usuarios.php';
+            include 'view/admin/admin.php';
             return;
 
         } catch (Exception $e) {
