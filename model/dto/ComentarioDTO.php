@@ -8,8 +8,10 @@ class ComentarioDTO
     private $id;
     private $texto;
     private $dataComentario;
+    private $ativo;
     private $idUsuario;
     private $idDenuncia;
+    private $nomeUsuario;
 
     // --- GETTERS ---
 
@@ -28,6 +30,11 @@ class ComentarioDTO
         return $this->dataComentario;
     }
 
+    public function getAtivo()
+    {
+        return $this->ativo;
+    }
+
     public function getIdUsuario()
     {
         return $this->idUsuario;
@@ -36,6 +43,11 @@ class ComentarioDTO
     public function getIdDenuncia()
     {
         return $this->idDenuncia;
+    }
+
+    public function getNomeUsuario()
+    {
+        return $this->nomeUsuario;
     }
 
     // --- SETTERS ---
@@ -55,6 +67,11 @@ class ComentarioDTO
         $this->dataComentario = $dataComentario;
     }
 
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
+    }
+
     public function setIdUsuario($idUsuario)
     {
         $this->idUsuario = $idUsuario;
@@ -63,6 +80,11 @@ class ComentarioDTO
     public function setIdDenuncia($idDenuncia)
     {
         $this->idDenuncia = $idDenuncia;
+    }
+
+    public function setNomeUsuario($nomeUsuario)
+    {
+        $this->nomeUsuario = $nomeUsuario;
     }
 }
 ?>

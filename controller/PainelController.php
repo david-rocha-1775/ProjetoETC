@@ -3,11 +3,20 @@
 
 require_once "model/dao/DenunciaDAO.php";
 require_once "model/dao/CategoriaDAO.php";
+require_once "model/dao/ComentarioDAO.php";
+require_once "model/dao/CurtidaDenunciaDAO.php";
+require_once "model/dao/CurtidaComentarioDAO.php";
+require_once "model/dto/ComentarioDTO.php";
+require_once "model/dto/CurtidaDenunciaDTO.php";
+require_once "model/dto/CurtidaComentarioDTO.php";
 
 class PainelController
 {
     private $denunciaDAO;
     private $categoriaDAO;
+    private $comentarioDAO;
+    private $curtidaDenunciaDAO;
+    private $curtidaComentarioDAO;
 
     public function __construct()
     {
@@ -19,6 +28,9 @@ class PainelController
 
         $this->denunciaDAO = new DenunciaDAO();
         $this->categoriaDAO = new CategoriaDAO();
+        $this->comentarioDAO = new ComentarioDAO();
+        $this->curtidaDenunciaDAO = new CurtidaDenunciaDAO();
+        $this->curtidaComentarioDAO = new CurtidaComentarioDAO();
     }
 
     /**
@@ -29,6 +41,7 @@ class PainelController
         try {
             $denuncias = $this->denunciaDAO->listarUltimas(10);
             $categorias = $this->categoriaDAO->listarTodas();
+            $interacoes = $this->carregarInteracoesDenuncias($denuncias);
             $tituloPagina = "Painel do Usuário";
             $usuarioNome = $_SESSION['usuario_nome'];
 
@@ -209,6 +222,222 @@ class PainelController
     }
 
     /**
+     * Processa o cadastro de um comentário em uma denúncia.
+     */
+    public function comentarDenuncia()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Método não permitido.'
+                ], 405);
+            }
+
+            header("Location: index.php?rota=painel");
+            exit();
+        }
+
+        try {
+            $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
+            $texto = trim($_POST['texto'] ?? '');
+
+            if ($idDenuncia <= 0 || $texto === '') {
+                throw new Exception('Informe a denúncia e o texto do comentário.');
+            }
+
+            if ($this->denunciaDAO->buscarPorId($idDenuncia) === null) {
+                throw new Exception('Denúncia não encontrada.');
+            }
+
+            $comentario = new ComentarioDTO();
+            $comentario->setTexto($texto);
+            $comentario->setIdDenuncia($idDenuncia);
+            $comentario->setIdUsuario((int) ($_SESSION['usuario_id'] ?? 0));
+
+            $salvou = $this->comentarioDAO->cadastrar($comentario);
+            if (!$salvou) {
+                throw new Exception('Não foi possível cadastrar o comentário.');
+            }
+
+            $comentarioCriado = $this->comentarioDAO->buscarPorId((int) $salvou);
+            if ($comentarioCriado === null) {
+                throw new Exception('Não foi possível recuperar o comentário cadastrado.');
+            }
+
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => true,
+                    'message' => 'Comentário publicado com sucesso!',
+                    'id_denuncia' => $idDenuncia,
+                    'comentario' => $this->comentarioParaResposta($comentarioCriado),
+                ], 201);
+            }
+
+            $_SESSION['mensagem'] = 'Comentário publicado com sucesso!';
+            $_SESSION['tipo_mensagem'] = 'sucesso';
+
+        } catch (Exception $e) {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Erro: ' . $e->getMessage(),
+                ], 400);
+            }
+
+            $_SESSION['mensagem'] = 'Erro: ' . $e->getMessage();
+            $_SESSION['tipo_mensagem'] = 'erro';
+        }
+
+        header("Location: index.php?rota=painel");
+        exit();
+    }
+
+    /**
+     * Alterna a curtida da denúncia.
+     */
+    public function curtirDenuncia()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Método não permitido.'
+                ], 405);
+            }
+
+            header("Location: index.php?rota=painel");
+            exit();
+        }
+
+        try {
+            $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
+            $idUsuario = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idDenuncia <= 0 || $idUsuario <= 0) {
+                throw new Exception('Não foi possível processar a curtida.');
+            }
+
+            if ($this->denunciaDAO->buscarPorId($idDenuncia) === null) {
+                throw new Exception('Denúncia não encontrada.');
+            }
+
+            if ($this->curtidaDenunciaDAO->usuarioCurtiu($idUsuario, $idDenuncia)) {
+                $this->curtidaDenunciaDAO->removerCurtida($idUsuario, $idDenuncia);
+                $mensagem = 'Curtida removida.';
+            } else {
+                $curtida = new CurtidaDenunciaDTO();
+                $curtida->setIdUsuario($idUsuario);
+                $curtida->setIdDenuncia($idDenuncia);
+                $this->curtidaDenunciaDAO->curtir($curtida);
+                $mensagem = 'Denúncia curtida com sucesso!';
+            }
+
+            $totalCurtidas = $this->curtidaDenunciaDAO->contarCurtidas($idDenuncia);
+            $usuarioCurtiu = $this->curtidaDenunciaDAO->usuarioCurtiu($idUsuario, $idDenuncia);
+
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => true,
+                    'message' => $mensagem,
+                    'id_denuncia' => $idDenuncia,
+                    'total_curtidas' => $totalCurtidas,
+                    'usuario_curtiu' => $usuarioCurtiu,
+                ]);
+            }
+
+            $_SESSION['mensagem'] = $mensagem;
+            $_SESSION['tipo_mensagem'] = 'sucesso';
+
+        } catch (Exception $e) {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Erro: ' . $e->getMessage(),
+                ], 400);
+            }
+
+            $_SESSION['mensagem'] = 'Erro: ' . $e->getMessage();
+            $_SESSION['tipo_mensagem'] = 'erro';
+        }
+
+        header("Location: index.php?rota=painel");
+        exit();
+    }
+
+    /**
+     * Alterna a curtida de um comentário.
+     */
+    public function curtirComentario()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Método não permitido.'
+                ], 405);
+            }
+
+            header("Location: index.php?rota=painel");
+            exit();
+        }
+
+        try {
+            $idComentario = (int) ($_POST['id_comentario'] ?? 0);
+            $idUsuario = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idComentario <= 0 || $idUsuario <= 0) {
+                throw new Exception('Não foi possível processar a curtida.');
+            }
+
+            if ($this->comentarioDAO->buscarPorId($idComentario) === null) {
+                throw new Exception('Comentário não encontrado.');
+            }
+
+            if ($this->curtidaComentarioDAO->usuarioCurtiu($idUsuario, $idComentario)) {
+                $this->curtidaComentarioDAO->removerCurtida($idUsuario, $idComentario);
+                $mensagem = 'Curtida removida.';
+            } else {
+                $curtida = new CurtidaComentarioDTO();
+                $curtida->setIdUsuario($idUsuario);
+                $curtida->setIdComentario($idComentario);
+                $this->curtidaComentarioDAO->curtir($curtida);
+                $mensagem = 'Comentário curtido com sucesso!';
+            }
+
+            $totalCurtidas = $this->curtidaComentarioDAO->contarCurtidas($idComentario);
+            $usuarioCurtiu = $this->curtidaComentarioDAO->usuarioCurtiu($idUsuario, $idComentario);
+
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => true,
+                    'message' => $mensagem,
+                    'id_comentario' => $idComentario,
+                    'total_curtidas' => $totalCurtidas,
+                    'usuario_curtiu' => $usuarioCurtiu,
+                ]);
+            }
+
+            $_SESSION['mensagem'] = $mensagem;
+            $_SESSION['tipo_mensagem'] = 'sucesso';
+
+        } catch (Exception $e) {
+            if ($this->requisicaoAceitaJson()) {
+                $this->responderJson([
+                    'success' => false,
+                    'message' => 'Erro: ' . $e->getMessage(),
+                ], 400);
+            }
+
+            $_SESSION['mensagem'] = 'Erro: ' . $e->getMessage();
+            $_SESSION['tipo_mensagem'] = 'erro';
+        }
+
+        header("Location: index.php?rota=painel");
+        exit();
+    }
+
+    /**
      * Garante que somente o dono da denúncia ou admin altere/exclua o registro.
      */
     private function validarPermissaoDenuncia($idUsuarioDono)
@@ -259,6 +488,86 @@ class PainelController
         }
 
         return $caminhoCompleto;
+    }
+
+    /**
+     * Indica se a requisição espera resposta JSON.
+     */
+    private function requisicaoAceitaJson()
+    {
+        $accept = strtolower($_SERVER['HTTP_ACCEPT'] ?? '');
+        $xRequestedWith = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '');
+
+        return strpos($accept, 'application/json') !== false || $xRequestedWith === 'xmlhttprequest';
+    }
+
+    /**
+     * Envia uma resposta JSON e encerra a execução.
+     *
+     * @param array $dados
+     * @param int $statusCode
+     */
+    private function responderJson(array $dados, $statusCode = 200)
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit();
+    }
+
+    /**
+     * Converte um comentário em array para retorno via JSON.
+     *
+     * @param ComentarioDTO $comentario
+     * @return array
+     */
+    private function comentarioParaResposta(ComentarioDTO $comentario)
+    {
+        return [
+            'id' => (int) $comentario->getId(),
+            'texto' => $comentario->getTexto(),
+            'data_comentario' => $comentario->getDataComentario(),
+            'nome_usuario' => $comentario->getNomeUsuario() ?: 'Usuário',
+            'id_usuario' => (int) $comentario->getIdUsuario(),
+            'id_denuncia' => (int) $comentario->getIdDenuncia(),
+            'total_curtidas' => 0,
+            'usuario_curtiu' => false,
+        ];
+    }
+
+    /**
+     * Carrega comentários e curtidas de cada denúncia do painel.
+     *
+     * @param array $denuncias
+     * @return array
+     */
+    private function carregarInteracoesDenuncias($denuncias)
+    {
+        $interacoes = [];
+        $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+        foreach ($denuncias as $denuncia) {
+            $idDenuncia = (int) $denuncia->getId();
+            $comentarios = $this->comentarioDAO->listarPorDenuncia($idDenuncia);
+
+            $comentariosComCurtidas = [];
+            foreach ($comentarios as $comentario) {
+                $idComentario = (int) $comentario->getId();
+                $comentariosComCurtidas[] = [
+                    'comentario' => $comentario,
+                    'totalCurtidas' => $this->curtidaComentarioDAO->contarCurtidas($idComentario),
+                    'usuarioCurtiu' => $idUsuarioSessao > 0 ? $this->curtidaComentarioDAO->usuarioCurtiu($idUsuarioSessao, $idComentario) : false,
+                ];
+            }
+
+            $interacoes[$idDenuncia] = [
+                'comentarios' => $comentariosComCurtidas,
+                'totalCurtidas' => $this->curtidaDenunciaDAO->contarCurtidas($idDenuncia),
+                'usuarioCurtiu' => $idUsuarioSessao > 0 ? $this->curtidaDenunciaDAO->usuarioCurtiu($idUsuarioSessao, $idDenuncia) : false,
+            ];
+        }
+
+        return $interacoes;
     }
 }
 ?>

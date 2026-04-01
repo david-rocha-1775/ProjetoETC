@@ -8,6 +8,7 @@ class CurtidaComentarioDTO
     private $idUsuario;
     private $idComentario;
     private $dataCurtida;
+    private $ativo;
 
     // --- GETTERS ---
 
@@ -26,6 +27,11 @@ class CurtidaComentarioDTO
         return $this->dataCurtida;
     }
 
+    public function getAtivo()
+    {
+        return $this->ativo;
+    }
+
     // --- SETTERS ---
 
     public function setIdUsuario($idUsuario)
@@ -41,6 +47,11 @@ class CurtidaComentarioDTO
     public function setDataCurtida($dataCurtida)
     {
         $this->dataCurtida = $dataCurtida;
+    }
+
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
     }
 }
 ?>

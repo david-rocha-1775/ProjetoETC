@@ -20,7 +20,7 @@ class UsuarioDAO
      */
     public function cadastrar(UsuarioDTO $usuario)
     {
-        $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
+        $sql = "INSERT INTO usuarios (nome, email, senha, ativo) VALUES (:nome, :email, :senha, 1)";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -43,7 +43,7 @@ class UsuarioDAO
      */
     public function buscarPorEmail($email)
     {
-        $sql = "SELECT id_usuario, nome, email, senha, tipo FROM usuarios WHERE email = :email";
+        $sql = "SELECT id_usuario, nome, email, senha, tipo, ativo FROM usuarios WHERE email = :email AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':email', $email);
@@ -58,6 +58,7 @@ class UsuarioDAO
             $usuario->setEmail($dados['email']);
             $usuario->setSenha($dados['senha']);
             $usuario->setTipo($dados['tipo']);
+            $usuario->setAtivo($dados['ativo']);
 
             return $usuario;
         }
@@ -73,7 +74,7 @@ class UsuarioDAO
      */
     public function buscarPorId($idUsuario)
     {
-        $sql = "SELECT id_usuario, nome, email, senha, tipo, data_cadastro FROM usuarios WHERE id_usuario = :id_usuario";
+        $sql = "SELECT id_usuario, nome, email, senha, tipo, ativo, data_cadastro FROM usuarios WHERE id_usuario = :id_usuario AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
@@ -90,6 +91,7 @@ class UsuarioDAO
         $usuario->setEmail($dados['email']);
         $usuario->setSenha($dados['senha']);
         $usuario->setTipo($dados['tipo']);
+        $usuario->setAtivo($dados['ativo']);
         $usuario->setDataCadastro($dados['data_cadastro']);
 
         return $usuario;
@@ -131,7 +133,7 @@ class UsuarioDAO
                 SET nome = :nome,
                     email = :email,
                     senha = :senha
-                WHERE id_usuario = :id_usuario";
+                WHERE id_usuario = :id_usuario AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -156,7 +158,7 @@ class UsuarioDAO
      */
     public function excluirPorId($idUsuario)
     {
-        $sql = "DELETE FROM usuarios WHERE id_usuario = :id_usuario";
+        $sql = "UPDATE usuarios SET ativo = 0 WHERE id_usuario = :id_usuario AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
@@ -171,9 +173,10 @@ class UsuarioDAO
      */
     public function listarUsuarios()
     {
-        $sql = "SELECT id_usuario, nome, email, tipo, data_cadastro
-                FROM usuarios
-                ORDER BY id_usuario DESC";
+        $sql = "SELECT id_usuario, nome, email, tipo, ativo, data_cadastro
+            FROM usuarios
+            WHERE ativo = 1
+            ORDER BY id_usuario DESC";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->execute();
@@ -185,6 +188,7 @@ class UsuarioDAO
             $usuario->setNome($dados['nome']);
             $usuario->setEmail($dados['email']);
             $usuario->setTipo($dados['tipo']);
+            $usuario->setAtivo($dados['ativo']);
             $usuario->setDataCadastro($dados['data_cadastro']);
 
             $usuarios[] = $usuario;

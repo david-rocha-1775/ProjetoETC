@@ -20,7 +20,7 @@ class CategoriaDAO
      */
     public function listarTodas()
     {
-        $sql = "SELECT id_categoria, nome_categoria FROM categorias ORDER BY nome_categoria ASC";
+        $sql = "SELECT id_categoria, nome_categoria, ativo FROM categorias WHERE ativo = 1 ORDER BY nome_categoria ASC";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->execute();
@@ -31,6 +31,7 @@ class CategoriaDAO
             $categoria = new CategoriaDTO();
             $categoria->setId($dados['id_categoria']);
             $categoria->setNomeCategoria($dados['nome_categoria']);
+            $categoria->setAtivo($dados['ativo']);
 
             $categorias[] = $categoria;
         }
@@ -66,7 +67,7 @@ class CategoriaDAO
     {
         $sql = "UPDATE categorias
                 SET nome_categoria = :nome_categoria
-                WHERE id_categoria = :id_categoria";
+                WHERE id_categoria = :id_categoria AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -87,7 +88,7 @@ class CategoriaDAO
      */
     public function excluirPorId($idCategoria)
     {
-        $sql = "DELETE FROM categorias WHERE id_categoria = :id_categoria";
+        $sql = "UPDATE categorias SET ativo = 0 WHERE id_categoria = :id_categoria AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_categoria', $idCategoria, PDO::PARAM_INT);

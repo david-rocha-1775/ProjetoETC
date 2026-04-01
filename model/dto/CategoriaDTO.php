@@ -7,6 +7,7 @@ class CategoriaDTO
 {
     private $id;
     private $nomeCategoria;
+    private $ativo;
 
     // --- GETTERS ---
 
@@ -20,6 +21,11 @@ class CategoriaDTO
         return $this->nomeCategoria;
     }
 
+    public function getAtivo()
+    {
+        return $this->ativo;
+    }
+
     // --- SETTERS ---
 
     public function setId($id)
@@ -30,6 +36,11 @@ class CategoriaDTO
     public function setNomeCategoria($nomeCategoria)
     {
         $this->nomeCategoria = $nomeCategoria;
+    }
+
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
     }
 }
 ?>
