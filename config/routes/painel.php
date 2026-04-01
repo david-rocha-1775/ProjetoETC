@@ -34,4 +34,28 @@ return [
         'controller_method' => 'excluirDenuncia',
         'http_method' => 'POST',
     ],
+    // Processa comentário em denúncia.
+    'processar_comentario' => [
+        'type' => 'action',
+        'controller_file' => 'controller/PainelController.php',
+        'controller_class' => 'PainelController',
+        'controller_method' => 'comentarDenuncia',
+        'http_method' => 'POST',
+    ],
+    // Alterna curtida de uma denúncia.
+    'processar_curtida_denuncia' => [
+        'type' => 'action',
+        'controller_file' => 'controller/PainelController.php',
+        'controller_class' => 'PainelController',
+        'controller_method' => 'curtirDenuncia',
+        'http_method' => 'POST',
+    ],
+    // Alterna curtida de um comentário.
+    'processar_curtida_comentario' => [
+        'type' => 'action',
+        'controller_file' => 'controller/PainelController.php',
+        'controller_class' => 'PainelController',
+        'controller_method' => 'curtirComentario',
+        'http_method' => 'POST',
+    ],
 ];

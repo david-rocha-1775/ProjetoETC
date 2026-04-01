@@ -11,6 +11,7 @@ class DenunciaDTO
     private $localizacao;
     private $fotoPath;
     private $status;
+    private $ativo;
     private $idUsuario;
     private $idCategoria;
     private $dataCriacao;
@@ -45,6 +46,11 @@ class DenunciaDTO
     public function getStatus()
     {
         return $this->status;
+    }
+
+    public function getAtivo()
+    {
+        return $this->ativo;
     }
 
     public function getDataCriacao()
@@ -92,6 +98,11 @@ class DenunciaDTO
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
     }
 
     public function setDataCriacao($dataCriacao)

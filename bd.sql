@@ -9,13 +9,15 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
     tipo ENUM('cidadao', 'admin') DEFAULT 'cidadao',
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- 3. Tabela de Categorias
 CREATE TABLE IF NOT EXISTS categorias (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-    nome_categoria VARCHAR(50) NOT NULL
+    nome_categoria VARCHAR(50) NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB;
 
 -- 4. Tabela de Denúncias
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS denuncias (
     longitude DECIMAL(11,8) NULL,
     foto_path VARCHAR(255),
     status ENUM('Aberto', 'Em Andamento', 'Resolvido') DEFAULT 'Aberto',
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_usuario INT NOT NULL,
     fk_categoria INT NOT NULL,
@@ -39,6 +42,7 @@ CREATE TABLE IF NOT EXISTS denuncias (
 CREATE TABLE IF NOT EXISTS comentarios (
     id_comentario INT AUTO_INCREMENT PRIMARY KEY,
     texto TEXT NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_comentario TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_usuario INT NOT NULL,
     fk_denuncia INT NOT NULL,
@@ -50,6 +54,7 @@ CREATE TABLE IF NOT EXISTS comentarios (
 CREATE TABLE IF NOT EXISTS curtida_denuncias (
     fk_usuario INT NOT NULL,
     fk_denuncia INT NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_curtida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_usuario, fk_denuncia),
     FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
@@ -60,6 +65,7 @@ CREATE TABLE IF NOT EXISTS curtida_denuncias (
 CREATE TABLE IF NOT EXISTS curtida_comentarios (
     fk_usuario INT NOT NULL,
     fk_comentario INT NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_curtida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_usuario, fk_comentario),
     FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,

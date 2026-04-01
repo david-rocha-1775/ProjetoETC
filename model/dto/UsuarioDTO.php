@@ -10,6 +10,7 @@ class UsuarioDTO
     private $email;
     private $senha;
     private $tipo;
+    private $ativo;
 
     private $dataCadastro;
 
@@ -38,6 +39,11 @@ class UsuarioDTO
     public function getTipo()
     {
         return $this->tipo;
+    }
+
+    public function getAtivo()
+    {
+        return $this->ativo;
     }
 
     public function getDataCadastro()
@@ -70,6 +76,11 @@ class UsuarioDTO
     public function setTipo($tipo)
     {
         $this->tipo = $tipo;
+    }
+
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
     }
 
     public function setDataCadastro($dataCadastro)

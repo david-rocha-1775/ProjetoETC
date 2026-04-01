@@ -21,8 +21,9 @@ class DenunciaDAO
      */
     public function listarUltimas($limite = 10)
     {
-        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status, fk_usuario, fk_categoria
-                FROM denuncias 
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status, ativo, fk_usuario, fk_categoria
+            FROM denuncias
+            WHERE ativo = 1
                 ORDER BY id_denuncia DESC 
                 LIMIT :limite";
 
@@ -47,6 +48,7 @@ class DenunciaDAO
             $denuncia->setLocalizacao($dados['localizacao']);
             $denuncia->setFotoPath($dados['foto_path']);
             $denuncia->setStatus($status);
+            $denuncia->setAtivo($dados['ativo']);
             $denuncia->setIdUsuario($dados['fk_usuario']);
             $denuncia->setIdCategoria($dados['fk_categoria']);
 
@@ -64,9 +66,9 @@ class DenunciaDAO
      */
     public function buscarPorId($idDenuncia)
     {
-        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status, fk_usuario, fk_categoria, data_criacao
-                FROM denuncias
-                WHERE id_denuncia = :id_denuncia";
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
+            FROM denuncias
+            WHERE id_denuncia = :id_denuncia AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
@@ -91,6 +93,7 @@ class DenunciaDAO
         $denuncia->setLocalizacao($dados['localizacao']);
         $denuncia->setFotoPath($dados['foto_path']);
         $denuncia->setStatus($status);
+        $denuncia->setAtivo($dados['ativo']);
         $denuncia->setIdUsuario($dados['fk_usuario']);
         $denuncia->setIdCategoria($dados['fk_categoria']);
         $denuncia->setDataCriacao($dados['data_criacao']);
@@ -106,8 +109,8 @@ class DenunciaDAO
      */
     public function cadastrar(DenunciaDTO $denuncia)
     {
-        $sql = "INSERT INTO denuncias (titulo, descricao, localizacao, foto_path, status, fk_usuario, fk_categoria) 
-                VALUES (:titulo, :descricao, :localizacao, :foto_path, :status, :fk_usuario, :fk_categoria)";
+        $sql = "INSERT INTO denuncias (titulo, descricao, localizacao, foto_path, status, ativo, fk_usuario, fk_categoria) 
+            VALUES (:titulo, :descricao, :localizacao, :foto_path, :status, 1, :fk_usuario, :fk_categoria)";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -146,7 +149,7 @@ class DenunciaDAO
                     status = :status,
                     fk_usuario = :fk_usuario,
                     fk_categoria = :fk_categoria
-                WHERE id_denuncia = :id_denuncia";
+                WHERE id_denuncia = :id_denuncia AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
 
@@ -179,7 +182,7 @@ class DenunciaDAO
      */
     public function excluirPorId($idDenuncia)
     {
-        $sql = "DELETE FROM denuncias WHERE id_denuncia = :id_denuncia";
+        $sql = "UPDATE denuncias SET ativo = 0 WHERE id_denuncia = :id_denuncia AND ativo = 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);

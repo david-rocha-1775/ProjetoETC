@@ -8,6 +8,7 @@ class CurtidaDenunciaDTO
     private $idUsuario;
     private $idDenuncia;
     private $dataCurtida;
+    private $ativo;
 
     // --- GETTERS ---
 
@@ -26,6 +27,11 @@ class CurtidaDenunciaDTO
         return $this->dataCurtida;
     }
 
+    public function getAtivo()
+    {
+        return $this->ativo;
+    }
+
     // --- SETTERS ---
 
     public function setIdUsuario($idUsuario)
@@ -41,6 +47,11 @@ class CurtidaDenunciaDTO
     public function setDataCurtida($dataCurtida)
     {
         $this->dataCurtida = $dataCurtida;
+    }
+
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
     }
 }
 ?>
