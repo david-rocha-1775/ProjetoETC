@@ -24,8 +24,10 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <!-- Bootstrap JS Bundle -->
     <script src="assets/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
     <link rel="icon" href="assets/images/favicon.ico">
 </head>
 
@@ -46,31 +48,35 @@
 
                     <li><a href="index.php?rota=<?= (isset($_SESSION['logado']) && $_SESSION['logado'] === true) ? 'painel' : 'inicio' ?>"
                             class="nav-link px-2">Inicio</a></li>
-                    <li><a href="#" class="nav-link px-2">Mapa?</a></li>
+                    <li><a href="index.php?rota=mapa" class="nav-link px-2">Mapa</a></li>
                     <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2">Nova Denuncia</a></li>
 
                 </ul>
 
                 <div class="col-md-auto text-end">
                     <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
-                        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-end gap-1">
+                        <div
+                            class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-end gap-1">
                             <span class="text-center text-md-end me-md-2 mb-1 mb-md-0">Olá, <strong>
                                     <?= $_SESSION['usuario_nome'] ?>
                                 </strong>!</span>
 
                             <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
-                                <a href="index.php?rota=listar_usuarios" class="btn btn-secondary flex-fill text-nowrap">Admin</a>
+                                <a href="index.php?rota=listar_usuarios"
+                                    class="btn btn-secondary flex-fill text-nowrap">Admin</a>
                             <?php endif; ?>
 
-                            <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu Perfil</a>
-                            
+                            <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu
+                                Perfil</a>
+
                             <a href="index.php?rota=sair" class="btn btn-outline-primary flex-fill text-nowrap">Sair</a>
                         </div>
                     <?php else: ?>
 
                         <div class="d-flex flex-column flex-md-row align-items-stretch justify-content-end gap-1">
                             <a href="index.php?rota=login" class="btn btn-outline-primary flex-fill text-nowrap">Entrar</a>
-                            <a href="index.php?rota=cadastrar" class="btn btn-primary flex-fill text-nowrap">Cadastrar-se</a>
+                            <a href="index.php?rota=cadastrar"
+                                class="btn btn-primary flex-fill text-nowrap">Cadastrar-se</a>
                         </div>
 
                     <?php endif; ?>

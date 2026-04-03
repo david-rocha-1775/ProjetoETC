@@ -10,6 +10,12 @@ return [
         'controller_method' => 'index',
         'http_method' => 'GET',
     ],
+    // Exibe o mapa de denúncias (etapa inicial sem backend).
+    'mapa' => [
+        'type' => 'view',
+        'target' => 'view/painel/mapa.php',
+        'http_method' => 'GET',
+    ],
     // Exibe e processa o formulário de nova denúncia.
     'nova_denuncia' => [
         'type' => 'action',
