@@ -5,6 +5,7 @@ $paginaCssExtra = [
 ];
 $paginaJsHeadExtra = [
     'assets/vendor/leaflet/leaflet.js',
+    'assets/js/leaflet-offline.js',
 ];
 ?>
 <?php include "view/templates/header.php"; ?>
@@ -49,21 +50,22 @@ $paginaJsHeadExtra = [
         var botaoAplicarCentro = document.getElementById('btn-aplicar-centro');
         var botaoUsarLocalizacao = document.getElementById('btn-usar-localizacao');
 
-        if (!mapContainer || typeof L === 'undefined') {
+        if (!mapContainer || typeof L === 'undefined' || !window.ProjetoETCLeaflet) {
             return;
         }
 
         var centroPadrao = [-15.793889, -47.882778];
-        var mapa = L.map('mapa-denuncias').setView(centroPadrao, 12);
+        var mapa = window.ProjetoETCLeaflet.criarMapa('mapa-denuncias', {
+            center: centroPadrao,
+            zoom: 12,
+            onOfflineFallback: function () {
+                atualizarStatus('Sem acesso aos tiles externos. Usando fundo offline local.');
+            }
+        }).map;
         var camadaMarcadores = L.layerGroup().addTo(mapa);
         var marcadorCentro = null;
         var circuloRaio = null;
         var raioKm = 10;
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(mapa);
 
         function atualizarStatus(mensagem) {
             if (statusContainer) {

@@ -1,5 +1,12 @@
 <?php
 // View do Painel do Usuário (Dashboard)
+$paginaCssExtra = [
+    'assets/vendor/leaflet/leaflet.css',
+];
+$paginaJsHeadExtra = [
+    'assets/vendor/leaflet/leaflet.js',
+    'assets/js/leaflet-offline.js',
+];
 ?>
 <?php include "view/templates/header.php"; ?>
 <div class="container py-4">
@@ -223,16 +230,18 @@
             const lonInput = document.querySelector(`.longitude-input[data-id="${denunciaId}"]`);
             const btnGeo = document.querySelector(`.btn-geo[data-id="${denunciaId}"]`);
 
+            if (typeof L === 'undefined' || !window.ProjetoETCLeaflet) {
+                return;
+            }
+
             // Coordenadas iniciais (da denúncia ou padrão)
             let initialLat = latInput.value ? parseFloat(latInput.value) : DEFAULT_LAT;
             let initialLon = lonInput.value ? parseFloat(lonInput.value) : DEFAULT_LON;
 
-            const mapa = L.map(mapElement).setView([initialLat, initialLon], 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap',
-                maxZoom: 19,
-            }).addTo(mapa);
+            const mapa = window.ProjetoETCLeaflet.criarMapa(mapElement, {
+                center: [initialLat, initialLon],
+                zoom: 13,
+            }).map;
 
             let marcador = null;
 
@@ -295,8 +304,5 @@
         });
     });
 </script>
-
-<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
-<script src="assets/vendor/leaflet/leaflet.js" defer></script>
 
 <?php include "view/templates/footer.php"; ?>

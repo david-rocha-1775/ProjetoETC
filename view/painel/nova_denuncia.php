@@ -1,3 +1,12 @@
+<?php
+$paginaCssExtra = [
+    'assets/vendor/leaflet/leaflet.css',
+];
+$paginaJsHeadExtra = [
+    'assets/vendor/leaflet/leaflet.js',
+    'assets/js/leaflet-offline.js',
+];
+?>
 <?php include "view/templates/header.php"; ?>
 
 <section class="container py-4">
@@ -114,12 +123,14 @@
         const DEFAULT_LAT = -15.793889;
         const DEFAULT_LON = -47.882778;
 
-        const mapa = L.map(mapElement).setView([DEFAULT_LAT, DEFAULT_LON], 13);
+        if (typeof L === 'undefined' || !window.ProjetoETCLeaflet) {
+            return;
+        }
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap',
-            maxZoom: 19,
-        }).addTo(mapa);
+        const mapa = window.ProjetoETCLeaflet.criarMapa(mapElement, {
+            center: [DEFAULT_LAT, DEFAULT_LON],
+            zoom: 13,
+        }).map;
 
         let marcador = null;
 
@@ -175,8 +186,5 @@
         });
     });
 </script>
-
-<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
-<script src="assets/vendor/leaflet/leaflet.js" defer></script>
 
 <?php include "view/templates/footer.php"; ?>
