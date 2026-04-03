@@ -198,7 +198,7 @@ class DenunciaDAO
      * @param int $limite
      * @return DenunciaDTO[]
      */
-    public function buscarPorProximidade($latitude, $longitude, $raioKm = 7.5, $limite = 50)
+    public function buscarPorProximidade($latitude, $longitude, $raioKm = 10.0, $limite = 50)
     {
         $latitude = (float) $latitude;
         $longitude = (float) $longitude;

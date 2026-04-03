@@ -7,7 +7,7 @@ class MapaController
 {
     private $denunciaDAO;
 
-    private const RAIO_PADRAO_KM = 7.5;
+    private const RAIO_PADRAO_KM = 10.0;
     private const LIMITE_PADRAO = 50;
 
     // Fallback padrão quando não há geolocalização do navegador (Brasília/DF).
