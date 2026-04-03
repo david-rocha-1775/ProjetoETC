@@ -151,19 +151,60 @@ class UsuarioDAO
     }
 
     /**
-     * Exclui um usuário pelo ID.
+     * Desativa um usuário e seus dados relacionados com integridade transacional.
      *
      * @param int $idUsuario
      * @return bool
      */
     public function excluirPorId($idUsuario)
     {
-        $sql = "UPDATE usuarios SET ativo = 0 WHERE id_usuario = :id_usuario AND ativo = 1";
+        try {
+            $this->conexao->beginTransaction();
 
-        $stmt = $this->conexao->prepare($sql);
-        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+            $queries = [
+                "UPDATE curtida_denuncias SET ativo = 0 WHERE fk_usuario = :id_usuario",
+                "UPDATE curtida_comentarios SET ativo = 0 WHERE fk_usuario = :id_usuario",
+                "UPDATE comentarios SET ativo = 0 WHERE fk_usuario = :id_usuario",
+                "UPDATE denuncias SET ativo = 0 WHERE fk_usuario = :id_usuario",
+                "UPDATE comentarios c INNER JOIN denuncias d ON d.id_denuncia = c.fk_denuncia
+                    SET c.ativo = 0
+                    WHERE d.fk_usuario = :id_usuario",
+                "UPDATE curtida_denuncias cd INNER JOIN denuncias d ON d.id_denuncia = cd.fk_denuncia
+                    SET cd.ativo = 0
+                    WHERE d.fk_usuario = :id_usuario",
+                "UPDATE curtida_comentarios cc
+                    INNER JOIN comentarios c ON c.id_comentario = cc.fk_comentario
+                    INNER JOIN denuncias d ON d.id_denuncia = c.fk_denuncia
+                    SET cc.ativo = 0
+                    WHERE d.fk_usuario = :id_usuario",
+            ];
 
-        return $stmt->execute();
+            foreach ($queries as $sql) {
+                $stmt = $this->conexao->prepare($sql);
+                $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+
+            $stmtUsuario = $this->conexao->prepare(
+                "UPDATE usuarios SET ativo = 0 WHERE id_usuario = :id_usuario AND ativo = 1"
+            );
+            $stmtUsuario->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+            $stmtUsuario->execute();
+
+            if ($stmtUsuario->rowCount() !== 1) {
+                throw new Exception("Usuário não pôde ser desativado.");
+            }
+
+            $this->conexao->commit();
+            return true;
+
+        } catch (Throwable $e) {
+            if ($this->conexao->inTransaction()) {
+                $this->conexao->rollBack();
+            }
+
+            throw new Exception("Falha ao excluir conta com integridade de dados.", 0, $e);
+        }
     }
 
     /**

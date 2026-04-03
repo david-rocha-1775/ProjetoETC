@@ -14,14 +14,42 @@ class AuthController
     }
 
     /**
+     * Garante que a requisição seja POST antes de processar a ação.
+     */
+    private function exigirMetodoPost($rotaRetorno)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirecionarComErro("Método inválido.", $rotaRetorno);
+        }
+    }
+
+    /**
      * Processa o formulário de cadastro de um novo usuário.
      */
     public function cadastrar()
     {
+        $this->exigirMetodoPost('cadastrar');
+
         try {
-            $nome = $_POST['nome'];
-            $email = $_POST['email'];
-            $senha = $_POST['senha'];
+            $nome = trim($_POST['nome'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $senha = $_POST['senha'] ?? '';
+
+            if ($nome === '' || $email === '' || $senha === '') {
+                throw new Exception("Nome, e-mail e senha são obrigatórios.");
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Informe um e-mail válido.");
+            }
+
+            if (strlen($senha) < 6) {
+                throw new Exception("A senha deve ter no mínimo 6 caracteres.");
+            }
+
+            if ($this->usuarioDAO->emailJaCadastrado($email)) {
+                throw new Exception("Este e-mail já está cadastrado.");
+            }
 
             $usuario = new UsuarioDTO();
             $usuario->setNome($nome);
@@ -48,9 +76,19 @@ class AuthController
      */
     public function login()
     {
+        $this->exigirMetodoPost('login');
+
         try {
-            $email = $_POST['email'];
-            $senha = $_POST['senha'];
+            $email = trim($_POST['email'] ?? '');
+            $senha = $_POST['senha'] ?? '';
+
+            if ($email === '' || $senha === '') {
+                throw new Exception("Informe e-mail e senha.");
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Informe um e-mail válido.");
+            }
 
             $usuario = $this->usuarioDAO->buscarPorEmail($email);
 
@@ -81,7 +119,11 @@ class AuthController
      */
     public function logout()
     {
+        session_unset();
         session_destroy();
+        session_start();
+        $_SESSION['mensagem'] = 'Você saiu da conta com sucesso.';
+        $_SESSION['tipo_mensagem'] = 'sucesso';
         header("Location: index.php?rota=login");
         exit();
     }
@@ -115,10 +157,7 @@ class AuthController
     public function atualizarPerfil()
     {
         $this->exigirLogin();
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro("Método inválido para atualização de perfil.", "painel");
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idUsuario = (int) $_SESSION['usuario_id'];
@@ -194,10 +233,7 @@ class AuthController
     public function excluirConta()
     {
         $this->exigirLogin();
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro("Método inválido para exclusão de conta.", "painel");
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idUsuario = (int) $_SESSION['usuario_id'];
@@ -216,7 +252,10 @@ class AuthController
                 throw new Exception("Senha de confirmação inválida.");
             }
 
-            $this->usuarioDAO->excluirPorId($idUsuario);
+            $excluiu = $this->usuarioDAO->excluirPorId($idUsuario);
+            if (!$excluiu) {
+                throw new Exception("Não foi possível excluir a conta neste momento.");
+            }
 
             session_unset();
             session_destroy();

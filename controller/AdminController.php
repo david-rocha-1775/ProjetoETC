@@ -14,6 +14,8 @@ class AdminController
     {
         $this->usuarioDAO = new UsuarioDAO();
         $this->categoriaDAO = new CategoriaDAO();
+
+        $this->exigirAcessoAdmin();
     }
 
     /**
@@ -21,9 +23,6 @@ class AdminController
      */
     public function listarUsuarios()
     {
-        $this->exigirLogin();
-        $this->exigirAdministrador();
-
         try {
             $usuarios = $this->usuarioDAO->listarUsuarios();
             $categorias = $this->categoriaDAO->listarTodas();
@@ -41,9 +40,6 @@ class AdminController
      */
     public function cadastrarCategoria()
     {
-        $this->exigirLogin();
-        $this->exigirAdministrador();
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirecionarComErro('Método inválido para cadastro de categoria.', 'painel');
         }
@@ -74,9 +70,6 @@ class AdminController
      */
     public function atualizarCategoria()
     {
-        $this->exigirLogin();
-        $this->exigirAdministrador();
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirecionarComErro('Método inválido para atualização de categoria.', 'painel');
         }
@@ -110,9 +103,6 @@ class AdminController
      */
     public function excluirCategoria()
     {
-        $this->exigirLogin();
-        $this->exigirAdministrador();
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirecionarComErro('Método inválido para exclusão de categoria.', 'painel');
         }
@@ -136,20 +126,13 @@ class AdminController
     }
 
     /**
-     * Garante que a sessão esteja autenticada.
+     * Garante que a sessão esteja autenticada e com perfil administrativo.
      */
-    private function exigirLogin()
+    private function exigirAcessoAdmin()
     {
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['usuario_id'])) {
             $this->redirecionarComErro('Faça login para continuar.', 'login');
         }
-    }
-
-    /**
-     * Garante que o usuário autenticado seja administrador.
-     */
-    private function exigirAdministrador()
-    {
         if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'admin') {
             $this->redirecionarComErro('Acesso restrito a administradores.', 'painel');
         }
