@@ -16,6 +16,14 @@ return [
         'target' => 'view/painel/mapa.php',
         'http_method' => 'GET',
     ],
+    // Endpoint JSON para denúncias do mapa por proximidade.
+    'listar_denuncias_mapa' => [
+        'type' => 'action',
+        'controller_file' => 'controller/MapaController.php',
+        'controller_class' => 'MapaController',
+        'controller_method' => 'listarDenunciasMapa',
+        'http_method' => 'GET',
+    ],
     // Exibe e processa o formulário de nova denúncia.
     'nova_denuncia' => [
         'type' => 'action',

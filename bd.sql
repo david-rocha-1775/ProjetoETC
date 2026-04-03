@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS denuncias (
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_usuario INT NOT NULL,
     fk_categoria INT NOT NULL,
+    INDEX idx_denuncias_ativo_geo (ativo, latitude, longitude),
+    INDEX idx_denuncias_data_criacao (data_criacao),
     FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (fk_categoria) REFERENCES categorias(id_categoria) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
