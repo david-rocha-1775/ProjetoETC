@@ -11,6 +11,7 @@ Este projeto utiliza a arquitetura **Model-View-Controller (MVC)** para separar 
 ### Estrutura Principal:
 - **index.php**: Ponto de entrada da aplicação (Front Controller).
 - **controller/**: Lógica de controle.
+- **config/**: configuraçoes do sistema.
 - **model/**: Camada de dados e conexão.
 - **view/**: Interface do usuário.
 - **assets/**: Arquivos estáticos (CSS, JS, Imagens).
