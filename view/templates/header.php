@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php
+    $paginaCssExtra = (isset($paginaCssExtra) && is_array($paginaCssExtra)) ? $paginaCssExtra : [];
+    $paginaJsHeadExtra = (isset($paginaJsHeadExtra) && is_array($paginaJsHeadExtra)) ? $paginaJsHeadExtra : [];
+    ?>
     <script>
         (function () {
             try {
@@ -24,10 +28,14 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/estilo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <?php foreach ($paginaCssExtra as $cssExtra): ?>
+        <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssExtra) ?>">
+    <?php endforeach; ?>
     <!-- Bootstrap JS Bundle -->
     <script src="assets/js/bootstrap.bundle.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+    <?php foreach ($paginaJsHeadExtra as $jsHeadExtra): ?>
+        <script src="<?= htmlspecialchars((string) $jsHeadExtra) ?>" defer></script>
+    <?php endforeach; ?>
     <link rel="icon" href="assets/images/favicon.ico">
 </head>
 

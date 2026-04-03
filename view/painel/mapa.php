@@ -1,5 +1,11 @@
 <?php
 $tituloPagina = 'Mapa de Denuncias';
+$paginaCssExtra = [
+    'assets/vendor/leaflet/leaflet.css',
+];
+$paginaJsHeadExtra = [
+    'assets/vendor/leaflet/leaflet.js',
+];
 ?>
 <?php include "view/templates/header.php"; ?>
 
