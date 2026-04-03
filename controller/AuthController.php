@@ -252,7 +252,10 @@ class AuthController
                 throw new Exception("Senha de confirmação inválida.");
             }
 
-            $this->usuarioDAO->excluirPorId($idUsuario);
+            $excluiu = $this->usuarioDAO->excluirPorId($idUsuario);
+            if (!$excluiu) {
+                throw new Exception("Não foi possível excluir a conta neste momento.");
+            }
 
             session_unset();
             session_destroy();
