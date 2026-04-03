@@ -6,7 +6,8 @@
             <h2 class="mb-1"><?php echo isset($tituloPagina) ? htmlspecialchars($tituloPagina) : 'Nova Denúncia'; ?>
             </h2>
             <p class="text-muted mb-0">Bem-vindo,
-                <?php echo isset($usuarioNome) ? htmlspecialchars($usuarioNome) : 'Usuário'; ?></p>
+                <?php echo isset($usuarioNome) ? htmlspecialchars($usuarioNome) : 'Usuário'; ?>
+            </p>
         </div>
     </div>
 
@@ -64,6 +65,31 @@
                             <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
                         </div>
 
+                        <div class="mb-4">
+                            <label class="form-label">Localização no Mapa (Clique para selecionar coordenadas):</label>
+                            <div id="mapa-novo"
+                                style="height: 300px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
+                            </div>
+                            <div class="alert alert-info small">
+                                <strong>Dica:</strong> Clique no mapa para marcar a localização exata da denúncia.
+                                <button type="button" class="btn btn-sm btn-secondary" id="btn-geolocalizar">
+                                    📍 Usar minha localização
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="latitude" class="form-label">Latitude:</label>
+                                    <input type="text" id="latitude" name="latitude" class="form-control"
+                                        placeholder="Ex: -15.793889" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="longitude" class="form-label">Longitude:</label>
+                                    <input type="text" id="longitude" name="longitude" class="form-control"
+                                        placeholder="Ex: -47.882778" readonly>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">Enviar Denúncia</button>
                             <a href="index.php?rota=painel" class="btn btn-outline-secondary">Cancelar e Voltar ao
@@ -75,5 +101,82 @@
         </div>
     </div>
 </section>
+
+<script>
+    // Inicializa o mapa Leaflet para nova denúncia
+    document.addEventListener('DOMContentLoaded', function () {
+        const mapElement = document.getElementById('mapa-novo');
+        const latInput = document.getElementById('latitude');
+        const lonInput = document.getElementById('longitude');
+        const btnGeo = document.getElementById('btn-geolocalizar');
+
+        // Centro padrão (Brasília/DF)
+        const DEFAULT_LAT = -15.793889;
+        const DEFAULT_LON = -47.882778;
+
+        const mapa = L.map(mapElement).setView([DEFAULT_LAT, DEFAULT_LON], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 19,
+        }).addTo(mapa);
+
+        let marcador = null;
+
+        // Clique no mapa para marcar localização
+        mapa.on('click', function (e) {
+            const lat = e.latlng.lat.toFixed(8);
+            const lon = e.latlng.lng.toFixed(8);
+
+            latInput.value = lat;
+            lonInput.value = lon;
+
+            if (marcador) {
+                mapa.removeLayer(marcador);
+            }
+
+            marcador = L.marker([lat, lon]).addTo(mapa);
+        });
+
+        // Botão de geolocalização
+        btnGeo.addEventListener('click', function (e) {
+            e.preventDefault();
+            if ('geolocation' in navigator) {
+                btnGeo.disabled = true;
+                btnGeo.textContent = '⏳ Localizando...';
+
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) {
+                        const lat = pos.coords.latitude.toFixed(8);
+                        const lon = pos.coords.longitude.toFixed(8);
+
+                        latInput.value = lat;
+                        lonInput.value = lon;
+
+                        if (marcador) {
+                            mapa.removeLayer(marcador);
+                        }
+
+                        marcador = L.marker([lat, lon]).addTo(mapa);
+                        mapa.setView([lat, lon], 16);
+                        btnGeo.disabled = false;
+                        btnGeo.textContent = '📍 Usar minha localização';
+                    },
+                    function (err) {
+                        alert('Erro ao obter localização: ' + err.message);
+                        btnGeo.disabled = false;
+                        btnGeo.textContent = '📍 Usar minha localização';
+                    },
+                    { timeout: 8000 }
+                );
+            } else {
+                alert('Geolocalização não suportada no seu navegador.');
+            }
+        });
+    });
+</script>
+
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<script src="assets/vendor/leaflet/leaflet.js" defer></script>
 
 <?php include "view/templates/footer.php"; ?>

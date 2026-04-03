@@ -114,6 +114,34 @@
                                         <input type="file" name="foto" class="form-control" accept="image/*">
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label class="form-label">Localização no Mapa (Clique para atualizar coordenadas):</label>
+                                        <div id="mapa-edicao-<?= htmlspecialchars($d->getId()) ?>"
+                                            style="height: 250px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
+                                        </div>
+                                        <div class="alert alert-info small">
+                                            <strong>Dica:</strong> Clique no mapa para atualizar a localização.
+                                            <button type="button" class="btn btn-sm btn-secondary btn-geo"
+                                                data-id="<?= htmlspecialchars($d->getId()) ?>">
+                                                📍 Usar minha localização
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Latitude:</label>
+                                                <input type="text" name="latitude" class="form-control latitude-input"
+                                                    data-id="<?= htmlspecialchars($d->getId()) ?>" placeholder="Ex: -15.793889"
+                                                    value="<?= htmlspecialchars($d->getLatitude() ?? '') ?>" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Longitude:</label>
+                                                <input type="text" name="longitude" class="form-control longitude-input"
+                                                    data-id="<?= htmlspecialchars($d->getId()) ?>" placeholder="Ex: -47.882778"
+                                                    value="<?= htmlspecialchars($d->getLongitude() ?? '') ?>" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <button type="submit" class="btn btn-success btn-sm">Salvar edição</button>
                                 </form>
                             </details>
@@ -181,5 +209,94 @@
         <?php endif; ?>
     </section>
 </div>
+
+<script>
+    // Inicializa mapas Leaflet para edição de denúncias
+    document.addEventListener('DOMContentLoaded', function () {
+        const DEFAULT_LAT = -15.793889;
+        const DEFAULT_LON = -47.882778;
+
+        // Cria mapas para cada denúncia editável
+        document.querySelectorAll('[id^="mapa-edicao-"]').forEach(function (mapElement) {
+            const denunciaId = mapElement.id.replace('mapa-edicao-', '');
+            const latInput = document.querySelector(`.latitude-input[data-id="${denunciaId}"]`);
+            const lonInput = document.querySelector(`.longitude-input[data-id="${denunciaId}"]`);
+            const btnGeo = document.querySelector(`.btn-geo[data-id="${denunciaId}"]`);
+
+            // Coordenadas iniciais (da denúncia ou padrão)
+            let initialLat = latInput.value ? parseFloat(latInput.value) : DEFAULT_LAT;
+            let initialLon = lonInput.value ? parseFloat(lonInput.value) : DEFAULT_LON;
+
+            const mapa = L.map(mapElement).setView([initialLat, initialLon], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
+                maxZoom: 19,
+            }).addTo(mapa);
+
+            let marcador = null;
+
+            // Marca localização inicial se existir
+            if (latInput.value && lonInput.value) {
+                marcador = L.marker([initialLat, initialLon]).addTo(mapa);
+            }
+
+            // Clique no mapa para atualizar localização
+            mapa.on('click', function (e) {
+                const lat = e.latlng.lat.toFixed(8);
+                const lon = e.latlng.lng.toFixed(8);
+
+                latInput.value = lat;
+                lonInput.value = lon;
+
+                if (marcador) {
+                    mapa.removeLayer(marcador);
+                }
+
+                marcador = L.marker([lat, lon]).addTo(mapa);
+            });
+
+            // Botão de geolocalização
+            btnGeo.addEventListener('click', function (e) {
+                e.preventDefault();
+                if ('geolocation' in navigator) {
+                    btnGeo.disabled = true;
+                    const originalText = btnGeo.textContent;
+                    btnGeo.textContent = '⏳ Localizando...';
+
+                    navigator.geolocation.getCurrentPosition(
+                        function (pos) {
+                            const lat = pos.coords.latitude.toFixed(8);
+                            const lon = pos.coords.longitude.toFixed(8);
+
+                            latInput.value = lat;
+                            lonInput.value = lon;
+
+                            if (marcador) {
+                                mapa.removeLayer(marcador);
+                            }
+
+                            marcador = L.marker([lat, lon]).addTo(mapa);
+                            mapa.setView([lat, lon], 16);
+                            btnGeo.disabled = false;
+                            btnGeo.textContent = originalText;
+                        },
+                        function (err) {
+                            alert('Erro ao obter localização: ' + err.message);
+                            btnGeo.disabled = false;
+                            btnGeo.textContent = originalText;
+                        },
+                        { timeout: 8000 }
+                    );
+                } else {
+                    alert('Geolocalização não suportada no seu navegador.');
+                }
+            });
+        });
+    });
+</script>
+
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<script src="assets/vendor/leaflet/leaflet.js" defer></script>
 
 <?php include "view/templates/footer.php"; ?>

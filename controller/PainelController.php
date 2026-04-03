@@ -66,9 +66,24 @@ class PainelController
                 $descricao = trim($_POST['descricao'] ?? '');
                 $localizacao = trim($_POST['localizacao'] ?? '');
                 $idCategoria = trim($_POST['id_categoria'] ?? '');
+                $latitude = trim($_POST['latitude'] ?? '');
+                $longitude = trim($_POST['longitude'] ?? '');
 
                 if (empty($titulo) || empty($descricao) || empty($localizacao) || empty($idCategoria)) {
                     throw new Exception("Os campos título, descrição, localização e categoria são obrigatórios.");
+                }
+
+                // Valida coordenadas se foram fornecidas
+                if (!empty($latitude) && !empty($longitude)) {
+                    $coordsValidas = $this->validarCoordenadas($latitude, $longitude);
+                    if (!$coordsValidas['valida']) {
+                        throw new Exception($coordsValidas['mensagem']);
+                    }
+                    $latitude = (float) $latitude;
+                    $longitude = (float) $longitude;
+                } else {
+                    $latitude = null;
+                    $longitude = null;
                 }
 
                 $fotoPath = null;
@@ -86,6 +101,12 @@ class PainelController
                 $denuncia->setStatus('Aberto'); // Status inicial deve respeitar o ENUM do banco
                 // A sessão deve possuir o id do usuário no momento do login ("usuario_id")
                 $denuncia->setIdUsuario($_SESSION['usuario_id'] ?? null);
+
+                // Define coordenadas se foram validadas
+                if ($latitude !== null && $longitude !== null) {
+                    $denuncia->setLatitude($latitude);
+                    $denuncia->setLongitude($longitude);
+                }
 
                 $salvou = $this->denunciaDAO->cadastrar($denuncia);
                 if (!$salvou) {
@@ -132,6 +153,8 @@ class PainelController
             $localizacao = trim($_POST['localizacao'] ?? '');
             $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
             $status = trim($_POST['status'] ?? 'Aberto');
+            $latitude = trim($_POST['latitude'] ?? '');
+            $longitude = trim($_POST['longitude'] ?? '');
 
             if ($idDenuncia <= 0 || $idCategoria <= 0 || empty($titulo) || empty($descricao) || empty($localizacao)) {
                 throw new Exception("Dados obrigatórios da denúncia não informados corretamente.");
@@ -143,6 +166,20 @@ class PainelController
             }
 
             $this->validarPermissaoDenuncia($denunciaAtual->getIdUsuario());
+
+            // Valida coordenadas se foram fornecidas
+            if (!empty($latitude) && !empty($longitude)) {
+                $coordsValidas = $this->validarCoordenadas($latitude, $longitude);
+                if (!$coordsValidas['valida']) {
+                    throw new Exception($coordsValidas['mensagem']);
+                }
+                $latitude = (float) $latitude;
+                $longitude = (float) $longitude;
+            } else {
+                // Se não forneceu coordenadas, mantém as antigas
+                $latitude = $denunciaAtual->getLatitude();
+                $longitude = $denunciaAtual->getLongitude();
+            }
 
             $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
             if (!in_array($status, $statusValido, true)) {
@@ -163,6 +200,8 @@ class PainelController
             $denuncia->setStatus($status);
             $denuncia->setIdUsuario($denunciaAtual->getIdUsuario());
             $denuncia->setIdCategoria($idCategoria);
+            $denuncia->setLatitude($latitude);
+            $denuncia->setLongitude($longitude);
 
             $atualizou = $this->denunciaDAO->atualizar($denuncia);
             if (!$atualizou) {
@@ -568,6 +607,45 @@ class PainelController
         }
 
         return $interacoes;
+    }
+
+    /**
+     * Valida se as coordenadas (latitude, longitude) estão nos intervalos permitidos.
+     * 
+     * @param mixed $latitude
+     * @param mixed $longitude
+     * @return array ['valida' => bool, 'mensagem' => string]
+     */
+    private function validarCoordenadas($latitude, $longitude)
+    {
+        // Converte para float (validação básica)
+        $lat = @(float) $latitude;
+        $lon = @(float) $longitude;
+
+        // Valida intervalos
+        if ($lat < -90 || $lat > 90) {
+            return [
+                'valida' => false,
+                'mensagem' => 'Latitude deve estar entre -90 e 90.'
+            ];
+        }
+
+        if ($lon < -180 || $lon > 180) {
+            return [
+                'valida' => false,
+                'mensagem' => 'Longitude deve estar entre -180 e 180.'
+            ];
+        }
+
+        // Valida se são números válidos
+        if (!is_numeric($latitude) || !is_numeric($longitude)) {
+            return [
+                'valida' => false,
+                'mensagem' => 'Latitude e longitude devem ser números válidos.'
+            ];
+        }
+
+        return ['valida' => true, 'mensagem' => ''];
     }
 }
 ?>
