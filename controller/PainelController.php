@@ -39,18 +39,35 @@ class PainelController
     public function index()
     {
         try {
-            $denuncias = $this->denunciaDAO->listarUltimas(10);
+            $idCategoriaFiltro = $this->normalizarFiltroCategoria($_GET['categoria'] ?? null);
+            $paginaAtual = $this->normalizarPagina($_GET['pagina'] ?? 1);
+            $limitePagina = $this->normalizarLimite($_GET['limite'] ?? 10);
+            $ordenacaoFiltro = $this->normalizarOrdenacao($_GET['ordem'] ?? 'recentes');
+
+            $totalDenuncias = $this->denunciaDAO->contarPaginadas($idCategoriaFiltro);
+            $totalPaginas = $totalDenuncias > 0 ? (int) ceil($totalDenuncias / $limitePagina) : 0;
+
+            if ($totalPaginas > 0 && $paginaAtual > $totalPaginas) {
+                $paginaAtual = $totalPaginas;
+            }
+
+            $denuncias = $this->denunciaDAO->listarPaginadas($idCategoriaFiltro, $paginaAtual, $limitePagina, $ordenacaoFiltro);
             $categorias = $this->categoriaDAO->listarTodas();
             $interacoes = $this->carregarInteracoesDenuncias($denuncias);
             $tituloPagina = "Painel do Usuário";
             $usuarioNome = $_SESSION['usuario_nome'];
+            $filtroCategoriaSelecionada = $idCategoriaFiltro;
+            $filtroLimiteSelecionado = $limitePagina;
+            $filtroOrdenacaoSelecionada = $ordenacaoFiltro;
+            $painelQueryRetorno = $this->montarUrlRetornoPainel();
+            $painelQueryFiltros = $this->montarUrlRetornoPainel(['rota' => null]);
 
             include "view/painel/index.php";
 
         } catch (Exception $e) {
             $_SESSION['mensagem'] = "Erro ao carregar os dados do painel: " . $e->getMessage();
             $_SESSION['tipo_mensagem'] = "erro";
-            header("Location: index.php?rota=inicio");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel(['rota' => 'inicio']));
             exit();
         }
     }
@@ -122,7 +139,7 @@ class PainelController
             }
 
             // Redirecionar via PRG para evitar resubmissões e mostrar retorno da operação
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         } else {
             // Em caso de requisição GET, exibe a view de formulário da denúncia
@@ -142,7 +159,7 @@ class PainelController
     public function atualizarDenuncia()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         }
 
@@ -216,7 +233,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = "erro";
         }
 
-        header("Location: index.php?rota=painel");
+        header("Location: index.php?" . $this->montarUrlRetornoPainel());
         exit();
     }
 
@@ -226,7 +243,7 @@ class PainelController
     public function excluirDenuncia()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         }
 
@@ -256,7 +273,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = "erro";
         }
 
-        header("Location: index.php?rota=painel");
+        header("Location: index.php?" . $this->montarUrlRetornoPainel());
         exit();
     }
 
@@ -273,7 +290,7 @@ class PainelController
                 ], 405);
             }
 
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         }
 
@@ -328,7 +345,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?rota=painel");
+        header("Location: index.php?" . $this->montarUrlRetornoPainel());
         exit();
     }
 
@@ -345,7 +362,7 @@ class PainelController
                 ], 405);
             }
 
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         }
 
@@ -400,7 +417,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?rota=painel");
+        header("Location: index.php?" . $this->montarUrlRetornoPainel());
         exit();
     }
 
@@ -417,7 +434,7 @@ class PainelController
                 ], 405);
             }
 
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?" . $this->montarUrlRetornoPainel());
             exit();
         }
 
@@ -472,7 +489,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?rota=painel");
+        header("Location: index.php?" . $this->montarUrlRetornoPainel());
         exit();
     }
 
@@ -487,6 +504,125 @@ class PainelController
         if (!$usuarioAdmin && $idUsuarioSessao !== (int) $idUsuarioDono) {
             throw new Exception("Você não tem permissão para alterar esta denúncia.");
         }
+    }
+
+    /**
+     * Normaliza a categoria do filtro.
+     *
+     * @param mixed $valor
+     * @return int|null
+     */
+    private function normalizarFiltroCategoria($valor)
+    {
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+
+        $categoria = filter_var($valor, FILTER_VALIDATE_INT, [
+            'options' => [
+                'min_range' => 1,
+            ],
+        ]);
+
+        return $categoria === false ? null : (int) $categoria;
+    }
+
+    /**
+     * Normaliza o número da página.
+     *
+     * @param mixed $valor
+     * @return int
+     */
+    private function normalizarPagina($valor)
+    {
+        $pagina = filter_var($valor, FILTER_VALIDATE_INT, [
+            'options' => [
+                'min_range' => 1,
+            ],
+        ]);
+
+        return $pagina === false ? 1 : (int) $pagina;
+    }
+
+    /**
+     * Normaliza a quantidade de itens por página.
+     *
+     * @param mixed $valor
+     * @return int
+     */
+    private function normalizarLimite($valor)
+    {
+        $limite = (int) $valor;
+        $limitesPermitidos = [10, 25, 50];
+
+        if (!in_array($limite, $limitesPermitidos, true)) {
+            return 10;
+        }
+
+        return $limite;
+    }
+
+    /**
+     * Normaliza a ordenação do painel.
+     *
+     * @param mixed $valor
+     * @return string
+     */
+    private function normalizarOrdenacao($valor)
+    {
+        $valor = is_string($valor) ? strtolower(trim($valor)) : 'recentes';
+
+        $ordenacoesPermitidas = ['recentes', 'antigas'];
+        if (!in_array($valor, $ordenacoesPermitidas, true)) {
+            return 'recentes';
+        }
+
+        return $valor;
+    }
+
+    /**
+     * Monta a query string de retorno do painel preservando filtros e paginação.
+     *
+     * @param array $substituicoes
+     * @return string
+     */
+    private function montarUrlRetornoPainel(array $substituicoes = [])
+    {
+        $parametros = [
+            'rota' => 'painel',
+        ];
+
+        $categoria = $this->normalizarFiltroCategoria($_GET['categoria'] ?? null);
+        $pagina = $this->normalizarPagina($_GET['pagina'] ?? 1);
+        $limite = $this->normalizarLimite($_GET['limite'] ?? 10);
+
+        if ($categoria !== null) {
+            $parametros['categoria'] = $categoria;
+        }
+
+        if ($pagina > 1) {
+            $parametros['pagina'] = $pagina;
+        }
+
+        if ($limite !== 10) {
+            $parametros['limite'] = $limite;
+        }
+
+        $ordem = $this->normalizarOrdenacao($_GET['ordem'] ?? 'recentes');
+        if ($ordem !== 'recentes') {
+            $parametros['ordem'] = $ordem;
+        }
+
+        foreach ($substituicoes as $chave => $valor) {
+            if ($valor === null) {
+                unset($parametros[$chave]);
+                continue;
+            }
+
+            $parametros[$chave] = $valor;
+        }
+
+        return http_build_query($parametros);
     }
 
     /**
