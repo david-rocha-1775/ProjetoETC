@@ -1,23 +1,10 @@
 </main>
 
 <footer class="py-2 bottom-0 start-0 end-0 w-100">
-    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3">
-        <button class="btn btn-outline-secondary dropdown-toggle" id="bd-theme" type="button" aria-expanded="false"
-            data-bs-toggle="dropdown" aria-label="Toggle theme">
-            <i class="bi bi-circle-half"></i> Tema
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme">
-            <li>
-                <button type="button" class="dropdown-item" onclick="setTema('light')">
-                    ☀️ Claro
-                </button>
-            </li>
-            <li>
-                <button type="button" class="dropdown-item" onclick="setTema('dark')">
-                    🌙 Escuro
-                </button>
-            </li>
-        </ul>
+    <div class="position-fixed bottom-0 end-0 mb-3 me-3">
+        <button class="btn btn-outline-secondary" id="bd-theme" type="button" onclick="alternarTema()"
+            aria-label="Toggle theme" style="color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+            <img id="theme-icon" src="assets/fonts/material-symbols/dark_mode.svg" alt="theme" style="width: 24px; height: 24px;"></button>
     </div>
 
     <p class="text-center text-body-secondary mb-0">&copy;
@@ -27,16 +14,28 @@
 
 <script src="assets/js/painel-interacoes.js" defer></script>
 <script>
-    function setTema(tema) {
-        if (tema === 'light' || tema === 'dark') {
-            document.documentElement.setAttribute('data-bs-theme', tema);
-            localStorage.setItem('tema_preferido', tema);
-            return;
-        }
-
-        document.documentElement.removeAttribute('data-bs-theme');
-        localStorage.removeItem('tema_preferido');
+    function alternarTema() {
+        const tema = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+        const novoTema = tema === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-bs-theme', novoTema);
+        localStorage.setItem('tema_preferido', novoTema);
+        atualizarIconeTema();
     }
+
+    function atualizarIconeTema() {
+        const tema = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+        const icone = document.getElementById('theme-icon');
+        
+        if (tema === 'dark') {
+            icone.src = 'assets/fonts/material-symbols/dark_mode.svg';
+        } else {
+            icone.src = 'assets/fonts/material-symbols/light_mode.svg';
+        }
+    }
+
+    // Inicializar ícone ao carregar a página
+    document.addEventListener('DOMContentLoaded', atualizarIconeTema);
 </script>
 
 </body>

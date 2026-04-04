@@ -41,7 +41,7 @@
 
 <body class="d-flex flex-column min-vh-100">
 
-    <header class="border-bottom sticky-top w-100 bg-body">
+    <header class="border-bottom sticky-top w-100">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
 
@@ -55,9 +55,18 @@
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
 
                     <li><a href="index.php?rota=<?= (isset($_SESSION['logado']) && $_SESSION['logado'] === true) ? 'painel' : 'inicio' ?>"
-                            class="nav-link px-2">Inicio</a></li>
-                    <li><a href="index.php?rota=mapa" class="nav-link px-2">Mapa</a></li>
-                    <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2">Nova Denuncia</a></li>
+                            class="nav-link px-2 d-flex align-items-center gap-2">
+                            <img src="assets/fonts/material-symbols/home.svg" alt="home" class="nav-icon" style="width: 20px; height: 20px;">
+                            Inicio
+                        </a></li>
+                    <li><a href="index.php?rota=mapa" class="nav-link px-2 d-flex align-items-center gap-2">
+                            <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon" style="width: 20px; height: 20px;">
+                            Mapa
+                        </a></li>
+                    <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2 d-flex align-items-center gap-2">
+                            <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon" style="width: 20px; height: 20px;">
+                            Nova Denuncia
+                        </a></li>
 
                 </ul>
 

@@ -1,16 +1,511 @@
-/* Estilo.css - Customizações Mínimas
-   A estrutura do layout usa classes Bootstrap (d-flex, flex-column, min-vh-100, mt-auto)
-   Para manter o header fixo ou adicionar estilos personalizados, adicione-os aqui.
-   Mantenha mínimo para aproveitar o máximo do Bootstrap.
-*/
+/* ============================================
+   ESTILO.CSS - CIDADE ATENTA BOOTSTRAP 5
+   ============================================ */
 
-/* Garante que o header fixed-top não se misture com bg-body */
-header {
-    z-index: 1030;
+/* ============================================
+   IMPORTAR FONTES LOCAIS
+   ============================================ */
 
+@font-face {
+    font-family: 'Manrope';
+    src: url('../fonts/manrope/Manrope-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
 }
 
-/* Adiciona espaço suficiente para o header fixed-top */
+@font-face {
+    font-family: 'Manrope';
+    src: url('../fonts/manrope/Manrope-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* ============================================
+   VARIÁVEIS CSS (CORES DA MARCA)
+   ============================================ */
+
+:root {
+    --color-primary: #9ccaff;      /* Azul Claro */
+    --color-secondary: #8ad4cd;    /* Turquesa */
+    --color-tertiary: #ffb783;     /* Pêssego/Laranja */
+    --color-dark-bg: #0b1326;      /* Fundo Escuro Principal */
+    --color-card-bg: #131b2e;      /* Fundo Cards */
+}
+
+/* Light Mode */
+[data-bs-theme="light"] {
+    --color-dark-bg: #e4e4e4;      /* Fundo Claro */
+    --color-card-bg: #ffffff;      /* Cards Brancos */
+    color-scheme: light;
+}
+
+/* ============================================
+   TIPOGRAFIA
+   ============================================ */
+
+body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--color-dark-bg);
+    color: #e0e0e0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-bs-theme="light"] body {
+    color: #000000;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+[data-bs-theme="light"] h1,
+[data-bs-theme="light"] h2,
+[data-bs-theme="light"] h3,
+[data-bs-theme="light"] h4,
+[data-bs-theme="light"] h5,
+[data-bs-theme="light"] h6 {
+    color: #0b1326;
+}
+
+/* ============================================
+   HEADER FIXO
+   ============================================ */
+
+header {
+    z-index: 1030;
+    background-color: var(--color-dark-bg) !important;
+    border-bottom-color: rgba(156, 202, 255, 0.1);
+}
+
+[data-bs-theme="light"] header {
+    border-bottom-color: rgba(156, 202, 255, 0.2);
+}
+
 main {
     background-color: inherit;
+}
+
+/* ============================================
+   BOTÕES CUSTOMIZADOS
+   ============================================ */
+
+.btn {
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-dark-bg);
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+    background-color: #7ba8d9;
+    border-color: #7ba8d9;
+    color: var(--color-dark-bg);
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-dark-bg);
+    border-color: var(--color-primary);
+}
+
+/* Light Mode - Botões Mais Escuros */
+[data-bs-theme="light"] .btn-primary {
+    background-color: #004080;
+    color: #ffffff;
+    border-color: #013a72;
+}
+
+[data-bs-theme="light"] .btn-primary:hover {
+    background-color: #004080;
+    border-color: #013a72;
+    color: #ffffff;
+}
+
+[data-bs-theme="light"] .btn-outline-primary {
+    color: #004080;
+    border-color: #004080;
+}
+
+[data-bs-theme="light"] .btn-outline-primary:hover {
+    background-color: #004080;
+    color: #ffffff;
+    border-color: #0066cc;
+}
+
+/* ============================================
+   CARDS CUSTOMIZADOS
+   ============================================ */
+
+.custom-card {
+    background-color: var(--color-card-bg);
+    border: none;
+    border-radius: 1rem;
+    color: #e0e0e0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 40px rgba(156, 202, 255, 0.1);
+}
+
+[data-bs-theme="light"] .custom-card {
+    background-color: var(--color-card-bg);
+    color: #000000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .custom-card:hover {
+    box-shadow: 0 15px 40px rgba(156, 202, 255, 0.15);
+}
+
+.card {
+    background-color: var(--color-card-bg);
+    border: none;
+    border-radius: 1rem;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="light"] .card {
+    color: #333333;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+[data-bs-theme="light"] .card-title {
+    color: #0b1326;
+}
+
+/* ============================================
+   GLASSMORPHISM
+   ============================================ */
+
+.glass {
+    background-color: var(--color-card-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(156, 202, 255, 0.15);
+    border-radius: 1rem;
+}
+
+[data-bs-theme="light"] .glass {
+    background-color: var(--color-card-bg);
+    border: 1px solid rgba(156, 202, 255, 0.2);
+}
+
+[data-bs-theme="light"] .glass {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(156, 202, 255, 0.2);
+}
+
+/* ============================================
+   MATERIAL SYMBOLS ICONS (SVG)
+   ============================================ */
+
+svg {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
+.hero-section {
+    position: relative;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-dark-bg) 0%, #15213a 100%);
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(156, 202, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #ffffff;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: #b0b0b0;
+}
+
+[data-bs-theme="light"] .hero-content p {
+    color: #555555;
+}
+
+/* ============================================
+   LIGHT MODE - UTILITÁRIOS GLOBAIS
+   ============================================ */
+
+[data-bs-theme="light"] .text-muted {
+    color: #888888 !important;
+}
+
+[data-bs-theme="light"] .nav-link {
+    color: #004080 !important;
+}
+
+[data-bs-theme="light"] .nav-link:hover {
+    color: #0066cc !important;
+}
+
+/* Nav-links e ícones seguem a cor dos botões */
+.nav-link {
+    color: var(--color-primary) !important;
+}
+
+.nav-link:hover {
+    color: #7ba8d9 !important;
+}
+
+/* Ícones nos nav-links - Seguem a cor dos botões */
+.nav-icon {
+    filter: brightness(0) saturate(100%) invert(73%) sepia(38%) saturate(500%) hue-rotate(180deg) brightness(103%) contrast(102%);
+}
+
+[data-bs-theme="light"] .nav-icon {
+    filter: brightness(0) saturate(100%) invert(23%) sepia(40%) saturate(2000%) hue-rotate(191deg) brightness(94%) contrast(101%);
+}
+
+[data-bs-theme="light"] .alert {
+    background-color: #f8f9fa;
+    color: #0b1326;
+    border-color: rgba(156, 202, 255, 0.2);
+}
+
+[data-bs-theme="light"] .alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+[data-bs-theme="light"] .alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* ============================================
+   BENTO GRID
+   ============================================ */
+
+.bento-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin: 3rem 0;
+}
+
+.bento-item {
+    background-color: var(--color-card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    min-height: 250px;
+}
+
+.bento-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 50px rgba(156, 202, 255, 0.15);
+}
+
+.bento-item-icon {
+    font-size: 48px;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.bento-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+}
+
+.bento-item p {
+    color: #a0a0a0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+[data-bs-theme="light"] .bento-item {
+    background-color: #e8eaef;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+[data-bs-theme="light"] .bento-item:hover {
+    box-shadow: 0 15px 40px rgba(156, 202, 255, 0.15);
+}
+
+[data-bs-theme="light"] .bento-item h3 {
+    color: #0066cc;
+    font-weight: 800;
+}
+
+[data-bs-theme="light"] .bento-item p {
+    color: #000000;
+}
+
+/* Grid Responsivo */
+@media (min-width: 768px) {
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+    }
+
+    .bento-item.col-md-8 {
+        grid-column: span 8;
+    }
+
+    .bento-item.col-md-4 {
+        grid-column: span 4;
+    }
+
+    .bento-item.col-md-12 {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 767px) {
+    .bento-item {
+        grid-column: span 12;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* ============================================
+   SECTION SPACING
+   ============================================ */
+
+.section-spacing {
+    padding: 3rem 0;
+}
+
+/* ============================================
+   STAT CARD (para card de impacto)
+   ============================================ */
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: #a0a0a0;
+}
+
+[data-bs-theme="light"] .stat-label {
+    color: #666666;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+footer {
+    background-color: var(--color-dark-bg);
+    color: #888;
+    margin-top: auto;
+    border-top: 1px solid rgba(156, 202, 255, 0.1);
+}
+
+[data-bs-theme="light"] footer {
+    color: #666666;
+    border-top-color: rgba(156, 202, 255, 0.2);
+}
+
+footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--color-secondary);
+}
+
+/* ============================================
+   RESPONSIVIDADE GERAL
+   ============================================ */
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================================
+   TEMA BUTTON STYLING
+   ============================================ */
+
+#theme-icon {
+    color: #ffffff;
+    filter: brightness(0) invert(1);
+}
+
+[data-bs-theme="light"] #theme-icon {
+    color: #000000;
+    filter: none;
 }
