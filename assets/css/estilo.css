@@ -31,11 +31,14 @@
     /* Turquesa */
     --color-tertiary: #ffb783;
     /* Pêssego/Laranja */
-    --color-dark-bg: #0b1326;
+    --color-dark-bg: #0c162d;
     /* Fundo Escuro Principal */
     --color-card-bg: #131b2e;
     /* Fundo Cards */
     --brand-logo-color: #e0e0e0;
+    --color-surface-bg: #0b1326;
+    --color-divider: rgba(156, 202, 255, 0.1);
+    --footer-text-color: #888888;
 }
 
 /* Light Mode */
@@ -45,6 +48,9 @@
     --color-card-bg: #ffffff;
     /* Cards Brancos */
     --brand-logo-color: #000000;
+    --color-surface-bg: #d8dbe2;
+    --color-divider: rgba(156, 202, 255, 0.2);
+    --footer-text-color: #4f4f4f;
     color-scheme: light;
 }
 
@@ -123,12 +129,8 @@ h6 {
 
 header {
     z-index: 1030;
-    background-color: var(--color-dark-bg) !important;
-    border-bottom-color: rgba(156, 202, 255, 0.1);
-}
-
-[data-bs-theme="light"] header {
-    border-bottom-color: rgba(156, 202, 255, 0.2);
+    background-color: var(--color-surface-bg) !important;
+    border-bottom: 1px solid var(--color-divider);
 }
 
 main {
@@ -509,15 +511,14 @@ svg {
    ============================================ */
 
 footer {
-    background-color: var(--color-dark-bg);
-    color: #888;
+    background-color: var(--color-surface-bg);
+    color: var(--footer-text-color);
     margin-top: auto;
-    border-top: 1px solid rgba(156, 202, 255, 0.1);
+    border-top: 1px solid var(--color-divider);
 }
 
-[data-bs-theme="light"] footer {
-    color: #666666;
-    border-top-color: rgba(156, 202, 255, 0.2);
+footer .text-body-secondary {
+    color: var(--footer-text-color) !important;
 }
 
 footer a {
