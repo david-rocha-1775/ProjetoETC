@@ -8,7 +8,7 @@ trait ValidadorRequisicao
      * @param string $rotaRetorno
      * @return void
      */
-    private function exigirMetodoPost($rotaRetorno)
+    protected function exigirMetodoPost($rotaRetorno)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             if (method_exists($this, 'redirecionarComErro')) {
