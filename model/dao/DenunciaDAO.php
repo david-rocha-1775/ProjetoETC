@@ -6,6 +6,8 @@ require_once "model/dto/DenunciaDTO.php";
 
 class DenunciaDAO
 {
+    public const STATUS_VALIDOS = ['Aberto', 'Em Andamento', 'Resolvido'];
+
     private $conexao;
 
     public function __construct()
@@ -279,28 +281,7 @@ class DenunciaDAO
 
         $denuncias = [];
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $denuncia = new DenunciaDTO();
-            $status = $dados['status'];
-            $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
-
-            if (!in_array($status, $statusValido, true)) {
-                $status = 'Aberto';
-            }
-
-            $denuncia->setId($dados['id_denuncia']);
-            $denuncia->setTitulo($dados['titulo']);
-            $denuncia->setDescricao($dados['descricao']);
-            $denuncia->setLocalizacao($dados['localizacao']);
-            $denuncia->setLatitude($dados['latitude']);
-            $denuncia->setLongitude($dados['longitude']);
-            $denuncia->setFotoPath($dados['foto_path']);
-            $denuncia->setStatus($status);
-            $denuncia->setAtivo($dados['ativo']);
-            $denuncia->setIdUsuario($dados['fk_usuario']);
-            $denuncia->setIdCategoria($dados['fk_categoria']);
-            $denuncia->setDataCriacao($dados['data_criacao']);
-
-            $denuncias[] = $denuncia;
+            $denuncias[] = $this->hidratarDenuncia($dados);
         }
 
         return $denuncias;
@@ -516,15 +497,25 @@ class DenunciaDAO
      * @param array $dados
      * @return DenunciaDTO
      */
+    /**
+     * Valida e normaliza o status de uma denúncia.
+     *
+     * @param string $status
+     * @return string
+     */
+    private function validarStatus($status)
+    {
+        $status = (string) $status;
+        if (!in_array($status, self::STATUS_VALIDOS, true)) {
+            return 'Aberto';
+        }
+        return $status;
+    }
+
     private function hidratarDenuncia(array $dados)
     {
         $denuncia = new DenunciaDTO();
-        $status = $dados['status'];
-        $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
-
-        if (!in_array($status, $statusValido, true)) {
-            $status = 'Aberto';
-        }
+        $status = $this->validarStatus($dados['status'] ?? '');
 
         $denuncia->setId($dados['id_denuncia']);
         $denuncia->setTitulo($dados['titulo']);

@@ -6,10 +6,11 @@ require_once "model/dao/CategoriaDAO.php";
 require_once "model/dao/DenunciaDAO.php";
 require_once "model/dao/ComentarioDAO.php";
 require_once "model/dto/CategoriaDTO.php";
+require_once "config/traits/ValidadorRequisicao.php";
 
 class AdminController
 {
-    private const STATUS_DENUNCIA_VALIDO = ['Aberto', 'Em Andamento', 'Resolvido'];
+    use ValidadorRequisicao;
     private const LIMITES_PAGINA = [10, 20, 50];
 
     private $usuarioDAO;
@@ -145,9 +146,7 @@ class AdminController
      */
     public function atualizarStatusDenuncia()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para atualização de status.', 'admin_denuncias');
-        }
+        $this->exigirMetodoPost('admin_denuncias');
 
         try {
             $idDenuncia = $this->normalizarId($_POST['id_denuncia'] ?? null, 'Denúncia inválida.');
@@ -183,9 +182,7 @@ class AdminController
      */
     public function excluirComentario()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para exclusão de comentário.', 'admin_denuncias');
-        }
+        $this->exigirMetodoPost('admin_denuncias');
 
         try {
             $idComentario = $this->normalizarId($_POST['id_comentario'] ?? null, 'Comentário inválido.');
@@ -218,9 +215,7 @@ class AdminController
      */
     public function excluirUsuario()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para desativação de usuário.', 'listar_usuarios');
-        }
+        $this->exigirMetodoPost('listar_usuarios');
 
         try {
             $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
@@ -255,9 +250,7 @@ class AdminController
      */
     public function cadastrarCategoria()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para cadastro de categoria.', 'painel');
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $nomeCategoria = trim($_POST['nome_categoria'] ?? '');
@@ -292,9 +285,7 @@ class AdminController
      */
     public function atualizarCategoria()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para atualização de categoria.', 'painel');
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
@@ -332,9 +323,7 @@ class AdminController
      */
     public function excluirCategoria()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirecionarComErro('Método inválido para exclusão de categoria.', 'painel');
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idCategoria = (int) ($_POST['id_categoria'] ?? 0);
@@ -430,7 +419,7 @@ class AdminController
     {
         $status = trim((string) $status);
 
-        if (!in_array($status, self::STATUS_DENUNCIA_VALIDO, true)) {
+        if (!in_array($status, DenunciaDAO::STATUS_VALIDOS, true)) {
             throw new InvalidArgumentException('Status de denúncia inválido.');
         }
 
@@ -447,7 +436,7 @@ class AdminController
             return '';
         }
 
-        if (!in_array($status, self::STATUS_DENUNCIA_VALIDO, true)) {
+        if (!in_array($status, DenunciaDAO::STATUS_VALIDOS, true)) {
             throw new InvalidArgumentException('Filtro de status inválido.');
         }
 
@@ -626,12 +615,12 @@ class AdminController
     }
 
     /**
-     * Helper para redirecionamento com mensagens de erro.
+     * Helper consolidado para redirecionamento com mensagens.
      */
-    private function redirecionarComErro($mensagem, $rota, array $query = [])
+    private function redirecionarComMensagem($mensagem, $rota, $tipo = 'erro', array $query = [])
     {
         $_SESSION['mensagem'] = $mensagem;
-        $_SESSION['tipo_mensagem'] = 'erro';
+        $_SESSION['tipo_mensagem'] = $tipo;
         $url = 'index.php?rota=' . $rota;
         if ($query !== []) {
             $url .= '&' . http_build_query($query);
@@ -641,18 +630,19 @@ class AdminController
     }
 
     /**
+     * Helper para redirecionamento com mensagens de erro.
+     */
+    private function redirecionarComErro($mensagem, $rota, array $query = [])
+    {
+        $this->redirecionarComMensagem($mensagem, $rota, 'erro', $query);
+    }
+
+    /**
      * Helper para redirecionamento com mensagens de sucesso.
      */
     private function redirecionarComSucesso($mensagem, $rota, array $query = [])
     {
-        $_SESSION['mensagem'] = $mensagem;
-        $_SESSION['tipo_mensagem'] = 'sucesso';
-        $url = 'index.php?rota=' . $rota;
-        if ($query !== []) {
-            $url .= '&' . http_build_query($query);
-        }
-        header('Location: ' . $url);
-        exit();
+        $this->redirecionarComMensagem($mensagem, $rota, 'sucesso', $query);
     }
 }
 ?>

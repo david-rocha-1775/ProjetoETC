@@ -61,16 +61,7 @@ class ComentarioDAO
 
         $comentarios = [];
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $comentario = new ComentarioDTO();
-            $comentario->setId($dados['id_comentario']);
-            $comentario->setTexto($dados['texto']);
-            $comentario->setDataComentario($dados['data_comentario']);
-            $comentario->setAtivo($dados['ativo']);
-            $comentario->setIdUsuario($dados['fk_usuario']);
-            $comentario->setIdDenuncia($dados['fk_denuncia']);
-            $comentario->setNomeUsuario($dados['nome_usuario']);
-
-            $comentarios[] = $comentario;
+            $comentarios[] = $this->hidratarComentario($dados);
         }
 
         return $comentarios;
@@ -107,14 +98,7 @@ class ComentarioDAO
 
         $resultado = [];
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $comentario = new ComentarioDTO();
-            $comentario->setId($dados['id_comentario']);
-            $comentario->setTexto($dados['texto']);
-            $comentario->setDataComentario($dados['data_comentario']);
-            $comentario->setAtivo($dados['ativo']);
-            $comentario->setIdUsuario($dados['fk_usuario']);
-            $comentario->setIdDenuncia($dados['fk_denuncia']);
-            $comentario->setNomeUsuario($dados['nome_usuario']);
+            $comentario = $this->hidratarComentario($dados);
 
             $idDenuncia = (int) $dados['fk_denuncia'];
             if (!isset($resultado[$idDenuncia])) {
@@ -186,16 +170,7 @@ class ComentarioDAO
             return null;
         }
 
-        $comentario = new ComentarioDTO();
-        $comentario->setId($dados['id_comentario']);
-        $comentario->setTexto($dados['texto']);
-        $comentario->setDataComentario($dados['data_comentario']);
-        $comentario->setAtivo($dados['ativo']);
-        $comentario->setIdUsuario($dados['fk_usuario']);
-        $comentario->setIdDenuncia($dados['fk_denuncia']);
-        $comentario->setNomeUsuario($dados['nome_usuario']);
-
-        return $comentario;
+        return $this->hidratarComentario($dados);
     }
 
     /**
@@ -250,6 +225,26 @@ class ComentarioDAO
         $stmt->execute();
 
         return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Monta DTO de comentário a partir de um registro bruto.
+     *
+     * @param array $dados
+     * @return ComentarioDTO
+     */
+    private function hidratarComentario(array $dados)
+    {
+        $comentario = new ComentarioDTO();
+        $comentario->setId($dados['id_comentario']);
+        $comentario->setTexto($dados['texto']);
+        $comentario->setDataComentario($dados['data_comentario']);
+        $comentario->setAtivo($dados['ativo']);
+        $comentario->setIdUsuario($dados['fk_usuario']);
+        $comentario->setIdDenuncia($dados['fk_denuncia']);
+        $comentario->setNomeUsuario($dados['nome_usuario']);
+
+        return $comentario;
     }
 }
 ?>

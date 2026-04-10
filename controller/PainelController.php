@@ -10,9 +10,13 @@ require_once "model/dao/UsuarioDAO.php";
 require_once "model/dto/ComentarioDTO.php";
 require_once "model/dto/CurtidaDenunciaDTO.php";
 require_once "model/dto/CurtidaComentarioDTO.php";
+require_once "config/traits/ValidadorRequisicao.php";
+require_once "config/ResponseHelper.php";
 
 class PainelController
 {
+    use ValidadorRequisicao;
+
     private $denunciaDAO;
     private $categoriaDAO;
     private $comentarioDAO;
@@ -139,6 +143,15 @@ class PainelController
      */
     public function cadastrarDenuncia()
     {
+        // Em caso de requisição GET, exibe a view de formulário da denúncia
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $tituloPagina = "Nova Denúncia";
+            $usuarioNome = $_SESSION['usuario_nome'] ?? 'Usuário';
+            $categorias = $this->categoriaDAO->listarTodas();
+            include "view/painel/nova_denuncia.php";
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $titulo = trim($_POST['titulo'] ?? '');
@@ -219,15 +232,6 @@ class PainelController
             // Redirecionar via PRG para evitar resubmissões e mostrar retorno da operação
             header("Location: index.php?" . $this->montarUrlRetornoPosAcao());
             exit();
-        } else {
-            // Em caso de requisição GET, exibe a view de formulário da denúncia
-            $tituloPagina = "Nova Denúncia";
-            $usuarioNome = $_SESSION['usuario_nome'] ?? 'Usuário';
-
-            // Carrega as categorias do banco para preencher o <select>
-            $categorias = $this->categoriaDAO->listarTodas();
-
-            include "view/painel/nova_denuncia.php";
         }
     }
 
@@ -236,10 +240,7 @@ class PainelController
      */
     public function atualizarDenuncia()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
-            exit();
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
@@ -332,10 +333,7 @@ class PainelController
      */
     public function excluirDenuncia()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
-            exit();
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
@@ -372,17 +370,7 @@ class PainelController
      */
     public function comentarDenuncia()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            if ($this->requisicaoAceitaJson()) {
-                $this->responderJson([
-                    'success' => false,
-                    'message' => 'Método não permitido.'
-                ], 405);
-            }
-
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
-            exit();
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
@@ -448,17 +436,7 @@ class PainelController
      */
     public function curtirDenuncia()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            if ($this->requisicaoAceitaJson()) {
-                $this->responderJson([
-                    'success' => false,
-                    'message' => 'Método não permitido.'
-                ], 405);
-            }
-
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
-            exit();
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idDenuncia = (int) ($_POST['id_denuncia'] ?? 0);
@@ -520,17 +498,7 @@ class PainelController
      */
     public function curtirComentario()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            if ($this->requisicaoAceitaJson()) {
-                $this->responderJson([
-                    'success' => false,
-                    'message' => 'Método não permitido.'
-                ], 405);
-            }
-
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
-            exit();
-        }
+        $this->exigirMetodoPost('painel');
 
         try {
             $idComentario = (int) ($_POST['id_comentario'] ?? 0);
@@ -813,10 +781,7 @@ class PainelController
      */
     private function responderJson(array $dados, $statusCode = 200)
     {
-        http_response_code($statusCode);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        exit();
+        ResponseHelper::responderJson($dados, $statusCode);
     }
 
     /**
