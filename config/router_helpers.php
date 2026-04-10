@@ -36,6 +36,59 @@ function responder404()
 }
 
 /**
+ * Retorna (e cria quando necessário) o token CSRF da sessão atual.
+ *
+ * @return string
+ */
+function csrfToken()
+{
+    if (!isset($_SESSION['_csrf_token']) || !is_string($_SESSION['_csrf_token']) || $_SESSION['_csrf_token'] === '') {
+        $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['_csrf_token'];
+}
+
+/**
+ * Renderiza campo hidden com token CSRF para formulários.
+ */
+function csrfField()
+{
+    $token = htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8');
+    return '<input type="hidden" name="_csrf_token" value="' . $token . '">';
+}
+
+/**
+ * Valida token CSRF enviado por formulário ou header.
+ *
+ * @return bool
+ */
+function csrfRequisicaoValida()
+{
+    $tokenSessao = $_SESSION['_csrf_token'] ?? '';
+    if (!is_string($tokenSessao) || $tokenSessao === '') {
+        return false;
+    }
+
+    $tokenRequisicao = $_POST['_csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if (!is_string($tokenRequisicao) || $tokenRequisicao === '') {
+        return false;
+    }
+
+    return hash_equals($tokenSessao, $tokenRequisicao);
+}
+
+/**
+ * Renderiza página de token CSRF inválido.
+ */
+function responder419()
+{
+    http_response_code(419);
+    echo "<h1>Erro 419 - Sessão expirada ou token inválido</h1>";
+    echo "<a href='index.php?rota=inicio'>Voltar ao Início</a>";
+}
+
+/**
  * Renderiza página de método não permitido.
  */
 function responder405()

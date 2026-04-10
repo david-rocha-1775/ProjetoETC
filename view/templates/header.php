@@ -23,8 +23,9 @@
         })();
     </script>
     <title>
-        <?= isset($tituloPagina) ? $tituloPagina : 'Projeto ETC' ?>
+        <?= htmlspecialchars(isset($tituloPagina) ? (string) $tituloPagina : 'Projeto ETC', ENT_QUOTES, 'UTF-8') ?>
     </title>
+    <meta name="csrf-token" content="<?= htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8') ?>">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/estilo.css">
@@ -69,16 +70,18 @@
                                 style="width: 20px; height: 20px;">
                             Inicio
                         </a></li>
-                    <li><a href="index.php?rota=mapa" class="nav-link px-2 d-flex align-items-center gap-2">
-                            <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon"
-                                style="width: 20px; height: 20px;">
-                            Mapa
-                        </a></li>
-                    <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2 d-flex align-items-center gap-2">
-                            <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
-                                style="width: 20px; height: 20px;">
-                            Nova Denuncia
-                        </a></li>
+                    <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
+                        <li><a href="index.php?rota=mapa" class="nav-link px-2 d-flex align-items-center gap-2">
+                                <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon"
+                                    style="width: 20px; height: 20px;">
+                                Mapa
+                            </a></li>
+                        <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2 d-flex align-items-center gap-2">
+                                <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
+                                    style="width: 20px; height: 20px;">
+                                Nova Denuncia
+                            </a></li>
+                    <?php endif; ?>
 
                 </ul>
 
@@ -87,7 +90,7 @@
                         <div
                             class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-end gap-1">
                             <span class="text-center text-md-end me-md-2 mb-1 mb-md-0">Olá, <strong>
-                                    <?= $_SESSION['usuario_nome'] ?>
+                                    <?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?>
                                 </strong>!</span>
 
                             <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
@@ -98,7 +101,10 @@
                             <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu
                                 Perfil</a>
 
-                            <a href="index.php?rota=sair" class="btn btn-outline-primary flex-fill text-nowrap">Sair</a>
+                            <form action="index.php?rota=sair" method="POST" class="m-0 flex-fill">
+                                <?= csrfField() ?>
+                                <button type="submit" class="btn btn-outline-primary w-100 text-nowrap">Sair</button>
+                            </form>
                         </div>
                     <?php else: ?>
 
@@ -120,7 +126,7 @@
         <?php if (isset($_SESSION['mensagem'])): ?>
             <div class="mensagem <?= $_SESSION['tipo_mensagem'] ?? '' ?>">
                 <p>
-                    <?= $_SESSION['mensagem'] ?>
+                    <?= htmlspecialchars((string) $_SESSION['mensagem'], ENT_QUOTES, 'UTF-8') ?>
                 </p>
             </div>
             <?php

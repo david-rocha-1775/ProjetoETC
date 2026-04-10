@@ -38,6 +38,7 @@ $paginaJsHeadExtra = [
             <div class="card shadow-sm">
                 <div class="card-body">
                     <form action="index.php?rota=nova_denuncia" method="POST" enctype="multipart/form-data">
+                        <?= csrfField() ?>
                         <div class="mb-3">
                             <label for="titulo" class="form-label">Título da Denúncia:</label>
                             <input type="text" id="titulo" name="titulo" class="form-control" required>

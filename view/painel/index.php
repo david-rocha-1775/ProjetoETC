@@ -132,6 +132,7 @@ $paginaJsHeadExtra = [
                             <form
                                 action="index.php?<?= htmlspecialchars($queryFiltrosPainel . ($queryFiltrosPainel !== '' ? '&' : '') . 'rota=processar_curtida_denuncia') ?>"
                                 method="POST" class="js-curtir-denuncia">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars($d->getId()) ?>">
                                 <button type="submit" class="btn btn-outline-primary btn-sm" data-botao-curtir-denuncia>
                                     <?= $interacaoDenuncia['usuarioCurtiu'] ? 'Descurtir' : 'Curtir' ?>
@@ -161,6 +162,7 @@ $paginaJsHeadExtra = [
                                 <form
                                     action="index.php?<?= htmlspecialchars($queryFiltrosPainel . ($queryFiltrosPainel !== '' ? '&' : '') . 'rota=processar_edicao_denuncia') ?>"
                                     method="POST" enctype="multipart/form-data" class="mt-3">
+                                    <?= csrfField() ?>
                                     <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars($d->getId()) ?>">
 
                                     <div class="mb-3">
@@ -247,6 +249,7 @@ $paginaJsHeadExtra = [
                                 action="index.php?<?= htmlspecialchars($queryFiltrosPainel . ($queryFiltrosPainel !== '' ? '&' : '') . 'rota=processar_exclusao_denuncia') ?>"
                                 method="POST" class="mt-3"
                                 onsubmit="return confirm('Tem certeza que deseja excluir esta denúncia?');">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars($d->getId()) ?>">
                                 <button type="submit" class="btn btn-danger btn-sm">Excluir denúncia</button>
                             </form>
@@ -259,6 +262,7 @@ $paginaJsHeadExtra = [
                                 action="index.php?<?= htmlspecialchars($queryFiltrosPainel . ($queryFiltrosPainel !== '' ? '&' : '') . 'rota=processar_comentario') ?>"
                                 method="POST" class="js-comentar-denuncia mb-3"
                                 data-lista-comentarios="comentarios-denuncia-<?= htmlspecialchars($d->getId()) ?>">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars($d->getId()) ?>">
                                 <textarea name="texto" rows="3" placeholder="Escreva um comentário..." required
                                     class="form-control"></textarea>
@@ -282,6 +286,7 @@ $paginaJsHeadExtra = [
                                                 <form
                                                     action="index.php?<?= htmlspecialchars($queryFiltrosPainel . ($queryFiltrosPainel !== '' ? '&' : '') . 'rota=processar_curtida_comentario') ?>"
                                                     method="POST" class="js-curtir-comentario mt-2 d-inline-block">
+                                                    <?= csrfField() ?>
                                                     <input type="hidden" name="id_comentario"
                                                         value="<?= htmlspecialchars($comentario->getId()) ?>">
                                                     <button type="submit" class="btn btn-outline-secondary btn-sm"

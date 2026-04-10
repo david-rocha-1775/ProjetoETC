@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const feedbackContainer = document.getElementById('painel-feedback');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
     function escapeHtml(valor) {
         return String(valor ?? '')
@@ -15,10 +16,22 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        feedbackContainer.innerHTML = '<div class="alert alert-' + tipo + ' alert-dismissible fade show" role="alert">' +
-            escapeHtml(mensagem) +
-            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>' +
-            '</div>';
+        const tipoNormalizado = ['success', 'danger', 'warning', 'info'].includes(tipo) ? tipo : 'info';
+        feedbackContainer.textContent = '';
+
+        const alerta = document.createElement('div');
+        alerta.className = 'alert alert-' + tipoNormalizado + ' alert-dismissible fade show';
+        alerta.setAttribute('role', 'alert');
+        alerta.textContent = String(mensagem || 'Operação concluída.');
+
+        const botaoFechar = document.createElement('button');
+        botaoFechar.type = 'button';
+        botaoFechar.className = 'btn-close';
+        botaoFechar.setAttribute('data-bs-dismiss', 'alert');
+        botaoFechar.setAttribute('aria-label', 'Fechar');
+        alerta.appendChild(botaoFechar);
+
+        feedbackContainer.appendChild(alerta);
 
         window.clearTimeout(window.__painelFeedbackTimeout);
         window.__painelFeedbackTimeout = window.setTimeout(function () {
@@ -76,7 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const autor = document.createElement('p');
         autor.style.marginBottom = '4px';
-        autor.innerHTML = '<strong>' + escapeHtml(comentario.nome_usuario || 'Usuário') + '</strong>';
+        const autorStrong = document.createElement('strong');
+        autorStrong.textContent = comentario.nome_usuario || 'Usuário';
+        autor.appendChild(autorStrong);
 
         const texto = document.createElement('p');
         texto.style.marginBottom = '4px';
@@ -97,6 +112,14 @@ document.addEventListener('DOMContentLoaded', function () {
         inputId.name = 'id_comentario';
         inputId.value = comentario.id;
 
+        if (csrfToken) {
+            const inputCsrf = document.createElement('input');
+            inputCsrf.type = 'hidden';
+            inputCsrf.name = '_csrf_token';
+            inputCsrf.value = csrfToken;
+            formCurtida.appendChild(inputCsrf);
+        }
+
         const botao = document.createElement('button');
         botao.type = 'submit';
         botao.setAttribute('data-botao-curtir-comentario', '1');
@@ -104,7 +127,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const curtidas = document.createElement('span');
         curtidas.style.marginLeft = '8px';
-        curtidas.innerHTML = 'Curtidas: <strong id="total-curtidas-comentario-' + comentario.id + '">' + comentario.total_curtidas + '</strong>';
+        const comentarioIdSeguro = parseInt(comentario.id, 10) || 0;
+        const totalCurtidasSeguro = parseInt(comentario.total_curtidas, 10) || 0;
+        curtidas.appendChild(document.createTextNode('Curtidas: '));
+        const strongCurtidas = document.createElement('strong');
+        strongCurtidas.id = 'total-curtidas-comentario-' + comentarioIdSeguro;
+        strongCurtidas.textContent = String(totalCurtidasSeguro);
+        curtidas.appendChild(strongCurtidas);
 
         formCurtida.appendChild(inputId);
         formCurtida.appendChild(botao);

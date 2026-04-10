@@ -48,6 +48,7 @@
         <div class="card-body">
             <h4 class="h6">Cadastrar nova categoria</h4>
             <form action="index.php?rota=processar_cadastro_categoria" method="POST" class="row g-2">
+                <?= csrfField() ?>
                 <div class="col-md-8">
                     <input type="text" name="nome_categoria" class="form-control" placeholder="Nome da categoria"
                         required>
@@ -78,6 +79,7 @@
                                 <div class="d-flex gap-2 flex-wrap">
                                     <form action="index.php?rota=processar_edicao_categoria" method="POST"
                                         class="d-flex gap-2 flex-grow-1">
+                                        <?= csrfField() ?>
                                         <input type="hidden" name="id_categoria"
                                             value="<?= htmlspecialchars($categoria->getId()) ?>">
                                         <input type="text" name="nome_categoria" class="form-control"
@@ -87,6 +89,7 @@
 
                                     <form action="index.php?rota=processar_exclusao_categoria" method="POST"
                                         onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?');">
+                                        <?= csrfField() ?>
                                         <input type="hidden" name="id_categoria"
                                             value="<?= htmlspecialchars($categoria->getId()) ?>">
                                         <button type="submit" class="btn btn-outline-danger">Excluir</button>
