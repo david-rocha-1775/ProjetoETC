@@ -112,6 +112,16 @@ document.addEventListener('DOMContentLoaded', function () {
         inputId.name = 'id_comentario';
         inputId.value = comentario.id;
 
+        const inputRetornoRota = document.createElement('input');
+        inputRetornoRota.type = 'hidden';
+        inputRetornoRota.name = 'retorno_rota';
+        inputRetornoRota.value = 'detalhe_denuncia';
+
+        const inputRetornoId = document.createElement('input');
+        inputRetornoId.type = 'hidden';
+        inputRetornoId.name = 'retorno_id';
+        inputRetornoId.value = comentario.id_denuncia || '';
+
         if (csrfToken) {
             const inputCsrf = document.createElement('input');
             inputCsrf.type = 'hidden';
@@ -136,6 +146,8 @@ document.addEventListener('DOMContentLoaded', function () {
         curtidas.appendChild(strongCurtidas);
 
         formCurtida.appendChild(inputId);
+        formCurtida.appendChild(inputRetornoRota);
+        formCurtida.appendChild(inputRetornoId);
         formCurtida.appendChild(botao);
 
         wrapper.appendChild(autor);

@@ -128,6 +128,43 @@ class ComentarioDAO
     }
 
     /**
+     * Retorna contagem de comentários ativos agrupada por denúncia.
+     *
+     * @param int[] $idsDenuncia
+     * @return array<int, int>
+     */
+    public function contarPorDenuncias(array $idsDenuncia)
+    {
+        $idsDenuncia = array_values(array_filter(array_map('intval', $idsDenuncia), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsDenuncia === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsDenuncia), '?'));
+        $sql = "SELECT fk_denuncia, COUNT(*) AS total
+                FROM comentarios
+                WHERE ativo = 1 AND fk_denuncia IN ($placeholders)
+                GROUP BY fk_denuncia";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsDenuncia as $index => $idDenuncia) {
+            $stmt->bindValue($index + 1, $idDenuncia, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $resultado[(int) $dados['fk_denuncia']] = (int) $dados['total'];
+        }
+
+        return $resultado;
+    }
+
+    /**
      * Busca um comentário pelo ID.
      *
      * @param int $idComentario

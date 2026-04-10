@@ -10,6 +10,14 @@ return [
         'controller_method' => 'index',
         'http_method' => 'GET',
     ],
+    // Exibe os detalhes completos de uma denúncia.
+    'detalhe_denuncia' => [
+        'type' => 'action',
+        'controller_file' => 'controller/PainelController.php',
+        'controller_class' => 'PainelController',
+        'controller_method' => 'detalheDenuncia',
+        'http_method' => 'GET',
+    ],
     // Exibe o mapa de denúncias.
     'mapa' => [
         'type' => 'action',

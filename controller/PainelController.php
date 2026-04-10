@@ -6,6 +6,7 @@ require_once "model/dao/CategoriaDAO.php";
 require_once "model/dao/ComentarioDAO.php";
 require_once "model/dao/CurtidaDenunciaDAO.php";
 require_once "model/dao/CurtidaComentarioDAO.php";
+require_once "model/dao/UsuarioDAO.php";
 require_once "model/dto/ComentarioDTO.php";
 require_once "model/dto/CurtidaDenunciaDTO.php";
 require_once "model/dto/CurtidaComentarioDTO.php";
@@ -17,6 +18,7 @@ class PainelController
     private $comentarioDAO;
     private $curtidaDenunciaDAO;
     private $curtidaComentarioDAO;
+    private $usuarioDAO;
 
     public function __construct()
     {
@@ -31,6 +33,7 @@ class PainelController
         $this->comentarioDAO = new ComentarioDAO();
         $this->curtidaDenunciaDAO = new CurtidaDenunciaDAO();
         $this->curtidaComentarioDAO = new CurtidaComentarioDAO();
+        $this->usuarioDAO = new UsuarioDAO();
     }
 
     /**
@@ -62,7 +65,9 @@ class PainelController
 
             $denuncias = $this->denunciaDAO->listarPaginadas($idCategoriaFiltro, $paginaAtual, $limitePagina, $ordenacaoFiltro);
             $categorias = $this->categoriaDAO->listarTodas();
-            $interacoes = $this->carregarInteracoesDenuncias($denuncias);
+            $resumoInteracoes = $this->carregarResumoInteracoesDenuncias($denuncias);
+            $autoresPorDenuncia = $this->carregarAutoresPorDenuncia($denuncias);
+            $categoriasPorId = $this->mapearCategoriasPorId($categorias);
             $tituloPagina = "Painel do Usuário";
             $usuarioNome = $_SESSION['usuario_nome'];
             $filtroCategoriaSelecionada = $idCategoriaFiltro;
@@ -77,6 +82,54 @@ class PainelController
             $_SESSION['mensagem'] = "Erro ao carregar os dados do painel: " . $e->getMessage();
             $_SESSION['tipo_mensagem'] = "erro";
             header("Location: index.php?" . $this->montarUrlRetornoPainel(['rota' => 'inicio']));
+            exit();
+        }
+    }
+
+    /**
+     * Exibe a tela detalhada de uma denúncia.
+     */
+    public function detalheDenuncia()
+    {
+        try {
+            $idDenuncia = (int) ($_GET['id'] ?? 0);
+            if ($idDenuncia <= 0) {
+                throw new Exception('Denúncia inválida.');
+            }
+
+            $denuncia = $this->denunciaDAO->buscarPorId($idDenuncia);
+            if ($denuncia === null) {
+                throw new Exception('Denúncia não encontrada.');
+            }
+
+            $categorias = $this->categoriaDAO->listarTodas();
+            $categoriasPorId = $this->mapearCategoriasPorId($categorias);
+
+            $interacoes = $this->carregarInteracoesDenuncias([$denuncia]);
+            $interacaoDenuncia = $interacoes[$idDenuncia] ?? [
+                'comentarios' => [],
+                'totalCurtidas' => 0,
+                'usuarioCurtiu' => false,
+            ];
+
+            $idUsuarioDono = (int) $denuncia->getIdUsuario();
+            $autorDenuncia = $this->usuarioDAO->buscarPorId($idUsuarioDono);
+            $nomeAutorDenuncia = $autorDenuncia ? $autorDenuncia->getNome() : 'Usuário';
+
+            $usuarioLogadoId = (int) ($_SESSION['usuario_id'] ?? 0);
+            $usuarioAdmin = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin';
+            $podeGerenciar = $usuarioAdmin || $usuarioLogadoId === $idUsuarioDono;
+
+            $tituloPagina = 'Detalhes da Denúncia';
+            $painelQueryRetorno = $this->montarUrlRetornoPainel();
+            $nomeCategoriaDenuncia = $categoriasPorId[(int) $denuncia->getIdCategoria()] ?? 'Categoria não informada';
+
+            include "view/painel/detalhe.php";
+
+        } catch (Exception $e) {
+            $_SESSION['mensagem'] = 'Erro: ' . $e->getMessage();
+            $_SESSION['tipo_mensagem'] = 'erro';
+            header('Location: index.php?' . $this->montarUrlRetornoPainel());
             exit();
         }
     }
@@ -164,7 +217,7 @@ class PainelController
             }
 
             // Redirecionar via PRG para evitar resubmissões e mostrar retorno da operação
-            header("Location: index.php?" . $this->montarUrlRetornoPainel());
+            header("Location: index.php?" . $this->montarUrlRetornoPosAcao());
             exit();
         } else {
             // Em caso de requisição GET, exibe a view de formulário da denúncia
@@ -270,7 +323,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = "erro";
         }
 
-        header("Location: index.php?" . $this->montarUrlRetornoPainel());
+        header("Location: index.php?" . $this->montarUrlRetornoPosAcao($idDenuncia ?? 0));
         exit();
     }
 
@@ -310,7 +363,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = "erro";
         }
 
-        header("Location: index.php?" . $this->montarUrlRetornoPainel());
+        header("Location: index.php?" . $this->montarUrlRetornoPosAcao($idDenuncia ?? 0));
         exit();
     }
 
@@ -386,7 +439,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?" . $this->montarUrlRetornoPainel());
+        header("Location: index.php?" . $this->montarUrlRetornoPosAcao($idDenuncia ?? 0));
         exit();
     }
 
@@ -458,7 +511,7 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?" . $this->montarUrlRetornoPainel());
+        header("Location: index.php?" . $this->montarUrlRetornoPosAcao($idDenuncia ?? 0));
         exit();
     }
 
@@ -530,8 +583,29 @@ class PainelController
             $_SESSION['tipo_mensagem'] = 'erro';
         }
 
-        header("Location: index.php?" . $this->montarUrlRetornoPainel());
+        header("Location: index.php?" . $this->montarUrlRetornoPosAcao());
         exit();
+    }
+
+    /**
+     * Monta a URL de retorno para ações POST, priorizando a tela de detalhe quando solicitada.
+     *
+     * @param int $idDenunciaFallback
+     * @return string
+     */
+    private function montarUrlRetornoPosAcao($idDenunciaFallback = 0)
+    {
+        $retornoRota = isset($_POST['retorno_rota']) ? (string) $_POST['retorno_rota'] : '';
+        $retornoId = (int) ($_POST['retorno_id'] ?? $idDenunciaFallback);
+
+        if ($retornoRota === 'detalhe_denuncia' && $retornoId > 0) {
+            return http_build_query([
+                'rota' => 'detalhe_denuncia',
+                'id' => $retornoId,
+            ]);
+        }
+
+        return $this->montarUrlRetornoPainel();
     }
 
     /**
@@ -825,6 +899,86 @@ class PainelController
         }
 
         return $interacoes;
+    }
+
+    /**
+     * Carrega apenas métricas resumidas de interações para a listagem do painel.
+     *
+     * @param array $denuncias
+     * @return array<int, array{totalCurtidas:int,totalComentarios:int,usuarioCurtiu:bool}>
+     */
+    private function carregarResumoInteracoesDenuncias($denuncias)
+    {
+        $resumo = [];
+        $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+        $idsDenuncia = [];
+        foreach ($denuncias as $denuncia) {
+            $idsDenuncia[] = (int) $denuncia->getId();
+        }
+
+        if ($idsDenuncia === []) {
+            return $resumo;
+        }
+
+        $totalCurtidasPorDenuncia = $this->curtidaDenunciaDAO->contarCurtidasPorDenuncias($idsDenuncia);
+        $totalComentariosPorDenuncia = $this->comentarioDAO->contarPorDenuncias($idsDenuncia);
+        $usuarioCurtiuDenuncia = $idUsuarioSessao > 0
+            ? $this->curtidaDenunciaDAO->usuarioCurtiuPorDenuncias($idUsuarioSessao, $idsDenuncia)
+            : [];
+
+        foreach ($idsDenuncia as $idDenuncia) {
+            $resumo[$idDenuncia] = [
+                'totalCurtidas' => (int) ($totalCurtidasPorDenuncia[$idDenuncia] ?? 0),
+                'totalComentarios' => (int) ($totalComentariosPorDenuncia[$idDenuncia] ?? 0),
+                'usuarioCurtiu' => (bool) ($usuarioCurtiuDenuncia[$idDenuncia] ?? false),
+            ];
+        }
+
+        return $resumo;
+    }
+
+    /**
+     * Cria um mapa id_denuncia => nome do autor.
+     *
+     * @param array $denuncias
+     * @return array<int, string>
+     */
+    private function carregarAutoresPorDenuncia($denuncias)
+    {
+        $resultado = [];
+        $idsUsuario = [];
+
+        foreach ($denuncias as $denuncia) {
+            $idsUsuario[] = (int) $denuncia->getIdUsuario();
+        }
+
+        $nomesPorUsuario = $this->usuarioDAO->buscarNomesPorIds($idsUsuario);
+
+        foreach ($denuncias as $denuncia) {
+            $idDenuncia = (int) $denuncia->getId();
+            $idUsuario = (int) $denuncia->getIdUsuario();
+            $resultado[$idDenuncia] = $nomesPorUsuario[$idUsuario] ?? 'Usuário';
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Converte lista de categorias em mapa id_categoria => nome.
+     *
+     * @param array $categorias
+     * @return array<int, string>
+     */
+    private function mapearCategoriasPorId($categorias)
+    {
+        $resultado = [];
+
+        foreach ($categorias as $categoria) {
+            $resultado[(int) $categoria->getId()] = (string) $categoria->getNomeCategoria();
+        }
+
+        return $resultado;
     }
 
     /**
