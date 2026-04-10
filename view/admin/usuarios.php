@@ -42,7 +42,8 @@
                                     <form action="index.php?rota=processar_exclusao_usuario_admin" method="POST"
                                         onsubmit="return confirm('Tem certeza que deseja desativar este usuário?');">
                                         <?= csrfField() ?>
-                                        <input type="hidden" name="id_usuario" value="<?= htmlspecialchars($usuario->getId()) ?>">
+                                        <input type="hidden" name="id_usuario"
+                                            value="<?= htmlspecialchars($usuario->getId()) ?>">
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
                                     </form>
                                 <?php endif; ?>

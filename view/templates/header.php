@@ -94,7 +94,7 @@
                                 </strong>!</span>
 
                             <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
-                                <a href="index.php?rota=listar_usuarios"
+                                <a href="index.php?rota=admin_dashboard"
                                     class="btn btn-secondary flex-fill text-nowrap">Admin</a>
                             <?php endif; ?>
 

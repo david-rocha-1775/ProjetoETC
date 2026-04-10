@@ -199,5 +199,20 @@ class ComentarioDAO
 
         return $stmt->execute();
     }
+
+    /**
+     * Conta comentários ativos.
+     *
+     * @return int
+     */
+    public function contarAtivos()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM comentarios WHERE ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
 }
 ?>

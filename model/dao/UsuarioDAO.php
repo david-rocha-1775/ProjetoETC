@@ -237,5 +237,20 @@ class UsuarioDAO
 
         return $usuarios;
     }
+
+    /**
+     * Conta usuários ativos.
+     *
+     * @return int
+     */
+    public function contarAtivos()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM usuarios WHERE ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
 }
 ?>
