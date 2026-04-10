@@ -100,5 +100,79 @@ class CurtidaComentarioDAO
 
         return (int) $stmt->fetchColumn();
     }
+
+    /**
+     * Conta curtidas agrupadas por comentário.
+     *
+     * @param int[] $idsComentario
+     * @return array<int, int>
+     */
+    public function contarCurtidasPorComentarios(array $idsComentario)
+    {
+        $idsComentario = array_values(array_filter(array_map('intval', $idsComentario), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsComentario === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsComentario), '?'));
+        $sql = "SELECT fk_comentario, COUNT(*) AS total
+                FROM curtida_comentarios
+                WHERE ativo = 1 AND fk_comentario IN ($placeholders)
+                GROUP BY fk_comentario";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsComentario as $index => $idComentario) {
+            $stmt->bindValue($index + 1, $idComentario, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $resultado[(int) $dados['fk_comentario']] = (int) $dados['total'];
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Retorna um mapa [id_comentario => true] para comentários curtidos pelo usuário.
+     *
+     * @param int $idUsuario
+     * @param int[] $idsComentario
+     * @return array<int, bool>
+     */
+    public function usuarioCurtiuPorComentarios($idUsuario, array $idsComentario)
+    {
+        $idUsuario = (int) $idUsuario;
+        $idsComentario = array_values(array_filter(array_map('intval', $idsComentario), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idUsuario <= 0 || $idsComentario === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsComentario), '?'));
+        $sql = "SELECT fk_comentario
+                FROM curtida_comentarios
+                WHERE ativo = 1 AND fk_usuario = ? AND fk_comentario IN ($placeholders)";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindValue(1, $idUsuario, PDO::PARAM_INT);
+        foreach ($idsComentario as $index => $idComentario) {
+            $stmt->bindValue($index + 2, $idComentario, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $resultado[(int) $dados['fk_comentario']] = true;
+        }
+
+        return $resultado;
+    }
 }
 ?>

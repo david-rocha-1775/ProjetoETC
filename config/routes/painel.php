@@ -10,10 +10,12 @@ return [
         'controller_method' => 'index',
         'http_method' => 'GET',
     ],
-    // Exibe o mapa de denúncias (etapa inicial sem backend).
+    // Exibe o mapa de denúncias.
     'mapa' => [
-        'type' => 'view',
-        'target' => 'view/painel/mapa.php',
+        'type' => 'action',
+        'controller_file' => 'controller/PainelController.php',
+        'controller_class' => 'PainelController',
+        'controller_method' => 'exibirMapa',
         'http_method' => 'GET',
     ],
     // Endpoint JSON para denúncias do mapa por proximidade.

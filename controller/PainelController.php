@@ -34,6 +34,15 @@ class PainelController
     }
 
     /**
+     * Exibe o mapa apenas para usuários autenticados.
+     */
+    public function exibirMapa()
+    {
+        $tituloPagina = 'Mapa de Denuncias';
+        include 'view/painel/mapa.php';
+    }
+
+    /**
      * Carrega a página principal do painel (Dashboard).
      */
     public function index()
@@ -88,6 +97,22 @@ class PainelController
 
                 if (empty($titulo) || empty($descricao) || empty($localizacao) || empty($idCategoria)) {
                     throw new Exception("Os campos título, descrição, localização e categoria são obrigatórios.");
+                }
+
+                if (mb_strlen($titulo) > 150) {
+                    throw new Exception('O título deve ter no máximo 150 caracteres.');
+                }
+
+                if (mb_strlen($descricao) > 5000) {
+                    throw new Exception('A descrição deve ter no máximo 5000 caracteres.');
+                }
+
+                if (mb_strlen($localizacao) > 255) {
+                    throw new Exception('A localização deve ter no máximo 255 caracteres.');
+                }
+
+                if (filter_var($idCategoria, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+                    throw new Exception('Categoria inválida.');
                 }
 
                 // Valida coordenadas se foram fornecidas
@@ -175,6 +200,18 @@ class PainelController
 
             if ($idDenuncia <= 0 || $idCategoria <= 0 || empty($titulo) || empty($descricao) || empty($localizacao)) {
                 throw new Exception("Dados obrigatórios da denúncia não informados corretamente.");
+            }
+
+            if (mb_strlen($titulo) > 150) {
+                throw new Exception('O título deve ter no máximo 150 caracteres.');
+            }
+
+            if (mb_strlen($descricao) > 5000) {
+                throw new Exception('A descrição deve ter no máximo 5000 caracteres.');
+            }
+
+            if (mb_strlen($localizacao) > 255) {
+                throw new Exception('A localização deve ter no máximo 255 caracteres.');
             }
 
             $denunciaAtual = $this->denunciaDAO->buscarPorId($idDenuncia);
@@ -300,6 +337,10 @@ class PainelController
 
             if ($idDenuncia <= 0 || $texto === '') {
                 throw new Exception('Informe a denúncia e o texto do comentário.');
+            }
+
+            if (mb_strlen($texto) > 2000) {
+                throw new Exception('O comentário deve ter no máximo 2000 caracteres.');
             }
 
             if ($this->denunciaDAO->buscarPorId($idDenuncia) === null) {
@@ -650,6 +691,20 @@ class PainelController
             throw new Exception("O arquivo enviado não é uma imagem válida.");
         }
 
+        $tipoImagem = exif_imagetype($arquivo['tmp_name']);
+        if ($tipoImagem !== IMAGETYPE_JPEG && $tipoImagem !== IMAGETYPE_PNG) {
+            throw new Exception('Formato de imagem inválido.');
+        }
+
+        $dimensoes = getimagesize($arquivo['tmp_name']);
+        if ($dimensoes === false) {
+            throw new Exception('Não foi possível validar a imagem enviada.');
+        }
+
+        if (($dimensoes[0] ?? 0) > 4000 || ($dimensoes[1] ?? 0) > 3000) {
+            throw new Exception('A imagem deve ter no máximo 4000x3000 pixels.');
+        }
+
         $diretorioDestino = 'uploads/';
         if (!is_dir($diretorioDestino)) {
             mkdir($diretorioDestino, 0755, true);
@@ -721,24 +776,51 @@ class PainelController
         $interacoes = [];
         $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
 
+        $idsDenuncia = [];
+        foreach ($denuncias as $denuncia) {
+            $idsDenuncia[] = (int) $denuncia->getId();
+        }
+
+        if ($idsDenuncia === []) {
+            return $interacoes;
+        }
+
+        $comentariosPorDenuncia = $this->comentarioDAO->listarPorDenuncias($idsDenuncia);
+        $totalCurtidasPorDenuncia = $this->curtidaDenunciaDAO->contarCurtidasPorDenuncias($idsDenuncia);
+        $usuarioCurtiuDenuncia = $idUsuarioSessao > 0
+            ? $this->curtidaDenunciaDAO->usuarioCurtiuPorDenuncias($idUsuarioSessao, $idsDenuncia)
+            : [];
+
+        $idsComentario = [];
+        foreach ($comentariosPorDenuncia as $comentariosDaDenuncia) {
+            foreach ($comentariosDaDenuncia as $comentario) {
+                $idsComentario[] = (int) $comentario->getId();
+            }
+        }
+
+        $totalCurtidasPorComentario = $this->curtidaComentarioDAO->contarCurtidasPorComentarios($idsComentario);
+        $usuarioCurtiuComentario = $idUsuarioSessao > 0
+            ? $this->curtidaComentarioDAO->usuarioCurtiuPorComentarios($idUsuarioSessao, $idsComentario)
+            : [];
+
         foreach ($denuncias as $denuncia) {
             $idDenuncia = (int) $denuncia->getId();
-            $comentarios = $this->comentarioDAO->listarPorDenuncia($idDenuncia);
+            $comentarios = $comentariosPorDenuncia[$idDenuncia] ?? [];
 
             $comentariosComCurtidas = [];
             foreach ($comentarios as $comentario) {
                 $idComentario = (int) $comentario->getId();
                 $comentariosComCurtidas[] = [
                     'comentario' => $comentario,
-                    'totalCurtidas' => $this->curtidaComentarioDAO->contarCurtidas($idComentario),
-                    'usuarioCurtiu' => $idUsuarioSessao > 0 ? $this->curtidaComentarioDAO->usuarioCurtiu($idUsuarioSessao, $idComentario) : false,
+                    'totalCurtidas' => (int) ($totalCurtidasPorComentario[$idComentario] ?? 0),
+                    'usuarioCurtiu' => (bool) ($usuarioCurtiuComentario[$idComentario] ?? false),
                 ];
             }
 
             $interacoes[$idDenuncia] = [
                 'comentarios' => $comentariosComCurtidas,
-                'totalCurtidas' => $this->curtidaDenunciaDAO->contarCurtidas($idDenuncia),
-                'usuarioCurtiu' => $idUsuarioSessao > 0 ? $this->curtidaDenunciaDAO->usuarioCurtiu($idUsuarioSessao, $idDenuncia) : false,
+                'totalCurtidas' => (int) ($totalCurtidasPorDenuncia[$idDenuncia] ?? 0),
+                'usuarioCurtiu' => (bool) ($usuarioCurtiuDenuncia[$idDenuncia] ?? false),
             ];
         }
 
@@ -754,9 +836,17 @@ class PainelController
      */
     private function validarCoordenadas($latitude, $longitude)
     {
-        // Converte para float (validação básica)
-        $lat = @(float) $latitude;
-        $lon = @(float) $longitude;
+        // Valida se são números válidos antes da conversão
+        if (!is_numeric($latitude) || !is_numeric($longitude)) {
+            return [
+                'valida' => false,
+                'mensagem' => 'Latitude e longitude devem ser números válidos.'
+            ];
+        }
+
+        // Converte para float
+        $lat = (float) $latitude;
+        $lon = (float) $longitude;
 
         // Valida intervalos
         if ($lat < -90 || $lat > 90) {
@@ -770,14 +860,6 @@ class PainelController
             return [
                 'valida' => false,
                 'mensagem' => 'Longitude deve estar entre -180 e 180.'
-            ];
-        }
-
-        // Valida se são números válidos
-        if (!is_numeric($latitude) || !is_numeric($longitude)) {
-            return [
-                'valida' => false,
-                'mensagem' => 'Latitude e longitude devem ser números válidos.'
             ];
         }
 

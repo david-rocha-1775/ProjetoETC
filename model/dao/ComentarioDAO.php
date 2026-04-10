@@ -77,6 +77,57 @@ class ComentarioDAO
     }
 
     /**
+     * Lista comentários ativos agrupados por denúncia.
+     *
+     * @param int[] $idsDenuncia
+     * @return array<int, ComentarioDTO[]>
+     */
+    public function listarPorDenuncias(array $idsDenuncia)
+    {
+        $idsDenuncia = array_values(array_filter(array_map('intval', $idsDenuncia), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsDenuncia === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsDenuncia), '?'));
+        $sql = "SELECT c.id_comentario, c.texto, c.data_comentario, c.ativo, c.fk_usuario, c.fk_denuncia, u.nome AS nome_usuario
+                FROM comentarios c
+                INNER JOIN usuarios u ON u.id_usuario = c.fk_usuario
+                WHERE c.fk_denuncia IN ($placeholders) AND c.ativo = 1
+                ORDER BY c.fk_denuncia ASC, c.data_comentario ASC";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsDenuncia as $index => $idDenuncia) {
+            $stmt->bindValue($index + 1, $idDenuncia, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $comentario = new ComentarioDTO();
+            $comentario->setId($dados['id_comentario']);
+            $comentario->setTexto($dados['texto']);
+            $comentario->setDataComentario($dados['data_comentario']);
+            $comentario->setAtivo($dados['ativo']);
+            $comentario->setIdUsuario($dados['fk_usuario']);
+            $comentario->setIdDenuncia($dados['fk_denuncia']);
+            $comentario->setNomeUsuario($dados['nome_usuario']);
+
+            $idDenuncia = (int) $dados['fk_denuncia'];
+            if (!isset($resultado[$idDenuncia])) {
+                $resultado[$idDenuncia] = [];
+            }
+
+            $resultado[$idDenuncia][] = $comentario;
+        }
+
+        return $resultado;
+    }
+
+    /**
      * Busca um comentário pelo ID.
      *
      * @param int $idComentario
