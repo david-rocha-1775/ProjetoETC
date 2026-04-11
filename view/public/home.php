@@ -39,7 +39,7 @@ $tituloPagina = "Início - Cidade Atenta";
                 <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem;">
                     <!-- Card Cuidado Coletivo (8 cols) -->
                     <div style="grid-column: span 8;">
-                        <div class="custom-card glass home-card-flex">
+                        <div class="custom-card glass h-100 d-flex flex-column justify-content-between p-4 p-lg-5">
                             <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
                                 <img src="assets/fonts/material-symbols/group.svg" alt="group"
                                     style="width: 48px; height: 48px; flex-shrink: 0;">
@@ -56,7 +56,8 @@ $tituloPagina = "Início - Cidade Atenta";
 
                     <!-- Card Reporte Fácil (4 cols) -->
                     <div style="grid-column: span 4;">
-                        <div class="custom-card glass home-card-flex home-card-centered">
+                        <div
+                            class="custom-card glass h-100 d-flex flex-column justify-content-center align-items-center text-center p-4 p-lg-5">
                             <div>
                                 <img src="assets/fonts/material-symbols/description.svg" alt="description"
                                     style="width: 48px; height: 48px; display: block; margin-bottom: 1rem;">
@@ -72,7 +73,8 @@ $tituloPagina = "Início - Cidade Atenta";
                 <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem;">
                     <!-- Card Acompanhamento (4 cols) -->
                     <div style="grid-column: span 4;">
-                        <div class="custom-card glass home-card-flex home-card-centered">
+                        <div
+                            class="custom-card glass h-100 d-flex flex-column justify-content-center align-items-center text-center p-4 p-lg-5">
                             <div>
                                 <img src="assets/fonts/material-symbols/schedule.svg" alt="schedule"
                                     style="width: 48px; height: 48px; display: block; margin-bottom: 1rem;">
@@ -85,7 +87,8 @@ $tituloPagina = "Início - Cidade Atenta";
 
                     <!-- Card Mapa Interativo (8 cols) -->
                     <div style="grid-column: span 8;">
-                        <div class="custom-card glass home-card-flex-center">
+                        <div
+                            class="custom-card glass h-100 d-flex flex-column justify-content-center align-items-center text-center position-relative overflow-hidden p-4 p-lg-5">
                             <div
                                 style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;">
                                 <img src="assets/fonts/material-symbols/map.svg" alt="map"
@@ -104,7 +107,7 @@ $tituloPagina = "Início - Cidade Atenta";
                 <!-- Linha 3: Full Width - Impacto Social -->
                 <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem;">
                     <div style="grid-column: span 12;">
-                        <div class="custom-card glass home-card-large">
+                        <div class="custom-card glass h-100 p-4 p-lg-5">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
                                 <div>
                                     <img src="assets/fonts/material-symbols/trending_up.svg" alt="trending_up"

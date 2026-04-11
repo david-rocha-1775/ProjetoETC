@@ -207,6 +207,7 @@ main {
    CARDS CUSTOMIZADOS
    ============================================ */
 
+.card,
 .custom-card {
     background-color: var(--color-card-bg);
     border: none;
@@ -220,21 +221,13 @@ main {
     box-shadow: 0 10px 40px rgba(156, 202, 255, 0.1);
 }
 
+[data-bs-theme="light"] .card,
 [data-bs-theme="light"] .custom-card {
-    background-color: var(--color-card-bg);
     color: #000000;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 [data-bs-theme="light"] .custom-card:hover {
     box-shadow: 0 15px 40px rgba(156, 202, 255, 0.15);
-}
-
-.card {
-    background-color: var(--color-card-bg);
-    border: none;
-    border-radius: 1rem;
-    color: #e0e0e0;
 }
 
 [data-bs-theme="light"] .card {
@@ -250,35 +243,131 @@ main {
     font-weight: 700;
 }
 
-/* ============================================
-   HOME CARDS - REFACTOR INLINE STYLES
-   ============================================ */
-
-.home-card-flex {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 280px;
-    padding: 2.5rem;
+.painel-shell {
+    isolation: isolate;
 }
 
-.home-card-flex-center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 280px;
-    padding: 2.5rem;
-    position: relative;
-    overflow: hidden;
+.painel-sidebar-mobile-toggle {
+    margin-left: 1rem;
+    margin-top: 1rem;
 }
 
-.home-card-centered {
-    text-align: center;
+.painel-sidebar-card {
+    top: 6.4rem;
 }
 
-.home-card-large {
-    padding: 3rem;
+@media (min-width: 992px) {
+    .main-com-sidebar {
+        padding-left: 300px;
+    }
+
+    .painel-layout {
+        min-height: calc(100dvh - 6.4rem);
+    }
+
+    .painel-sidebar-col {
+        position: fixed;
+        top: 2rem;
+        bottom: 9.5rem;
+        left: 1rem;
+        width: 280px;
+        z-index: 1020;
+    }
+
+    .painel-sidebar-card {
+        height: 100%;
+        width: 100%;
+        margin-bottom: 0;
+        max-height: none;
+    }
+
+    .painel-sidebar-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: none;
+        overflow: auto;
+        padding: 1rem;
+    }
+
+    .painel-sidebar-main {
+        min-height: auto;
+        overflow: visible;
+        padding: 0;
+    }
+
+    .painel-sidebar-exit {
+        margin-top: auto;
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .painel-sidebar-logout-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--color-primary);
+        font-weight: 600;
+        text-align: left;
+        padding: 0.2rem 0;
+    }
+
+    .painel-sidebar-logout-link:hover {
+        color: #7ba8d9;
+    }
+
+    [data-bs-theme="light"] .painel-sidebar-logout-link {
+        color: #1f5f95;
+    }
+
+    [data-bs-theme="light"] .painel-sidebar-logout-link:hover {
+        color: #194f7d;
+    }
+
+    .painel-conteudo-col {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .main-com-sidebar {
+        padding-left: 320px;
+    }
+
+    .painel-sidebar-col {
+        width: 300px;
+    }
+
+    .painel-conteudo-col {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+.painel-metrica-card {
+    border: 1px solid rgba(156, 202, 255, 0.08);
+}
+
+.painel-metrica-icone {
+    opacity: 0.82;
+    filter: brightness(0) saturate(100%) invert(73%) sepia(38%) saturate(500%) hue-rotate(180deg) brightness(103%) contrast(102%);
+}
+
+.offcanvas {
+    background-color: var(--color-card-bg);
+    color: inherit;
+}
+
+[data-bs-theme="light"] .painel-metrica-icone {
+    filter: brightness(0) saturate(100%) invert(23%) sepia(40%) saturate(2000%) hue-rotate(191deg) brightness(94%) contrast(101%);
+}
+
+[data-bs-theme="light"] .offcanvas {
+    background-color: #ffffff;
 }
 
 .painel-denuncias-lista {
@@ -347,14 +436,80 @@ main {
     display: inline-flex;
     gap: 0.9rem;
     align-items: center;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
-    background: rgba(156, 202, 255, 0.08);
 }
 
 .painel-indicador-curtidas,
 .painel-indicador-comentarios {
     white-space: nowrap;
+    line-height: 1;
+}
+
+.painel-icone-curtir {
+    min-width: auto;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.painel-icone-curtir img {
+    display: block;
+    opacity: 0.72;
+    transition: opacity 0.2s ease;
+}
+
+.painel-indicador-comentarios img {
+    display: block;
+}
+
+.js-curtir-denuncia {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.painel-icone-curtir:hover img,
+.painel-icone-curtir:focus-visible img,
+.painel-icone-curtir.is-active img {
+    opacity: 1;
+}
+
+.painel-filtros-card {
+    border-radius: 0.85rem;
+}
+
+.painel-filtros-card .card-body {
+    padding: 0.9rem 0.9rem 0.85rem;
+}
+
+.painel-filtros-form .form-label {
+    margin-bottom: 0.15rem;
+}
+
+.painel-filtros-form .form-select {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.18);
+    color: inherit;
+    min-height: 2rem;
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+    border-radius: 0.45rem;
+    box-shadow: none;
+}
+
+.painel-filtros-form .form-select:focus {
+    border-color: rgba(156, 202, 255, 0.45);
+    box-shadow: 0 0 0 0.15rem rgba(156, 202, 255, 0.12);
+}
+
+.painel-filtros-form .btn {
+    border-radius: 0.45rem;
+    min-height: 2rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
 }
 
 .painel-denuncia-titulo {
@@ -385,10 +540,6 @@ main {
     border-top-color: rgba(11, 19, 38, 0.1) !important;
 }
 
-[data-bs-theme="light"] .painel-denuncia-indicadores {
-    background: rgba(11, 19, 38, 0.06);
-}
-
 @media (max-width: 575.98px) {
     .painel-denuncia-card {
         display: grid !important;
@@ -408,6 +559,10 @@ main {
     .painel-denuncia-indicadores {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    .painel-metrica-card .display-6 {
+        font-size: 2rem;
     }
 }
 
@@ -540,4 +695,337 @@ footer a:hover {
 [data-bs-theme="light"] #theme-icon {
     color: #000000;
     filter: none;
+}
+
+/* ============================================
+   AUTH CADASTRO - LAYOUT EM CARDS
+   ============================================ */
+
+.auth-cadastro-header {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.auth-cadastro-header-icon {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(156, 202, 255, 0.22);
+    border: 1px solid rgba(156, 202, 255, 0.35);
+}
+
+.auth-cadastro-header-icon img,
+.auth-cadastro-card-title img {
+    filter: brightness(0) saturate(100%) invert(80%) sepia(32%) saturate(580%) hue-rotate(175deg) brightness(102%) contrast(102%);
+}
+
+.auth-cadastro-card {
+    background: linear-gradient(165deg, rgba(19, 27, 46, 0.95), rgba(15, 24, 42, 0.92));
+    border: 1px solid rgba(156, 202, 255, 0.16);
+    border-radius: 1.2rem;
+    padding: 1.3rem;
+    box-shadow: 0 18px 38px rgba(4, 8, 18, 0.34);
+}
+
+.auth-cadastro-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+}
+
+.auth-cadastro-card-title h3 {
+    color: #f3f6ff;
+}
+
+.auth-cadastro-card .form-floating>.form-control {
+    border-radius: 0.85rem;
+    border-color: rgba(156, 202, 255, 0.18);
+    background-color: rgba(9, 15, 28, 0.72);
+}
+
+.auth-password-field>.form-control {
+    padding-right: 3.1rem;
+}
+
+.auth-password-toggle {
+    position: absolute;
+    right: 0.45rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    border: none;
+    border-radius: 0;
+    color: #dbeeff;
+    background-color: transparent;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-password-toggle:hover {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.auth-password-toggle img {
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
+    filter: brightness(0) saturate(100%) invert(88%) sepia(15%) saturate(442%) hue-rotate(177deg) brightness(106%) contrast(99%);
+}
+
+.auth-cadastro-card .form-check-label {
+    font-size: 0.9rem;
+}
+
+.auth-cadastro-card .form-check-input {
+    border-color: rgba(156, 202, 255, 0.5);
+}
+
+.auth-cadastro-card .form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.auth-cadastro-cta {
+    background: linear-gradient(165deg, rgba(20, 48, 78, 0.95), rgba(17, 41, 70, 0.88));
+}
+
+[data-bs-theme="light"] .auth-cadastro-header-icon {
+    background: rgba(0, 64, 128, 0.1);
+    border-color: rgba(0, 64, 128, 0.24);
+}
+
+[data-bs-theme="light"] .auth-cadastro-card {
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.95), rgba(247, 250, 255, 0.93));
+    border-color: rgba(0, 64, 128, 0.14);
+    box-shadow: 0 12px 28px rgba(0, 32, 64, 0.12);
+}
+
+[data-bs-theme="light"] .auth-cadastro-card-title h3 {
+    color: #0b1326;
+}
+
+[data-bs-theme="light"] .auth-cadastro-card .form-floating>.form-control {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 64, 128, 0.22);
+}
+
+[data-bs-theme="light"] .auth-password-toggle {
+    color: #0b315c;
+    background-color: transparent;
+}
+
+[data-bs-theme="light"] .auth-password-toggle:hover {
+    color: #082949;
+    background-color: transparent;
+}
+
+[data-bs-theme="light"] .auth-password-toggle img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(46%) saturate(1553%) hue-rotate(190deg) brightness(90%) contrast(98%);
+}
+
+[data-bs-theme="light"] .auth-cadastro-header-icon img,
+[data-bs-theme="light"] .auth-cadastro-card-title img {
+    filter: brightness(0) saturate(100%) invert(18%) sepia(47%) saturate(1827%) hue-rotate(193deg) brightness(92%) contrast(101%);
+}
+
+[data-bs-theme="light"] .auth-cadastro-cta {
+    background: linear-gradient(165deg, rgba(233, 244, 255, 0.98), rgba(224, 238, 252, 0.95));
+}
+
+@media (max-width: 991.98px) {
+    .auth-cadastro-card {
+        padding: 1.1rem;
+    }
+}
+
+/* ============================================
+   AUTH LOGIN - CARROSSEL
+   ============================================ */
+
+.auth-login-page {
+    min-height: calc(100vh - 120px);
+}
+
+.auth-login-shell,
+.auth-login-grid {
+    min-height: calc(100vh - 120px);
+}
+
+.auth-login-carousel-frame {
+    position: relative;
+    height: 100%;
+    min-height: calc(100vh - 120px);
+    overflow: hidden;
+    background-color: #d8e0e6;
+}
+
+.auth-login-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+}
+
+.auth-login-slide.is-active {
+    z-index: 2;
+    opacity: 1;
+}
+
+.auth-login-carousel-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3rem;
+    background: linear-gradient(180deg, rgba(6, 12, 24, 0.08) 0%, rgba(8, 14, 28, 0.82) 72%, rgba(8, 14, 28, 0.95) 100%);
+}
+
+.auth-login-kicker {
+    font-size: 0.76rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #8ad4cd;
+    font-weight: 700;
+}
+
+.auth-login-hero {
+    max-width: 560px;
+    font-size: clamp(2rem, 4vw, 3.9rem);
+    line-height: 1.03;
+    margin: 0;
+    color: #d7def4;
+    text-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-bs-theme="light"] .auth-login-hero {
+    color: #d7def4;
+}
+
+.auth-login-hero-sub {
+    max-width: 470px;
+    color: rgba(224, 224, 224, 0.9);
+    font-size: 1.05rem;
+}
+
+.auth-login-panel {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-dark-bg);
+    border-left: 1px solid rgba(156, 202, 255, 0.2);
+    padding: 2rem 1.4rem;
+}
+
+.auth-login-panel-inner {
+    width: 100%;
+    max-width: 380px;
+}
+
+.auth-login-title {
+    color: #eef4ff;
+    font-size: clamp(1.65rem, 2.2vw, 2.2rem);
+}
+
+.auth-login-form .form-floating>.form-control {
+    min-height: 2.9rem;
+    border-radius: 0.85rem;
+    border-color: rgba(156, 202, 255, 0.18);
+    background-color: rgba(9, 15, 28, 0.72);
+    color: #e8eefb;
+}
+
+[data-bs-theme="light"] .auth-login-panel {
+    background-color: var(--color-dark-bg);
+    border-left-color: rgba(0, 64, 128, 0.14);
+}
+
+[data-bs-theme="light"] .auth-login-title {
+    color: #0b1326;
+}
+
+.auth-login-form .form-floating>.form-control::placeholder {
+    color: rgba(208, 221, 243, 0.52);
+}
+
+.auth-login-field {
+    position: relative;
+}
+
+.auth-login-field-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 1.05rem;
+    height: 1.05rem;
+    filter: brightness(0) saturate(100%) invert(86%) sepia(10%) saturate(574%) hue-rotate(180deg) brightness(103%) contrast(96%);
+}
+
+.auth-login-form .auth-login-field>.form-control {
+    padding-left: 2.6rem;
+}
+
+.auth-login-form .auth-login-field>label {
+    padding-left: 2.6rem;
+}
+
+.auth-login-form .form-floating>label::after {
+    background-color: transparent !important;
+}
+
+.auth-cadastro-card .form-floating>label::after {
+    background-color: transparent !important;
+}
+
+[data-bs-theme="light"] .auth-login-form .form-floating>.form-control {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 64, 128, 0.22);
+    color: #1b2f4d;
+}
+
+[data-bs-theme="light"] .auth-login-form .form-floating>.form-control::placeholder {
+    color: rgba(27, 47, 77, 0.55);
+}
+
+[data-bs-theme="light"] .auth-login-field-icon {
+    filter: brightness(0) saturate(100%) invert(24%) sepia(44%) saturate(1058%) hue-rotate(180deg) brightness(92%) contrast(95%);
+}
+
+@media (max-width: 991.98px) {
+
+    .auth-login-page,
+    .auth-login-shell,
+    .auth-login-grid {
+        min-height: auto;
+    }
+
+    .auth-login-panel {
+        border-left: none;
+        padding: 2.2rem 1rem;
+    }
+
+    .auth-login-panel-inner {
+        max-width: 430px;
+    }
+
+    .auth-login-carousel-frame {
+        min-height: auto;
+    }
 }

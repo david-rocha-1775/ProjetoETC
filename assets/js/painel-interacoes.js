@@ -71,7 +71,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const contador = document.getElementById('total-curtidas-denuncia-' + idDenuncia);
 
         if (botao) {
-            botao.textContent = dados.usuario_curtiu ? 'Descurtir' : 'Curtir';
+            const ehBotaoIcone = botao.hasAttribute('data-curtir-icone');
+
+            if (ehBotaoIcone) {
+                const label = dados.usuario_curtiu ? 'Remover curtida' : 'Curtir';
+                botao.setAttribute('aria-label', label);
+                botao.setAttribute('title', label);
+                botao.classList.toggle('is-active', Boolean(dados.usuario_curtiu));
+            } else {
+                botao.textContent = dados.usuario_curtiu ? 'Descurtir' : 'Curtir';
+            }
         }
 
         if (contador) {
@@ -195,12 +204,16 @@ document.addEventListener('DOMContentLoaded', function () {
         evento.preventDefault();
 
         const botao = formulario.querySelector('button[type="submit"]');
+        const ehBotaoIcone = botao ? botao.hasAttribute('data-curtir-icone') : false;
         const textoOriginal = botao ? botao.textContent : '';
 
         try {
             if (botao) {
                 botao.disabled = true;
-                botao.textContent = 'Processando...';
+
+                if (!ehBotaoIcone) {
+                    botao.textContent = 'Processando...';
+                }
             }
 
             const dados = await enviarFormulario(formulario);
@@ -229,7 +242,10 @@ document.addEventListener('DOMContentLoaded', function () {
         } finally {
             if (botao) {
                 botao.disabled = false;
-                botao.textContent = textoOriginal || botao.textContent;
+
+                if (!ehBotaoIcone) {
+                    botao.textContent = textoOriginal || botao.textContent;
+                }
             }
         }
     }
