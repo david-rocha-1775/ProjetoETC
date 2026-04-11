@@ -100,11 +100,6 @@
 
                             <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu
                                 Perfil</a>
-
-                            <form action="index.php?rota=sair" method="POST" class="m-0 flex-fill">
-                                <?= csrfField() ?>
-                                <button type="submit" class="btn btn-outline-primary w-100 text-nowrap">Sair</button>
-                            </form>
                         </div>
                     <?php else: ?>
 

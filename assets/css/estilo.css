@@ -243,6 +243,109 @@ main {
     font-weight: 700;
 }
 
+.painel-shell {
+    isolation: isolate;
+}
+
+.painel-sidebar-card {
+    top: 6.4rem;
+}
+
+@media (min-width: 992px) {
+    .painel-layout {
+        min-height: calc(100dvh - 6.4rem);
+    }
+
+    .painel-sidebar-col {
+        position: fixed;
+        top: 6.4rem;
+        bottom: 2.7rem;
+        left: 1rem;
+        width: 280px;
+        z-index: 1020;
+    }
+
+    .painel-sidebar-card {
+        height: 100%;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .painel-sidebar-body {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        min-height: 0;
+        padding: 0;
+    }
+
+    .painel-sidebar-main {
+        min-height: 0;
+        overflow: auto;
+        padding: 1rem;
+    }
+
+    .painel-sidebar-exit {
+        padding: 0.9rem 1rem;
+    }
+
+    .painel-sidebar-logout-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--color-primary);
+        font-weight: 600;
+        text-align: left;
+        padding: 0.2rem 0;
+    }
+
+    .painel-sidebar-logout-link:hover {
+        color: #7ba8d9;
+    }
+
+    .painel-conteudo-col {
+        margin-left: 300px;
+        width: calc(100% - 300px);
+        max-width: calc(100% - 300px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .painel-sidebar-col {
+        width: 300px;
+    }
+
+    .painel-conteudo-col {
+        margin-left: 320px;
+        width: calc(100% - 320px);
+        max-width: calc(100% - 320px);
+    }
+}
+
+.painel-metrica-card {
+    border: 1px solid rgba(156, 202, 255, 0.08);
+}
+
+.painel-metrica-icone {
+    opacity: 0.82;
+    filter: brightness(0) saturate(100%) invert(73%) sepia(38%) saturate(500%) hue-rotate(180deg) brightness(103%) contrast(102%);
+}
+
+.offcanvas {
+    background-color: var(--color-card-bg);
+    color: inherit;
+}
+
+[data-bs-theme="light"] .painel-metrica-icone {
+    filter: brightness(0) saturate(100%) invert(23%) sepia(40%) saturate(2000%) hue-rotate(191deg) brightness(94%) contrast(101%);
+}
+
+[data-bs-theme="light"] .offcanvas {
+    background-color: #ffffff;
+}
+
 .painel-denuncias-lista {
     display: flex;
     flex-direction: column;
@@ -309,14 +412,80 @@ main {
     display: inline-flex;
     gap: 0.9rem;
     align-items: center;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
-    background: rgba(156, 202, 255, 0.08);
 }
 
 .painel-indicador-curtidas,
 .painel-indicador-comentarios {
     white-space: nowrap;
+    line-height: 1;
+}
+
+.painel-icone-curtir {
+    min-width: auto;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.painel-icone-curtir img {
+    display: block;
+    opacity: 0.72;
+    transition: opacity 0.2s ease;
+}
+
+.painel-indicador-comentarios img {
+    display: block;
+}
+
+.js-curtir-denuncia {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.painel-icone-curtir:hover img,
+.painel-icone-curtir:focus-visible img,
+.painel-icone-curtir.is-active img {
+    opacity: 1;
+}
+
+.painel-filtros-card {
+    border-radius: 0.85rem;
+}
+
+.painel-filtros-card .card-body {
+    padding: 0.9rem 0.9rem 0.85rem;
+}
+
+.painel-filtros-form .form-label {
+    margin-bottom: 0.15rem;
+}
+
+.painel-filtros-form .form-select {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.18);
+    color: inherit;
+    min-height: 2rem;
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+    border-radius: 0.45rem;
+    box-shadow: none;
+}
+
+.painel-filtros-form .form-select:focus {
+    border-color: rgba(156, 202, 255, 0.45);
+    box-shadow: 0 0 0 0.15rem rgba(156, 202, 255, 0.12);
+}
+
+.painel-filtros-form .btn {
+    border-radius: 0.45rem;
+    min-height: 2rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
 }
 
 .painel-denuncia-titulo {
@@ -347,10 +516,6 @@ main {
     border-top-color: rgba(11, 19, 38, 0.1) !important;
 }
 
-[data-bs-theme="light"] .painel-denuncia-indicadores {
-    background: rgba(11, 19, 38, 0.06);
-}
-
 @media (max-width: 575.98px) {
     .painel-denuncia-card {
         display: grid !important;
@@ -370,6 +535,10 @@ main {
     .painel-denuncia-indicadores {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    .painel-metrica-card .display-6 {
+        font-size: 2rem;
     }
 }
 
