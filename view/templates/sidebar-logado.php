@@ -41,12 +41,32 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
             Meu perfil
         </a>
         <?php if ($ehAdminSidebar): ?>
-            <a href="index.php?rota=admin_dashboard"
-                class="<?= $classeItemSidebar(['admin_dashboard', 'admin_denuncias', 'listar_usuarios', 'listar_categorias_admin']) ?>">
-                <img src="assets/fonts/material-symbols/group.svg" alt="administracao" class="nav-icon" width="18"
-                    height="18">
-                Administracao
-            </a>
+            <div class="pt-2 border-top">
+                <p class="small text-muted mb-2">Administracao</p>
+                <div class="d-grid gap-2">
+                    <a href="index.php?rota=admin_dashboard" class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
+                        <img src="assets/fonts/material-symbols/analytics4.svg" alt="dashboard admin" class="nav-icon"
+                            width="18" height="18">
+                        Dashboard Admin
+                    </a>
+                    <a href="index.php?rota=admin_denuncias" class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
+                        <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Denuncias
+                    </a>
+                    <a href="index.php?rota=listar_usuarios" class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
+                        <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Usuarios
+                    </a>
+                    <a href="index.php?rota=listar_categorias_admin"
+                        class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">
+                        <img src="assets/fonts/material-symbols/tune.svg" alt="gerenciar categorias" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Categorias
+                    </a>
+                </div>
+            </div>
         <?php endif; ?>
     </div>
 </div>
@@ -82,12 +102,35 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
                         Meu perfil
                     </a>
                     <?php if ($ehAdminSidebar): ?>
-                        <a href="index.php?rota=admin_dashboard"
-                            class="<?= $classeItemSidebar(['admin_dashboard', 'admin_denuncias', 'listar_usuarios', 'listar_categorias_admin']) ?>">
-                            <img src="assets/fonts/material-symbols/group.svg" alt="administracao" class="nav-icon"
-                                width="18" height="18">
-                            Administracao
-                        </a>
+                        <div class="pt-2 border-top">
+                            <p class="small text-muted mb-2">Administracao</p>
+                            <div class="d-grid gap-2">
+                                <a href="index.php?rota=admin_dashboard"
+                                    class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
+                                    <img src="assets/fonts/material-symbols/analytics4.svg" alt="dashboard admin"
+                                        class="nav-icon" width="18" height="18">
+                                    Dashboard Admin
+                                </a>
+                                <a href="index.php?rota=admin_denuncias"
+                                    class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
+                                    <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Denuncias
+                                </a>
+                                <a href="index.php?rota=listar_usuarios"
+                                    class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
+                                    <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Usuarios
+                                </a>
+                                <a href="index.php?rota=listar_categorias_admin"
+                                    class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">
+                                    <img src="assets/fonts/material-symbols/tune.svg" alt="gerenciar categorias"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Categorias
+                                </a>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>

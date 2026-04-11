@@ -1,15 +1,7 @@
 <?php include "view/templates/header.php"; ?>
 
 <section class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Gerenciamento de Categorias</h2>
-        <div class="d-flex gap-2">
-            <a href="index.php?rota=admin_dashboard" class="btn btn-outline-primary">Dashboard Admin</a>
-            <a href="index.php?rota=admin_denuncias" class="btn btn-outline-primary">Gerenciar Denúncias</a>
-            <a href="index.php?rota=listar_usuarios" class="btn btn-outline-primary">Gerenciar Usuários</a>
-            <a href="index.php?rota=painel" class="btn btn-outline-secondary">Voltar ao Painel</a>
-        </div>
-    </div>
+    <h2 class="mb-3">Gerenciamento de Categorias</h2>
 
     <div class="card mb-4">
         <div class="card-body">

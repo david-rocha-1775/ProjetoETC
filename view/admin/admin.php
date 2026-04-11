@@ -4,15 +4,7 @@
 <?php include "view/templates/header.php"; ?>
 
 <section class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Usuários Cadastrados</h2>
-        <div class="d-flex gap-2">
-            <a href="index.php?rota=admin_dashboard" class="btn btn-outline-primary">Dashboard Admin</a>
-            <a href="index.php?rota=admin_denuncias" class="btn btn-outline-primary">Gerenciar Denúncias</a>
-            <a href="index.php?rota=listar_categorias_admin" class="btn btn-outline-primary">Gerenciar Categorias</a>
-            <a href="index.php?rota=painel" class="btn btn-outline-secondary">Voltar ao Painel</a>
-        </div>
-    </div>
+    <h2 class="mb-3">Usuários Cadastrados</h2>
 
     <?php if (!empty($usuarios)): ?>
         <div class="table-responsive">
