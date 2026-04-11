@@ -89,19 +89,14 @@
 
                 <div class="col-md-auto text-end">
                     <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
-                        <div
-                            class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-end gap-1">
-                            <span class="text-center text-md-end me-md-2 mb-1 mb-md-0">Olá, <strong>
-                                    <?= htmlspecialchars((string) $_SESSION['usuario_nome'], ENT_QUOTES, 'UTF-8') ?>
-                                </strong>!</span>
-
-                            <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin'): ?>
-                                <a href="index.php?rota=admin_dashboard"
-                                    class="btn btn-secondary flex-fill text-nowrap">Admin</a>
-                            <?php endif; ?>
-
-                            <a href="index.php?rota=perfil_usuario" class="btn btn-primary flex-fill text-nowrap">Meu
-                                Perfil</a>
+                        <div class="d-flex align-items-center justify-content-end gap-2">
+                            <form action="index.php?rota=sair" method="POST" class="m-0 d-inline-flex">
+                                <?= csrfField() ?>
+                                <button type="submit" class="btn btn-link p-1 text-reset" aria-label="Sair">
+                                    <img src="assets/fonts/material-symbols/exit_to_app.svg" alt="sair" class="nav-icon"
+                                        width="24" height="24">
+                                </button>
+                            </form>
                         </div>
                     <?php else: ?>
 

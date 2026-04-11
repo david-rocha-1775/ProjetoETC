@@ -112,6 +112,40 @@ class DenunciaDAO
     }
 
     /**
+     * Retorna contagem total por grupos de status para denuncias ativas,
+     * com filtro opcional por categoria.
+     *
+     * @param int|null $idCategoria
+     * @return array{em_analise:int,resolvido:int}
+     */
+    public function contarTotaisPorStatus($idCategoria = null)
+    {
+        $sql = "SELECT
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                FROM denuncias
+                WHERE ativo = 1";
+
+        if ($idCategoria !== null) {
+            $sql .= " AND fk_categoria = :fk_categoria";
+        }
+
+        $stmt = $this->conexao->prepare($sql);
+
+        if ($idCategoria !== null) {
+            $stmt->bindValue(':fk_categoria', (int) $idCategoria, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'em_analise' => (int) ($dados['total_em_analise'] ?? 0),
+            'resolvido' => (int) ($dados['total_resolvido'] ?? 0),
+        ];
+    }
+
+    /**
      * Busca uma denúncia pelo ID.
      *
      * @param int $idDenuncia
