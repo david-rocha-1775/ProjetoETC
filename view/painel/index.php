@@ -51,7 +51,6 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
             <div>
                 <h2 class="mb-1">Início</h2>
-                <p class="text-muted mb-0">Acompanhe o status das suas solicitacoes.</p>
             </div>
         </div>
 

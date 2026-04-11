@@ -2,16 +2,22 @@
 // Controller de Autenticação (Login, Cadastro e Logout)
 
 require_once "model/dao/UsuarioDAO.php";
+require_once "model/dao/DenunciaDAO.php";
+require_once "model/dao/CategoriaDAO.php";
 require_once "model/dto/UsuarioDTO.php";
 
 class AuthController
 {
     private $usuarioDAO;
+    private $denunciaDAO;
+    private $categoriaDAO;
     private const MSG_CREDENCIAIS_INVALIDAS = 'Credenciais inválidas.';
 
     public function __construct()
     {
         $this->usuarioDAO = new UsuarioDAO();
+        $this->denunciaDAO = new DenunciaDAO();
+        $this->categoriaDAO = new CategoriaDAO();
     }
 
     /**
@@ -156,6 +162,36 @@ class AuthController
                 throw new Exception("Usuário não encontrado.");
             }
 
+            $paginaDenuncias = (int) ($_GET['minhas_pagina'] ?? 1);
+            if ($paginaDenuncias < 1) {
+                $paginaDenuncias = 1;
+            }
+
+            $limiteDenuncias = 5;
+            $totalMinhasDenuncias = $this->denunciaDAO->contarPaginadasPorUsuario($idUsuario);
+            $totalPaginasMinhasDenuncias = $totalMinhasDenuncias > 0
+                ? (int) ceil($totalMinhasDenuncias / $limiteDenuncias)
+                : 0;
+
+            if ($totalPaginasMinhasDenuncias > 0 && $paginaDenuncias > $totalPaginasMinhasDenuncias) {
+                $paginaDenuncias = $totalPaginasMinhasDenuncias;
+            }
+
+            $minhasDenuncias = $this->denunciaDAO->listarPaginadasPorUsuario(
+                $idUsuario,
+                $paginaDenuncias,
+                $limiteDenuncias,
+                'recentes'
+            );
+
+            $totaisMinhasDenunciasStatus = $this->denunciaDAO->contarTotaisPorStatusPorUsuario($idUsuario);
+            $categorias = $this->categoriaDAO->listarTodas();
+            $categoriasPorId = [];
+
+            foreach ($categorias as $categoria) {
+                $categoriasPorId[(int) $categoria->getId()] = (string) $categoria->getNomeCategoria();
+            }
+
             $tituloPagina = "Meu Perfil";
             include "view/auth/perfil.php";
 
@@ -170,7 +206,7 @@ class AuthController
     public function atualizarPerfil()
     {
         $this->exigirLogin();
-        $this->exigirMetodoPost('painel');
+        $this->exigirMetodoPost('perfil_usuario');
 
         try {
             $idUsuario = (int) $_SESSION['usuario_id'];
@@ -240,11 +276,11 @@ class AuthController
             $_SESSION['usuario_email'] = $email;
             $_SESSION['mensagem'] = "Dados atualizados com sucesso!";
             $_SESSION['tipo_mensagem'] = "sucesso";
-            header("Location: index.php?rota=painel");
+            header("Location: index.php?rota=perfil_usuario");
             exit();
 
         } catch (Exception $e) {
-            $this->redirecionarComErro($e->getMessage(), 'painel');
+            $this->redirecionarComErro($e->getMessage(), 'perfil_usuario');
         }
     }
 

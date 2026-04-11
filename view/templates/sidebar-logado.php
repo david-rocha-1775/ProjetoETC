@@ -56,7 +56,7 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
         <div class="card-body painel-sidebar-body h-100">
             <div class="painel-sidebar-main d-flex flex-column gap-3">
                 <div>
-                    <h3 class="h5 mb-1">navegação</h3>
+                    <h3 class="h5 mb-1">Navegação</h3>
                     <p class="text-muted small mb-0">Acesse rapidamente suas principais acoes.</p>
                 </div>
 

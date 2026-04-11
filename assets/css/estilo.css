@@ -583,6 +583,244 @@ main {
     overflow: hidden;
 }
 
+.nova-denuncia-page {
+    --nova-card-border: rgba(156, 202, 255, 0.14);
+    --nova-input-bg: rgba(8, 15, 30, 0.68);
+}
+
+.nova-denuncia-header p {
+    max-width: 62ch;
+}
+
+.nova-denuncia-card {
+    border: 1px solid var(--nova-card-border);
+    background: linear-gradient(165deg, rgba(19, 27, 46, 0.96), rgba(13, 21, 39, 0.9));
+    box-shadow: 0 14px 36px rgba(2, 6, 16, 0.35);
+}
+
+.nova-denuncia-card-title {
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    font-size: 0.82rem;
+    color: var(--color-secondary);
+}
+
+.nova-denuncia-page .form-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: rgba(220, 235, 255, 0.85);
+}
+
+.nova-denuncia-page .form-control,
+.nova-denuncia-page .form-select {
+    border-radius: 0.95rem;
+    border-color: rgba(156, 202, 255, 0.2);
+    background-color: var(--nova-input-bg);
+    color: #eff6ff;
+}
+
+.nova-denuncia-page .form-control::placeholder {
+    color: rgba(191, 208, 229, 0.65);
+}
+
+.nova-denuncia-page .form-control:focus,
+.nova-denuncia-page .form-select:focus {
+    border-color: rgba(156, 202, 255, 0.46);
+    box-shadow: 0 0 0 0.2rem rgba(156, 202, 255, 0.14);
+    background-color: rgba(10, 17, 32, 0.88);
+}
+
+.nova-denuncia-page .form-select option,
+.nova-denuncia-page .form-select optgroup {
+    background-color: #0f1d3a;
+    color: #e5efff;
+}
+
+.nova-denuncia-urgencia {
+    display: inline-flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.nova-denuncia-urgencia .badge {
+    border-radius: 999px;
+    padding: 0.45rem 0.65rem;
+    font-weight: 700;
+    background-color: rgba(156, 202, 255, 0.15) !important;
+    border: 1px solid rgba(156, 202, 255, 0.18);
+}
+
+.nova-denuncia-mapa {
+    height: 300px;
+    border-radius: 1rem;
+    border: 1px solid rgba(156, 202, 255, 0.2);
+    overflow: hidden;
+}
+
+.nova-denuncia-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    border: 1px solid rgba(156, 202, 255, 0.15);
+    border-radius: 0.9rem;
+    padding: 0.7rem 0.85rem;
+    background-color: rgba(9, 16, 30, 0.5);
+    font-size: 0.9rem;
+}
+
+.nova-denuncia-btn-principal {
+    min-width: 230px;
+}
+
+.nova-denuncia-preview {
+    border: 1px solid rgba(156, 202, 255, 0.15);
+    border-radius: 0.9rem;
+    padding: 0.75rem;
+    background-color: rgba(11, 19, 38, 0.6);
+}
+
+.nova-denuncia-preview-img {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 0.7rem;
+}
+
+.nova-denuncia-preview-file {
+    padding: 0.75rem;
+    border-radius: 0.6rem;
+    background-color: rgba(156, 202, 255, 0.12);
+    color: #d9ebff;
+    font-size: 0.9rem;
+}
+
+.nova-denuncia-sidecard p {
+    color: rgba(225, 235, 248, 0.86);
+}
+
+.perfil-page {
+    --perfil-card-border: rgba(156, 202, 255, 0.14);
+    --perfil-input-bg: rgba(8, 15, 30, 0.68);
+}
+
+.perfil-header p {
+    max-width: 64ch;
+}
+
+.perfil-header {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.perfil-card-resumo,
+.perfil-card-form,
+.perfil-card-perigo,
+.perfil-denuncia-item,
+.perfil-denuncia-vazia {
+    border: 1px solid var(--perfil-card-border);
+    background: linear-gradient(165deg, rgba(19, 27, 46, 0.96), rgba(13, 21, 39, 0.9));
+    box-shadow: 0 14px 36px rgba(2, 6, 16, 0.35);
+}
+
+.perfil-main-grid .h-100 {
+    min-height: 100%;
+}
+
+.perfil-section-title {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.88rem;
+    color: var(--color-secondary);
+}
+
+.perfil-page .form-label {
+    font-size: 0.77rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: rgba(220, 235, 255, 0.85);
+}
+
+.perfil-page .form-control,
+.perfil-page .form-select {
+    border-radius: 0.95rem;
+    border-color: rgba(156, 202, 255, 0.2);
+    background-color: var(--perfil-input-bg);
+    color: #eff6ff;
+}
+
+.perfil-page .form-control:focus,
+.perfil-page .form-select:focus {
+    border-color: rgba(156, 202, 255, 0.46);
+    box-shadow: 0 0 0 0.2rem rgba(156, 202, 255, 0.14);
+    background-color: rgba(10, 17, 32, 0.88);
+}
+
+.perfil-denuncia-item {
+    border-radius: 1rem;
+}
+
+.perfil-denuncia-meta {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(184, 208, 236, 0.78);
+}
+
+.perfil-denuncia-titulo {
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: #e8f3ff;
+}
+
+.perfil-status-pill {
+    border-radius: 999px;
+    padding: 0.42rem 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.perfil-status-analise {
+    background-color: rgba(59, 130, 246, 0.25);
+    color: #93c5fd;
+}
+
+.perfil-status-andamento {
+    background-color: rgba(245, 158, 11, 0.24);
+    color: #fcd34d;
+}
+
+.perfil-status-resolvido {
+    background-color: rgba(16, 185, 129, 0.24);
+    color: #6ee7b7;
+}
+
+.animate-in {
+    animation: novaCardReveal 220ms ease-out both;
+}
+
+@keyframes novaCardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .painel-paginacao {
     gap: 0.35rem;
 }
@@ -713,6 +951,112 @@ main {
     .painel-metrica-card .display-6 {
         font-size: 2rem;
     }
+
+    .nova-denuncia-mapa {
+        height: 220px;
+    }
+
+    .nova-denuncia-btn-principal {
+        width: 100%;
+    }
+
+    .perfil-denuncia-titulo {
+        font-size: 1.08rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .nova-denuncia-mapa {
+        height: 250px;
+    }
+}
+
+[data-bs-theme="light"] .nova-denuncia-page {
+    --nova-card-border: rgba(11, 19, 38, 0.12);
+    --nova-input-bg: #ffffff;
+}
+
+[data-bs-theme="light"] .nova-denuncia-card {
+    background: linear-gradient(165deg, #ffffff, #f6f8fb);
+    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.09);
+}
+
+[data-bs-theme="light"] .nova-denuncia-card-title {
+    color: #1f5f95;
+}
+
+[data-bs-theme="light"] .nova-denuncia-page .form-label {
+    color: #334155;
+}
+
+[data-bs-theme="light"] .nova-denuncia-page .form-control,
+[data-bs-theme="light"] .nova-denuncia-page .form-select {
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+[data-bs-theme="light"] .nova-denuncia-page .form-control::placeholder {
+    color: #64748b;
+}
+
+[data-bs-theme="light"] .nova-denuncia-page .form-select option,
+[data-bs-theme="light"] .nova-denuncia-page .form-select optgroup {
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+[data-bs-theme="light"] .nova-denuncia-info {
+    background-color: rgba(31, 95, 149, 0.06);
+    border-color: rgba(31, 95, 149, 0.2);
+}
+
+[data-bs-theme="light"] .nova-denuncia-preview {
+    background-color: #f8fbff;
+    border-color: rgba(31, 95, 149, 0.2);
+}
+
+[data-bs-theme="light"] .nova-denuncia-preview-file {
+    color: #1e3a5f;
+    background-color: rgba(31, 95, 149, 0.08);
+}
+
+[data-bs-theme="light"] .nova-denuncia-sidecard p {
+    color: #334155;
+}
+
+[data-bs-theme="light"] .perfil-page {
+    --perfil-card-border: rgba(11, 19, 38, 0.12);
+    --perfil-input-bg: #ffffff;
+}
+
+[data-bs-theme="light"] .perfil-card-resumo,
+[data-bs-theme="light"] .perfil-card-form,
+[data-bs-theme="light"] .perfil-card-perigo,
+[data-bs-theme="light"] .perfil-denuncia-item,
+[data-bs-theme="light"] .perfil-denuncia-vazia {
+    background: linear-gradient(165deg, #ffffff, #f6f8fb);
+    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.09);
+}
+
+[data-bs-theme="light"] .perfil-section-title {
+    color: #1f5f95;
+}
+
+[data-bs-theme="light"] .perfil-page .form-label {
+    color: #334155;
+}
+
+[data-bs-theme="light"] .perfil-page .form-control,
+[data-bs-theme="light"] .perfil-page .form-select {
+    color: #0f172a;
+}
+
+[data-bs-theme="light"] .perfil-denuncia-meta {
+    color: #475569;
+}
+
+[data-bs-theme="light"] .perfil-denuncia-titulo {
+    color: #1e293b;
 }
 
 /* ============================================
