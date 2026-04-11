@@ -1,7 +1,7 @@
 <?php $tituloPagina = "Cadastro"; ?>
 <?php include "view/templates/header.php"; ?>
 
-<div class="auth-cadastro-page d-flex min-vh-100 align-items-lg-center py-4">
+<div class="d-flex min-vh-100 align-items-lg-center py-4">
     <section class="container">
         <form action="index.php?rota=processar_cadastro" method="POST">
             <?= csrfField() ?>

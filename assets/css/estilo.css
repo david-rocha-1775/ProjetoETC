@@ -207,6 +207,7 @@ main {
    CARDS CUSTOMIZADOS
    ============================================ */
 
+.card,
 .custom-card {
     background-color: var(--color-card-bg);
     border: none;
@@ -220,21 +221,13 @@ main {
     box-shadow: 0 10px 40px rgba(156, 202, 255, 0.1);
 }
 
+[data-bs-theme="light"] .card,
 [data-bs-theme="light"] .custom-card {
-    background-color: var(--color-card-bg);
     color: #000000;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 [data-bs-theme="light"] .custom-card:hover {
     box-shadow: 0 15px 40px rgba(156, 202, 255, 0.15);
-}
-
-.card {
-    background-color: var(--color-card-bg);
-    border: none;
-    border-radius: 1rem;
-    color: #e0e0e0;
 }
 
 [data-bs-theme="light"] .card {
@@ -248,37 +241,6 @@ main {
 .card-title {
     color: #ffffff;
     font-weight: 700;
-}
-
-/* ============================================
-   HOME CARDS - REFACTOR INLINE STYLES
-   ============================================ */
-
-.home-card-flex {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 280px;
-    padding: 2.5rem;
-}
-
-.home-card-flex-center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 280px;
-    padding: 2.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.home-card-centered {
-    text-align: center;
-}
-
-.home-card-large {
-    padding: 3rem;
 }
 
 .painel-denuncias-lista {
@@ -587,7 +549,6 @@ footer a:hover {
     color: #f3f6ff;
 }
 
-.auth-cadastro-card .form-floating>.form-control,
 .auth-cadastro-card .form-floating>.form-control {
     border-radius: 0.85rem;
     border-color: rgba(156, 202, 255, 0.18);
@@ -660,7 +621,6 @@ footer a:hover {
     color: #0b1326;
 }
 
-[data-bs-theme="light"] .auth-cadastro-card .form-floating>.form-control,
 [data-bs-theme="light"] .auth-cadastro-card .form-floating>.form-control {
     background-color: rgba(255, 255, 255, 0.95);
     border-color: rgba(0, 64, 128, 0.22);
@@ -692,5 +652,187 @@ footer a:hover {
 @media (max-width: 991.98px) {
     .auth-cadastro-card {
         padding: 1.1rem;
+    }
+}
+
+/* ============================================
+   AUTH LOGIN - CARROSSEL
+   ============================================ */
+
+.auth-login-page {
+    min-height: calc(100vh - 120px);
+}
+
+.auth-login-shell,
+.auth-login-grid {
+    min-height: calc(100vh - 120px);
+}
+
+.auth-login-carousel-frame {
+    position: relative;
+    height: 100%;
+    min-height: calc(100vh - 120px);
+    overflow: hidden;
+    background-color: #d8e0e6;
+}
+
+.auth-login-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+}
+
+.auth-login-slide.is-active {
+    z-index: 2;
+    opacity: 1;
+}
+
+.auth-login-carousel-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3rem;
+    background: linear-gradient(180deg, rgba(6, 12, 24, 0.08) 0%, rgba(8, 14, 28, 0.82) 72%, rgba(8, 14, 28, 0.95) 100%);
+}
+
+.auth-login-kicker {
+    font-size: 0.76rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #8ad4cd;
+    font-weight: 700;
+}
+
+.auth-login-hero {
+    max-width: 560px;
+    font-size: clamp(2rem, 4vw, 3.9rem);
+    line-height: 1.03;
+    margin: 0;
+    color: #d7def4;
+    text-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-bs-theme="light"] .auth-login-hero {
+    color: #d7def4;
+}
+
+.auth-login-hero-sub {
+    max-width: 470px;
+    color: rgba(224, 224, 224, 0.9);
+    font-size: 1.05rem;
+}
+
+.auth-login-panel {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-dark-bg);
+    border-left: 1px solid rgba(156, 202, 255, 0.2);
+    padding: 2rem 1.4rem;
+}
+
+.auth-login-panel-inner {
+    width: 100%;
+    max-width: 380px;
+}
+
+.auth-login-title {
+    color: #eef4ff;
+    font-size: clamp(1.65rem, 2.2vw, 2.2rem);
+}
+
+.auth-login-form .form-floating>.form-control {
+    min-height: 2.9rem;
+    border-radius: 0.85rem;
+    border-color: rgba(156, 202, 255, 0.18);
+    background-color: rgba(9, 15, 28, 0.72);
+    color: #e8eefb;
+}
+
+[data-bs-theme="light"] .auth-login-panel {
+    background-color: var(--color-dark-bg);
+    border-left-color: rgba(0, 64, 128, 0.14);
+}
+
+[data-bs-theme="light"] .auth-login-title {
+    color: #0b1326;
+}
+
+.auth-login-form .form-floating>.form-control::placeholder {
+    color: rgba(208, 221, 243, 0.52);
+}
+
+.auth-login-field {
+    position: relative;
+}
+
+.auth-login-field-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 1.05rem;
+    height: 1.05rem;
+    filter: brightness(0) saturate(100%) invert(86%) sepia(10%) saturate(574%) hue-rotate(180deg) brightness(103%) contrast(96%);
+}
+
+.auth-login-form .auth-login-field>.form-control {
+    padding-left: 2.6rem;
+}
+
+.auth-login-form .auth-login-field>label {
+    padding-left: 2.6rem;
+}
+
+.auth-login-form .form-floating>label::after {
+    background-color: transparent !important;
+}
+
+.auth-cadastro-card .form-floating>label::after {
+    background-color: transparent !important;
+}
+
+[data-bs-theme="light"] .auth-login-form .form-floating>.form-control {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 64, 128, 0.22);
+    color: #1b2f4d;
+}
+
+[data-bs-theme="light"] .auth-login-form .form-floating>.form-control::placeholder {
+    color: rgba(27, 47, 77, 0.55);
+}
+
+[data-bs-theme="light"] .auth-login-field-icon {
+    filter: brightness(0) saturate(100%) invert(24%) sepia(44%) saturate(1058%) hue-rotate(180deg) brightness(92%) contrast(95%);
+}
+
+@media (max-width: 991.98px) {
+
+    .auth-login-page,
+    .auth-login-shell,
+    .auth-login-grid {
+        min-height: auto;
+    }
+
+    .auth-login-panel {
+        border-left: none;
+        padding: 2.2rem 1rem;
+    }
+
+    .auth-login-panel-inner {
+        max-width: 430px;
+    }
+
+    .auth-login-carousel-frame {
+        min-height: auto;
     }
 }
