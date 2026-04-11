@@ -488,6 +488,26 @@ main {
     border-color: rgba(156, 202, 255, 0.15) !important;
 }
 
+.painel-denuncia-rodape .form-select {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.18);
+    color: inherit;
+    color-scheme: dark;
+    box-shadow: none;
+}
+
+.painel-denuncia-rodape .form-select option,
+.painel-denuncia-rodape .form-select optgroup {
+    background-color: #0f1d3a;
+    color: #e5efff;
+}
+
+.painel-denuncia-rodape .form-select:focus {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.45);
+    box-shadow: 0 0 0 0.15rem rgba(156, 202, 255, 0.12);
+}
+
 .painel-denuncia-indicadores {
     display: inline-flex;
     gap: 0.9rem;
@@ -555,6 +575,27 @@ main {
     padding-bottom: 0.28rem;
     border-radius: 0.45rem;
     box-shadow: none;
+}
+
+.painel-filtros-form .form-control {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.18);
+    color: inherit;
+    min-height: 2rem;
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+    border-radius: 0.45rem;
+    box-shadow: none;
+}
+
+.painel-filtros-form .form-control::placeholder {
+    color: rgba(229, 239, 255, 0.7);
+}
+
+.painel-filtros-form .form-control:focus {
+    background-color: transparent;
+    border-color: rgba(156, 202, 255, 0.45);
+    box-shadow: 0 0 0 0.15rem rgba(156, 202, 255, 0.12);
 }
 
 .painel-filtros-form .form-select option,
@@ -874,6 +915,10 @@ main {
     color-scheme: light;
 }
 
+[data-bs-theme="light"] .painel-filtros-form .form-control::placeholder {
+    color: rgba(11, 19, 38, 0.55);
+}
+
 [data-bs-theme="light"] .painel-filtros-form .form-select option,
 [data-bs-theme="light"] .painel-filtros-form .form-select optgroup {
     background-color: #ffffff;
@@ -925,6 +970,16 @@ main {
 
 [data-bs-theme="light"] .painel-denuncia-rodape {
     border-top-color: rgba(11, 19, 38, 0.1) !important;
+}
+
+[data-bs-theme="light"] .painel-denuncia-rodape .form-select {
+    color-scheme: light;
+}
+
+[data-bs-theme="light"] .painel-denuncia-rodape .form-select option,
+[data-bs-theme="light"] .painel-denuncia-rodape .form-select optgroup {
+    background-color: #ffffff;
+    color: #0b1326;
 }
 
 @media (max-width: 575.98px) {
