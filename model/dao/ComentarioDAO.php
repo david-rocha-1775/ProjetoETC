@@ -61,19 +61,91 @@ class ComentarioDAO
 
         $comentarios = [];
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $comentario = new ComentarioDTO();
-            $comentario->setId($dados['id_comentario']);
-            $comentario->setTexto($dados['texto']);
-            $comentario->setDataComentario($dados['data_comentario']);
-            $comentario->setAtivo($dados['ativo']);
-            $comentario->setIdUsuario($dados['fk_usuario']);
-            $comentario->setIdDenuncia($dados['fk_denuncia']);
-            $comentario->setNomeUsuario($dados['nome_usuario']);
-
-            $comentarios[] = $comentario;
+            $comentarios[] = $this->hidratarComentario($dados);
         }
 
         return $comentarios;
+    }
+
+    /**
+     * Lista comentários ativos agrupados por denúncia.
+     *
+     * @param int[] $idsDenuncia
+     * @return array<int, ComentarioDTO[]>
+     */
+    public function listarPorDenuncias(array $idsDenuncia)
+    {
+        $idsDenuncia = array_values(array_filter(array_map('intval', $idsDenuncia), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsDenuncia === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsDenuncia), '?'));
+        $sql = "SELECT c.id_comentario, c.texto, c.data_comentario, c.ativo, c.fk_usuario, c.fk_denuncia, u.nome AS nome_usuario
+                FROM comentarios c
+                INNER JOIN usuarios u ON u.id_usuario = c.fk_usuario
+                WHERE c.fk_denuncia IN ($placeholders) AND c.ativo = 1
+                ORDER BY c.fk_denuncia ASC, c.data_comentario ASC";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsDenuncia as $index => $idDenuncia) {
+            $stmt->bindValue($index + 1, $idDenuncia, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $comentario = $this->hidratarComentario($dados);
+
+            $idDenuncia = (int) $dados['fk_denuncia'];
+            if (!isset($resultado[$idDenuncia])) {
+                $resultado[$idDenuncia] = [];
+            }
+
+            $resultado[$idDenuncia][] = $comentario;
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Retorna contagem de comentários ativos agrupada por denúncia.
+     *
+     * @param int[] $idsDenuncia
+     * @return array<int, int>
+     */
+    public function contarPorDenuncias(array $idsDenuncia)
+    {
+        $idsDenuncia = array_values(array_filter(array_map('intval', $idsDenuncia), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsDenuncia === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsDenuncia), '?'));
+        $sql = "SELECT fk_denuncia, COUNT(*) AS total
+                FROM comentarios
+                WHERE ativo = 1 AND fk_denuncia IN ($placeholders)
+                GROUP BY fk_denuncia";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsDenuncia as $index => $idDenuncia) {
+            $stmt->bindValue($index + 1, $idDenuncia, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $resultado[(int) $dados['fk_denuncia']] = (int) $dados['total'];
+        }
+
+        return $resultado;
     }
 
     /**
@@ -98,16 +170,7 @@ class ComentarioDAO
             return null;
         }
 
-        $comentario = new ComentarioDTO();
-        $comentario->setId($dados['id_comentario']);
-        $comentario->setTexto($dados['texto']);
-        $comentario->setDataComentario($dados['data_comentario']);
-        $comentario->setAtivo($dados['ativo']);
-        $comentario->setIdUsuario($dados['fk_usuario']);
-        $comentario->setIdDenuncia($dados['fk_denuncia']);
-        $comentario->setNomeUsuario($dados['nome_usuario']);
-
-        return $comentario;
+        return $this->hidratarComentario($dados);
     }
 
     /**
@@ -147,6 +210,41 @@ class ComentarioDAO
         $stmt->bindParam(':id_comentario', $idComentario, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+
+    /**
+     * Conta comentários ativos.
+     *
+     * @return int
+     */
+    public function contarAtivos()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM comentarios WHERE ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Monta DTO de comentário a partir de um registro bruto.
+     *
+     * @param array $dados
+     * @return ComentarioDTO
+     */
+    private function hidratarComentario(array $dados)
+    {
+        $comentario = new ComentarioDTO();
+        $comentario->setId($dados['id_comentario']);
+        $comentario->setTexto($dados['texto']);
+        $comentario->setDataComentario($dados['data_comentario']);
+        $comentario->setAtivo($dados['ativo']);
+        $comentario->setIdUsuario($dados['fk_usuario']);
+        $comentario->setIdDenuncia($dados['fk_denuncia']);
+        $comentario->setNomeUsuario($dados['nome_usuario']);
+
+        return $comentario;
     }
 }
 ?>

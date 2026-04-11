@@ -5,15 +5,25 @@ return [
     // Exibe dashboard com últimas denúncias.
     'painel' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelListagemController.php',
+        'controller_class' => 'PainelListagemController',
         'controller_method' => 'index',
         'http_method' => 'GET',
     ],
-    // Exibe o mapa de denúncias (etapa inicial sem backend).
+    // Exibe os detalhes completos de uma denúncia.
+    'detalhe_denuncia' => [
+        'type' => 'action',
+        'controller_file' => 'controller/PainelListagemController.php',
+        'controller_class' => 'PainelListagemController',
+        'controller_method' => 'detalheDenuncia',
+        'http_method' => 'GET',
+    ],
+    // Exibe o mapa de denúncias.
     'mapa' => [
-        'type' => 'view',
-        'target' => 'view/painel/mapa.php',
+        'type' => 'action',
+        'controller_file' => 'controller/PainelListagemController.php',
+        'controller_class' => 'PainelListagemController',
+        'controller_method' => 'exibirMapa',
         'http_method' => 'GET',
     ],
     // Endpoint JSON para denúncias do mapa por proximidade.
@@ -27,48 +37,48 @@ return [
     // Exibe e processa o formulário de nova denúncia.
     'nova_denuncia' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelDenunciaController.php',
+        'controller_class' => 'PainelDenunciaController',
         'controller_method' => 'cadastrarDenuncia',
         'http_method' => ['GET', 'POST'],
     ],
     // Processa edição de denúncia existente.
     'processar_edicao_denuncia' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelDenunciaController.php',
+        'controller_class' => 'PainelDenunciaController',
         'controller_method' => 'atualizarDenuncia',
         'http_method' => 'POST',
     ],
     // Processa exclusão de denúncia existente.
     'processar_exclusao_denuncia' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelDenunciaController.php',
+        'controller_class' => 'PainelDenunciaController',
         'controller_method' => 'excluirDenuncia',
         'http_method' => 'POST',
     ],
     // Processa comentário em denúncia.
     'processar_comentario' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelInteracaoController.php',
+        'controller_class' => 'PainelInteracaoController',
         'controller_method' => 'comentarDenuncia',
         'http_method' => 'POST',
     ],
     // Alterna curtida de uma denúncia.
     'processar_curtida_denuncia' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelInteracaoController.php',
+        'controller_class' => 'PainelInteracaoController',
         'controller_method' => 'curtirDenuncia',
         'http_method' => 'POST',
     ],
     // Alterna curtida de um comentário.
     'processar_curtida_comentario' => [
         'type' => 'action',
-        'controller_file' => 'controller/PainelController.php',
-        'controller_class' => 'PainelController',
+        'controller_file' => 'controller/PainelInteracaoController.php',
+        'controller_class' => 'PainelInteracaoController',
         'controller_method' => 'curtirComentario',
         'http_method' => 'POST',
     ],

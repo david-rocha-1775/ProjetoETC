@@ -36,7 +36,7 @@ return [
         'controller_file' => 'controller/AuthController.php',
         'controller_class' => 'AuthController',
         'controller_method' => 'logout',
-        'http_method' => 'GET',
+        'http_method' => 'POST',
     ],
     // Atualiza os dados do perfil do usuário.
     'processar_edicao_usuario' => [

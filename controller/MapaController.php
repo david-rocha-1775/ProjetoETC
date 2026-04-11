@@ -2,6 +2,7 @@
 // Controller de contexto do Mapa (ações geoespaciais autenticadas)
 
 require_once "model/dao/DenunciaDAO.php";
+require_once "config/ResponseHelper.php";
 
 class MapaController
 {
@@ -148,10 +149,7 @@ class MapaController
      */
     private function responderJson(array $dados, $statusCode = 200)
     {
-        http_response_code($statusCode);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        exit();
+        ResponseHelper::responderJson($dados, $statusCode);
     }
 }
 ?>

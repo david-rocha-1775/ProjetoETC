@@ -56,6 +56,11 @@ try {
     }
 
     if ($type === 'action') {
+        if ($requestMethod === 'POST' && !csrfRequisicaoValida()) {
+            responder419();
+            exit();
+        }
+
         $controllerFile = $config['controller_file'] ?? '';
         $controllerClass = $config['controller_class'] ?? '';
         $controllerMethod = $config['controller_method'] ?? '';

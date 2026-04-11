@@ -4,6 +4,7 @@
 <div class="d-flex py-4" style="min-height: calc(100vh - 120px);">
     <section class="form-signin w-100 m-auto" style="max-width: 330px;">
         <form action="index.php?rota=processar_cadastro" method="POST">
+            <?= csrfField() ?>
 
             <h2 class="h3 mb-3 fw-normal">Criar Conta</h2>
 

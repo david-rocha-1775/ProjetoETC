@@ -6,6 +6,8 @@ require_once "model/dto/DenunciaDTO.php";
 
 class DenunciaDAO
 {
+    public const STATUS_VALIDOS = ['Aberto', 'Em Andamento', 'Resolvido'];
+
     private $conexao;
 
     public function __construct()
@@ -279,28 +281,7 @@ class DenunciaDAO
 
         $denuncias = [];
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $denuncia = new DenunciaDTO();
-            $status = $dados['status'];
-            $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
-
-            if (!in_array($status, $statusValido, true)) {
-                $status = 'Aberto';
-            }
-
-            $denuncia->setId($dados['id_denuncia']);
-            $denuncia->setTitulo($dados['titulo']);
-            $denuncia->setDescricao($dados['descricao']);
-            $denuncia->setLocalizacao($dados['localizacao']);
-            $denuncia->setLatitude($dados['latitude']);
-            $denuncia->setLongitude($dados['longitude']);
-            $denuncia->setFotoPath($dados['foto_path']);
-            $denuncia->setStatus($status);
-            $denuncia->setAtivo($dados['ativo']);
-            $denuncia->setIdUsuario($dados['fk_usuario']);
-            $denuncia->setIdCategoria($dados['fk_categoria']);
-            $denuncia->setDataCriacao($dados['data_criacao']);
-
-            $denuncias[] = $denuncia;
+            $denuncias[] = $this->hidratarDenuncia($dados);
         }
 
         return $denuncias;
@@ -323,20 +304,218 @@ class DenunciaDAO
     }
 
     /**
+     * Lista denúncias para uso administrativo com filtros opcionais.
+     *
+     * @param string|null $status
+     * @param int|null $idCategoria
+     * @param string $termoBusca
+     * @param int $pagina
+     * @param int $limite
+     * @param string $ordenacao
+     * @return DenunciaDTO[]
+     */
+    public function listarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $pagina = 1, $limite = 10, $ordenacao = 'recentes')
+    {
+        $pagina = (int) $pagina;
+        $limite = (int) $limite;
+        $termoBusca = trim((string) $termoBusca);
+
+        if ($pagina < 1) {
+            $pagina = 1;
+        }
+
+        if ($limite < 1) {
+            $limite = 10;
+        }
+
+        $offset = ($pagina - 1) * $limite;
+        $ordenacaoSql = $this->mapearOrdenacaoAdmin($ordenacao);
+
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
+                FROM denuncias
+                WHERE ativo = 1";
+
+        if ($status !== null) {
+            $sql .= " AND status = :status";
+        }
+
+        if ($idCategoria !== null) {
+            $sql .= " AND fk_categoria = :fk_categoria";
+        }
+
+        if ($termoBusca !== '') {
+            $sql .= " AND (titulo LIKE :termo_busca OR descricao LIKE :termo_busca OR localizacao LIKE :termo_busca)";
+        }
+
+        $sql .= " ORDER BY {$ordenacaoSql} LIMIT :limite OFFSET :offset";
+
+        $stmt = $this->conexao->prepare($sql);
+
+        if ($status !== null) {
+            $stmt->bindValue(':status', $status);
+        }
+
+        if ($idCategoria !== null) {
+            $stmt->bindValue(':fk_categoria', (int) $idCategoria, PDO::PARAM_INT);
+        }
+
+        if ($termoBusca !== '') {
+            $termoBuscaLike = '%' . $termoBusca . '%';
+            $stmt->bindValue(':termo_busca', $termoBuscaLike);
+        }
+
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $denuncias = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $denuncias[] = $this->hidratarDenuncia($dados);
+        }
+
+        return $denuncias;
+    }
+
+    /**
+     * Conta denúncias para uso administrativo com filtros opcionais.
+     *
+     * @param string|null $status
+     * @param int|null $idCategoria
+     * @param string $termoBusca
+     * @return int
+     */
+    public function contarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '')
+    {
+        $termoBusca = trim((string) $termoBusca);
+
+        $sql = "SELECT COUNT(*) AS total
+                FROM denuncias
+                WHERE ativo = 1";
+
+        if ($status !== null) {
+            $sql .= " AND status = :status";
+        }
+
+        if ($idCategoria !== null) {
+            $sql .= " AND fk_categoria = :fk_categoria";
+        }
+
+        if ($termoBusca !== '') {
+            $sql .= " AND (titulo LIKE :termo_busca OR descricao LIKE :termo_busca OR localizacao LIKE :termo_busca)";
+        }
+
+        $stmt = $this->conexao->prepare($sql);
+
+        if ($status !== null) {
+            $stmt->bindValue(':status', $status);
+        }
+
+        if ($idCategoria !== null) {
+            $stmt->bindValue(':fk_categoria', (int) $idCategoria, PDO::PARAM_INT);
+        }
+
+        if ($termoBusca !== '') {
+            $termoBuscaLike = '%' . $termoBusca . '%';
+            $stmt->bindValue(':termo_busca', $termoBuscaLike);
+        }
+
+        $stmt->execute();
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($dados['total'] ?? 0);
+    }
+
+    /**
+     * Atualiza o status de uma denúncia ativa.
+     *
+     * @param int $idDenuncia
+     * @param string $status
+     * @return bool
+     */
+    public function atualizarStatusPorId($idDenuncia, $status)
+    {
+        $sql = "UPDATE denuncias SET status = :status WHERE id_denuncia = :id_denuncia AND ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindValue(':status', $status);
+        $stmt->bindValue(':id_denuncia', (int) $idDenuncia, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Retorna o total de denúncias ativas por status.
+     *
+     * @return array<string, int>
+     */
+    public function contarPorStatusAdmin()
+    {
+        $sql = "SELECT status, COUNT(*) AS total
+                FROM denuncias
+                WHERE ativo = 1
+                GROUP BY status";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->execute();
+
+        $resultado = [
+            'Aberto' => 0,
+            'Em Andamento' => 0,
+            'Resolvido' => 0,
+        ];
+
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $status = (string) ($dados['status'] ?? '');
+            if (array_key_exists($status, $resultado)) {
+                $resultado[$status] = (int) ($dados['total'] ?? 0);
+            }
+        }
+
+        return $resultado;
+    }
+
+    /**
+     * Mapeia opções válidas de ordenação da tela administrativa.
+     *
+     * @param string $ordenacao
+     * @return string
+     */
+    private function mapearOrdenacaoAdmin($ordenacao)
+    {
+        $ordenacao = strtolower(trim((string) $ordenacao));
+
+        if ($ordenacao === 'antigas') {
+            return 'data_criacao ASC, id_denuncia ASC';
+        }
+
+        return 'data_criacao DESC, id_denuncia DESC';
+    }
+
+    /**
      * Monta um DTO de denúncia a partir de um registro bruto.
      *
      * @param array $dados
      * @return DenunciaDTO
      */
+    /**
+     * Valida e normaliza o status de uma denúncia.
+     *
+     * @param string $status
+     * @return string
+     */
+    private function validarStatus($status)
+    {
+        $status = (string) $status;
+        if (!in_array($status, self::STATUS_VALIDOS, true)) {
+            return 'Aberto';
+        }
+        return $status;
+    }
+
     private function hidratarDenuncia(array $dados)
     {
         $denuncia = new DenunciaDTO();
-        $status = $dados['status'];
-        $statusValido = ['Aberto', 'Em Andamento', 'Resolvido'];
-
-        if (!in_array($status, $statusValido, true)) {
-            $status = 'Aberto';
-        }
+        $status = $this->validarStatus($dados['status'] ?? '');
 
         $denuncia->setId($dados['id_denuncia']);
         $denuncia->setTitulo($dados['titulo']);

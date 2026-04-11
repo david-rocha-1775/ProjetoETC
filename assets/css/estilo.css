@@ -144,8 +144,16 @@ main {
 .btn {
     border-radius: 1rem;
     font-weight: 600;
-    padding: 0.75rem 1.5rem;
     transition: all 0.3s ease;
+}
+
+.btn:not(.btn-sm):not(.btn-lg) {
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-sm {
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
 }
 
 .btn-primary {
@@ -242,8 +250,165 @@ main {
     font-weight: 700;
 }
 
+/* ============================================
+   HOME CARDS - REFACTOR INLINE STYLES
+   ============================================ */
+
+.home-card-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 280px;
+    padding: 2.5rem;
+}
+
+.home-card-flex-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 280px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-card-centered {
+    text-align: center;
+}
+
+.home-card-large {
+    padding: 3rem;
+}
+
+.painel-denuncias-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.painel-denuncia-card {
+    display: grid !important;
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid rgba(156, 202, 255, 0.08);
+}
+
+.painel-denuncia-thumb-wrap {
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+    height: 100%;
+}
+
+.painel-denuncia-thumb {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.painel-denuncia-thumb-placeholder {
+    background: linear-gradient(140deg, rgba(156, 202, 255, 0.3), rgba(138, 212, 205, 0.2));
+}
+
+.painel-denuncia-conteudo {
+    flex: 1;
+    min-height: 200px;
+}
+
+.painel-denuncia-cabecalho {
+    border-bottom: 1px solid rgba(156, 202, 255, 0.08);
+    padding-bottom: 0.4rem;
+}
+
+.painel-denuncia-meta {
+    color: rgba(224, 224, 224, 0.9);
+    font-size: 0.95rem;
+}
+
+.painel-denuncia-resumo {
+    color: rgba(224, 224, 224, 0.78);
+    font-size: 0.92rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.painel-denuncia-rodape {
+    border-color: rgba(156, 202, 255, 0.15) !important;
+}
+
+.painel-denuncia-indicadores {
+    display: inline-flex;
+    gap: 0.9rem;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(156, 202, 255, 0.08);
+}
+
+.painel-indicador-curtidas,
+.painel-indicador-comentarios {
+    white-space: nowrap;
+}
+
+.painel-denuncia-titulo {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 [data-bs-theme="light"] .card-title {
     color: #0b1326;
+}
+
+[data-bs-theme="light"] .painel-denuncia-meta {
+    color: #1f2937;
+}
+
+[data-bs-theme="light"] .painel-denuncia-resumo {
+    color: #374151;
+}
+
+[data-bs-theme="light"] .painel-denuncia-cabecalho {
+    border-bottom-color: rgba(11, 19, 38, 0.1);
+}
+
+[data-bs-theme="light"] .painel-denuncia-rodape {
+    border-top-color: rgba(11, 19, 38, 0.1) !important;
+}
+
+[data-bs-theme="light"] .painel-denuncia-indicadores {
+    background: rgba(11, 19, 38, 0.06);
+}
+
+@media (max-width: 575.98px) {
+    .painel-denuncia-card {
+        display: grid !important;
+        grid-template-columns: 1fr;
+    }
+
+    .painel-denuncia-thumb-wrap {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .painel-denuncia-thumb {
+        min-height: 170px;
+    }
+
+    .painel-denuncia-indicadores {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 /* ============================================
@@ -258,11 +423,6 @@ main {
 }
 
 [data-bs-theme="light"] .glass {
-    background-color: var(--color-card-bg);
-    border: 1px solid rgba(156, 202, 255, 0.2);
-}
-
-[data-bs-theme="light"] .glass {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(156, 202, 255, 0.2);
 }
@@ -274,58 +434,6 @@ main {
 svg {
     display: inline-flex;
     vertical-align: middle;
-}
-
-/* ============================================
-   HERO SECTION
-   ============================================ */
-
-.hero-section {
-    position: relative;
-    min-height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--color-dark-bg) 0%, #15213a 100%);
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(156, 202, 255, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: #ffffff;
-}
-
-.hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hero-content p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    color: #b0b0b0;
-}
-
-[data-bs-theme="light"] .hero-content p {
-    color: #555555;
 }
 
 /* ============================================
@@ -378,132 +486,6 @@ svg {
     background-color: #f8d7da;
     border-color: #f5c6cb;
     color: #721c24;
-}
-
-/* ============================================
-   BENTO GRID
-   ============================================ */
-
-.bento-grid {
-    display: grid;
-    gap: 1.5rem;
-    margin: 3rem 0;
-}
-
-.bento-item {
-    background-color: var(--color-card-bg);
-    border-radius: 1rem;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.3s ease;
-    min-height: 250px;
-}
-
-.bento-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 50px rgba(156, 202, 255, 0.15);
-}
-
-.bento-item-icon {
-    font-size: 48px;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-}
-
-.bento-item h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: #ffffff;
-}
-
-.bento-item p {
-    color: #a0a0a0;
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-[data-bs-theme="light"] .bento-item {
-    background-color: #e8eaef;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-}
-
-[data-bs-theme="light"] .bento-item:hover {
-    box-shadow: 0 15px 40px rgba(156, 202, 255, 0.15);
-}
-
-[data-bs-theme="light"] .bento-item h3 {
-    color: #0066cc;
-    font-weight: 800;
-}
-
-[data-bs-theme="light"] .bento-item p {
-    color: #000000;
-}
-
-/* Grid Responsivo */
-@media (min-width: 768px) {
-    .bento-grid {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 1.5rem;
-    }
-
-    .bento-item.col-md-8 {
-        grid-column: span 8;
-    }
-
-    .bento-item.col-md-4 {
-        grid-column: span 4;
-    }
-
-    .bento-item.col-md-12 {
-        grid-column: span 12;
-    }
-}
-
-@media (max-width: 767px) {
-    .bento-item {
-        grid-column: span 12;
-    }
-
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-}
-
-/* ============================================
-   SECTION SPACING
-   ============================================ */
-
-.section-spacing {
-    padding: 3rem 0;
-}
-
-/* ============================================
-   STAT CARD (para card de impacto)
-   ============================================ */
-
-.stat-item {
-    text-align: center;
-    padding: 1rem;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.95rem;
-    color: #a0a0a0;
-}
-
-[data-bs-theme="light"] .stat-label {
-    color: #666666;
 }
 
 /* ============================================

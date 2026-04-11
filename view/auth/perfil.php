@@ -13,6 +13,7 @@
                     <h3 class="h5 mb-3">Atualizar Dados</h3>
 
                     <form action="index.php?rota=processar_edicao_usuario" method="POST">
+                        <?= csrfField() ?>
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="nome" name="nome"
@@ -58,6 +59,7 @@
 
                     <form action="index.php?rota=processar_exclusao_usuario" method="POST"
                         onsubmit="return confirm('Tem certeza que deseja excluir sua conta? Essa ação não pode ser desfeita.');">
+                        <?= csrfField() ?>
                         <div class="mb-3">
                             <label for="senha_confirmacao" class="form-label">Senha de Confirmação</label>
                             <input type="password" class="form-control" id="senha_confirmacao" name="senha_confirmacao"

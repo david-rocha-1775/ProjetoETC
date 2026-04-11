@@ -98,6 +98,42 @@ class UsuarioDAO
     }
 
     /**
+     * Retorna um mapa id_usuario => nome para uma lista de usuários.
+     *
+     * @param int[] $idsUsuario
+     * @return array<int, string>
+     */
+    public function buscarNomesPorIds(array $idsUsuario)
+    {
+        $idsUsuario = array_values(array_filter(array_map('intval', $idsUsuario), static function ($id) {
+            return $id > 0;
+        }));
+
+        if ($idsUsuario === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($idsUsuario), '?'));
+        $sql = "SELECT id_usuario, nome
+                FROM usuarios
+                WHERE ativo = 1 AND id_usuario IN ($placeholders)";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($idsUsuario as $index => $idUsuario) {
+            $stmt->bindValue($index + 1, $idUsuario, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+
+        $resultado = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $resultado[(int) $dados['id_usuario']] = (string) $dados['nome'];
+        }
+
+        return $resultado;
+    }
+
+    /**
      * Verifica se um e-mail já está cadastrado.
      *
      * @param string $email
@@ -236,6 +272,21 @@ class UsuarioDAO
         }
 
         return $usuarios;
+    }
+
+    /**
+     * Conta usuários ativos.
+     *
+     * @return int
+     */
+    public function contarAtivos()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM usuarios WHERE ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
     }
 }
 ?>

@@ -7,6 +7,7 @@ require_once "model/dto/UsuarioDTO.php";
 class AuthController
 {
     private $usuarioDAO;
+    private const MSG_CREDENCIAIS_INVALIDAS = 'Credenciais inválidas.';
 
     public function __construct()
     {
@@ -39,12 +40,20 @@ class AuthController
                 throw new Exception("Nome, e-mail e senha são obrigatórios.");
             }
 
+            if (mb_strlen($nome) < 3 || mb_strlen($nome) > 100) {
+                throw new Exception('O nome deve ter entre 3 e 100 caracteres.');
+            }
+
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw new Exception("Informe um e-mail válido.");
             }
 
             if (strlen($senha) < 6) {
                 throw new Exception("A senha deve ter no mínimo 6 caracteres.");
+            }
+
+            if (strlen($senha) > 72) {
+                throw new Exception('A senha deve ter no máximo 72 caracteres.');
             }
 
             if ($this->usuarioDAO->emailJaCadastrado($email)) {
@@ -64,7 +73,7 @@ class AuthController
             exit();
 
         } catch (Exception $e) {
-            $_SESSION['mensagem'] = "Erro ao cadastrar: " . $e->getMessage();
+            $_SESSION['mensagem'] = $e->getMessage();
             $_SESSION['tipo_mensagem'] = "erro";
             header("Location: index.php?rota=cadastrar");
             exit();
@@ -92,25 +101,22 @@ class AuthController
 
             $usuario = $this->usuarioDAO->buscarPorEmail($email);
 
-            if ($usuario !== null) {
-                if (password_verify($senha, $usuario->getSenha())) {
-                    $_SESSION['usuario_id'] = $usuario->getId();
-                    $_SESSION['usuario_nome'] = $usuario->getNome();
-                    $_SESSION['usuario_email'] = $usuario->getEmail();
-                    $_SESSION['usuario_tipo'] = $usuario->getTipo();
-                    $_SESSION['logado'] = true;
-
-                    header("Location: index.php?rota=painel");
-                    exit();
-                } else {
-                    $this->redirecionarComErro("Senha incorreta.", "login");
-                }
-            } else {
-                $this->redirecionarComErro("Usuário não encontrado.", "login");
+            if ($usuario === null || !password_verify($senha, $usuario->getSenha())) {
+                $this->redirecionarComErro(self::MSG_CREDENCIAIS_INVALIDAS, 'login');
             }
 
+            session_regenerate_id(true);
+            $_SESSION['usuario_id'] = $usuario->getId();
+            $_SESSION['usuario_nome'] = $usuario->getNome();
+            $_SESSION['usuario_email'] = $usuario->getEmail();
+            $_SESSION['usuario_tipo'] = $usuario->getTipo();
+            $_SESSION['logado'] = true;
+
+            header("Location: index.php?rota=painel");
+            exit();
+
         } catch (Exception $e) {
-            $this->redirecionarComErro("Erro ao processar login: " . $e->getMessage(), "login");
+            $this->redirecionarComErro($e->getMessage(), 'login');
         }
     }
 
@@ -119,9 +125,11 @@ class AuthController
      */
     public function logout()
     {
+        $this->exigirMetodoPost('painel');
         session_unset();
         session_destroy();
         session_start();
+        session_regenerate_id(true);
         $_SESSION['mensagem'] = 'Você saiu da conta com sucesso.';
         $_SESSION['tipo_mensagem'] = 'sucesso';
         header("Location: index.php?rota=login");
@@ -168,6 +176,10 @@ class AuthController
                 throw new Exception("Nome e e-mail são obrigatórios.");
             }
 
+            if (mb_strlen($nome) < 3 || mb_strlen($nome) > 100) {
+                throw new Exception('O nome deve ter entre 3 e 100 caracteres.');
+            }
+
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw new Exception("Informe um e-mail válido.");
             }
@@ -204,6 +216,10 @@ class AuthController
                     throw new Exception("A nova senha deve ter no mínimo 6 caracteres.");
                 }
 
+                if (strlen($novaSenha) > 72) {
+                    throw new Exception('A nova senha deve ter no máximo 72 caracteres.');
+                }
+
                 $senhaFinal = password_hash($novaSenha, PASSWORD_DEFAULT);
             }
 
@@ -223,7 +239,7 @@ class AuthController
             exit();
 
         } catch (Exception $e) {
-            $this->redirecionarComErro("Erro ao atualizar perfil: " . $e->getMessage(), "painel");
+            $this->redirecionarComErro($e->getMessage(), 'painel');
         }
     }
 
@@ -260,13 +276,14 @@ class AuthController
             session_unset();
             session_destroy();
             session_start();
+            session_regenerate_id(true);
             $_SESSION['mensagem'] = "Conta excluída com sucesso.";
             $_SESSION['tipo_mensagem'] = "sucesso";
             header("Location: index.php?rota=login");
             exit();
 
         } catch (Exception $e) {
-            $this->redirecionarComErro("Erro ao excluir conta: " . $e->getMessage(), "painel");
+            $this->redirecionarComErro($e->getMessage(), 'painel');
         }
     }
 
