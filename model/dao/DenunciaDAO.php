@@ -84,6 +84,57 @@ class DenunciaDAO
     }
 
     /**
+     * Retorna denuncias ativas filtradas pelo usuario dono com paginacao.
+     *
+     * @param int $idUsuario
+     * @param int $pagina
+     * @param int $limite
+     * @param string $ordenacao
+     * @return DenunciaDTO[]
+     */
+    public function listarPaginadasPorUsuario($idUsuario, $pagina = 1, $limite = 10, $ordenacao = 'recentes')
+    {
+        $idUsuario = (int) $idUsuario;
+        $pagina = (int) $pagina;
+        $limite = (int) $limite;
+        $ordenacao = strtolower(trim((string) $ordenacao));
+
+        if ($idUsuario <= 0) {
+            return [];
+        }
+
+        if ($pagina < 1) {
+            $pagina = 1;
+        }
+
+        if ($limite < 1) {
+            $limite = 10;
+        }
+
+        $offset = ($pagina - 1) * $limite;
+        $ordemSql = ($ordenacao === 'antigas') ? 'ASC' : 'DESC';
+
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
+            FROM denuncias
+            WHERE ativo = 1 AND fk_usuario = :fk_usuario
+            ORDER BY data_criacao {$ordemSql}, id_denuncia {$ordemSql}
+            LIMIT :limite OFFSET :offset";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindValue(':fk_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $denuncias = [];
+        while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $denuncias[] = $this->hidratarDenuncia($dados);
+        }
+
+        return $denuncias;
+    }
+
+    /**
      * Conta denúncias ativas com filtro opcional por categoria.
      *
      * @param int|null $idCategoria
@@ -109,6 +160,98 @@ class DenunciaDAO
         $dados = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return (int) ($dados['total'] ?? 0);
+    }
+
+    /**
+     * Conta denuncias ativas de um usuario especifico.
+     *
+     * @param int $idUsuario
+     * @return int
+     */
+    public function contarPaginadasPorUsuario($idUsuario)
+    {
+        $idUsuario = (int) $idUsuario;
+        if ($idUsuario <= 0) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*) AS total
+            FROM denuncias
+            WHERE ativo = 1 AND fk_usuario = :fk_usuario";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindValue(':fk_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($dados['total'] ?? 0);
+    }
+
+    /**
+     * Retorna contagem total por grupos de status para denuncias ativas,
+     * com filtro opcional por categoria.
+     *
+     * @param int|null $idCategoria
+     * @return array{em_analise:int,resolvido:int}
+     */
+    public function contarTotaisPorStatus($idCategoria = null)
+    {
+        $sql = "SELECT
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                FROM denuncias
+                WHERE ativo = 1";
+
+        if ($idCategoria !== null) {
+            $sql .= " AND fk_categoria = :fk_categoria";
+        }
+
+        $stmt = $this->conexao->prepare($sql);
+
+        if ($idCategoria !== null) {
+            $stmt->bindValue(':fk_categoria', (int) $idCategoria, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'em_analise' => (int) ($dados['total_em_analise'] ?? 0),
+            'resolvido' => (int) ($dados['total_resolvido'] ?? 0),
+        ];
+    }
+
+    /**
+     * Retorna contagem de denuncias por status para um usuario.
+     *
+     * @param int $idUsuario
+     * @return array{em_analise:int,resolvido:int}
+     */
+    public function contarTotaisPorStatusPorUsuario($idUsuario)
+    {
+        $idUsuario = (int) $idUsuario;
+        if ($idUsuario <= 0) {
+            return [
+                'em_analise' => 0,
+                'resolvido' => 0,
+            ];
+        }
+
+        $sql = "SELECT
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                FROM denuncias
+                WHERE ativo = 1 AND fk_usuario = :fk_usuario";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindValue(':fk_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'em_analise' => (int) ($dados['total_em_analise'] ?? 0),
+            'resolvido' => (int) ($dados['total_resolvido'] ?? 0),
+        ];
     }
 
     /**

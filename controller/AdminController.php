@@ -54,14 +54,32 @@ class AdminController
     public function listarUsuarios()
     {
         try {
-            $usuarios = $this->usuarioDAO->listarUsuarios();
+            $buscaFiltro = $this->normalizarBuscaFiltro($_GET['busca'] ?? '');
+            $papelFiltro = $this->normalizarPapelUsuarioFiltro($_GET['papel'] ?? '');
+            $statusFiltro = $this->normalizarStatusUsuarioFiltro($_GET['status'] ?? 'ativo');
+
+            $usuarios = $this->usuarioDAO->listarUsuarios(
+                $buscaFiltro,
+                $papelFiltro !== '' ? $papelFiltro : null,
+                $statusFiltro
+            );
+
+            $filtrosUsuariosAtuais = [
+                'busca' => $buscaFiltro,
+                'papel' => $papelFiltro,
+                'status' => $statusFiltro,
+            ];
+
             $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
             $tituloPagina = 'Usuários Cadastrados';
             include 'view/admin/usuarios.php';
             return;
 
         } catch (Throwable $e) {
-            $this->redirecionarComErro('Não foi possível carregar a listagem de usuários.', 'painel');
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível carregar a listagem de usuários.'),
+                'listar_usuarios'
+            );
         }
     }
 
@@ -240,6 +258,45 @@ class AdminController
         } catch (Throwable $e) {
             $this->redirecionarComErro(
                 $this->mensagemErroExibivel($e, 'Não foi possível desativar o usuário.'),
+                'listar_usuarios'
+            );
+        }
+    }
+
+    /**
+     * Promove usuário para perfil admin (uso administrativo).
+     */
+    public function promoverUsuarioAdmin()
+    {
+        $this->exigirMetodoPost('listar_usuarios');
+
+        try {
+            $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
+            $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idUsuario === $idAdminSessao) {
+                throw new InvalidArgumentException('Sua conta já possui permissão administrativa.');
+            }
+
+            $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
+            if ($usuario === null) {
+                throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            if ((string) $usuario->getTipo() === 'admin') {
+                throw new InvalidArgumentException('Este usuário já é administrador.');
+            }
+
+            $promoveu = $this->usuarioDAO->promoverParaAdmin($idUsuario);
+            if (!$promoveu) {
+                throw new RuntimeException('Falha ao promover usuário para administrador.');
+            }
+
+            $this->redirecionarComSucesso('Usuário promovido para administrador com sucesso.', 'listar_usuarios');
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível promover o usuário para administrador.'),
                 'listar_usuarios'
             );
         }
@@ -474,6 +531,36 @@ class AdminController
         }
 
         return $busca;
+    }
+
+    /**
+     * Normaliza filtro de papel para listagem de usuários.
+     */
+    private function normalizarPapelUsuarioFiltro($papel)
+    {
+        $papel = strtolower(trim((string) $papel));
+        if ($papel === '') {
+            return '';
+        }
+
+        if (!in_array($papel, ['admin', 'cidadao'], true)) {
+            throw new InvalidArgumentException('Filtro de papel inválido.');
+        }
+
+        return $papel;
+    }
+
+    /**
+     * Normaliza filtro de status para listagem de usuários.
+     */
+    private function normalizarStatusUsuarioFiltro($status)
+    {
+        $status = strtolower(trim((string) $status));
+        if ($status === '' || $status === 'ativo') {
+            return 'ativo';
+        }
+
+        throw new InvalidArgumentException('Filtro de status inválido.');
     }
 
     /**

@@ -27,6 +27,7 @@ class PainelListagemController extends PainelBaseController
             }
 
             $denuncias = $this->denunciaDAO->listarPaginadas($idCategoriaFiltro, $paginaAtual, $limitePagina, $ordenacaoFiltro);
+            $totaisStatus = $this->denunciaDAO->contarTotaisPorStatus($idCategoriaFiltro);
             $categorias = $this->categoriaDAO->listarTodas();
             $resumoInteracoes = $this->carregarResumoInteracoesDenuncias($denuncias);
             $autoresPorDenuncia = $this->carregarAutoresPorDenuncia($denuncias);
@@ -38,6 +39,8 @@ class PainelListagemController extends PainelBaseController
             $filtroOrdenacaoSelecionada = $ordenacaoFiltro;
             $painelQueryRetorno = $this->montarUrlRetornoPainel();
             $painelQueryFiltros = $this->montarUrlRetornoPainel(['rota' => null]);
+            $totalStatusEmAnalise = (int) ($totaisStatus['em_analise'] ?? 0);
+            $totalStatusResolvido = (int) ($totaisStatus['resolvido'] ?? 0);
 
             include "view/painel/index.php";
 

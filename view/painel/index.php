@@ -28,16 +28,18 @@ $baseQuery = http_build_query($baseParams);
 
 $denuncias = isset($denuncias) && is_array($denuncias) ? $denuncias : [];
 $totalNaPagina = count($denuncias);
-$statusEmAnalise = 0;
-$statusResolvido = 0;
+$statusEmAnalise = isset($totalStatusEmAnalise) ? (int) $totalStatusEmAnalise : 0;
+$statusResolvido = isset($totalStatusResolvido) ? (int) $totalStatusResolvido : 0;
 
-foreach ($denuncias as $denunciaMetrica) {
-    $statusNormalizado = mb_strtolower(trim((string) $denunciaMetrica->getStatus()));
+if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
+    foreach ($denuncias as $denunciaMetrica) {
+        $statusNormalizado = mb_strtolower(trim((string) $denunciaMetrica->getStatus()));
 
-    if (str_contains($statusNormalizado, 'resolvido')) {
-        $statusResolvido++;
-    } else {
-        $statusEmAnalise++;
+        if (str_contains($statusNormalizado, 'resolvido')) {
+            $statusResolvido++;
+        } else {
+            $statusEmAnalise++;
+        }
     }
 }
 ?>
@@ -48,8 +50,7 @@ foreach ($denuncias as $denunciaMetrica) {
     <section class="painel-conteudo-col">
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
             <div>
-                <h2 class="mb-1">Painel do Cidadao</h2>
-                <p class="text-muted mb-0">Acompanhe o status das suas solicitacoes.</p>
+                <h2 class="mb-1">Início</h2>
             </div>
         </div>
 
@@ -74,7 +75,7 @@ foreach ($denuncias as $denunciaMetrica) {
                             <p class="text-uppercase small text-muted mb-1">Em analise</p>
                             <p class="display-6 mb-0 fw-semibold"><?= htmlspecialchars((string) $statusEmAnalise) ?>
                             </p>
-                            <span class="small text-muted">nesta pagina</span>
+                            <span class="small text-muted">total</span>
                         </div>
                         <img src="assets/fonts/material-symbols/pending.svg" alt="em analise" width="24" height="24"
                             class="painel-metrica-icone">
@@ -88,7 +89,7 @@ foreach ($denuncias as $denunciaMetrica) {
                             <p class="text-uppercase small text-muted mb-1">Resolvidos</p>
                             <p class="display-6 mb-0 fw-semibold"><?= htmlspecialchars((string) $statusResolvido) ?>
                             </p>
-                            <span class="small text-muted">nesta pagina</span>
+                            <span class="small text-muted">total</span>
                         </div>
                         <img src="assets/fonts/material-symbols/task_alt_.svg" alt="resolvidos" width="24" height="24"
                             class="painel-metrica-icone">
@@ -107,7 +108,7 @@ foreach ($denuncias as $denunciaMetrica) {
                 Filtrar
             </button>
             <a href="index.php?rota=nova_denuncia"
-                class="btn btn-primary btn-sm rounded-pill d-inline-flex align-items-center gap-2">
+                class="btn btn-primary btn-sm rounded-pill d-inline-flex align-items-center gap-2 painel-btn-nova-denuncia">
                 <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon" width="16"
                     height="16">
                 Nova denuncia
@@ -198,6 +199,11 @@ foreach ($denuncias as $denunciaMetrica) {
                         $nomeAutor = $autoresPorDenuncia[$idDenuncia] ?? 'Usuario';
                         $nomeCategoria = $categoriasPorId[(int) $d->getIdCategoria()] ?? 'Sem categoria';
                         $urlDetalhe = 'index.php?rota=detalhe_denuncia&id=' . rawurlencode((string) $idDenuncia);
+                        $dataCriacaoRaw = (string) $d->getDataCriacao();
+                        $timestampDataCriacao = strtotime($dataCriacaoRaw);
+                        $dataCriacaoFormatada = $timestampDataCriacao !== false
+                            ? date('d/m/y', $timestampDataCriacao)
+                            : $dataCriacaoRaw;
                         ?>
                         <article id="denuncia-<?= htmlspecialchars((string) $idDenuncia) ?>"
                             data-denuncia-id="<?= htmlspecialchars((string) $idDenuncia) ?>"
@@ -229,7 +235,7 @@ foreach ($denuncias as $denunciaMetrica) {
                                 <p class="mb-1 painel-denuncia-meta"><strong>Autor:</strong>
                                     <?= htmlspecialchars($nomeAutor) ?></p>
                                 <p class="mb-2 painel-denuncia-meta"><strong>Criada em:</strong>
-                                    <?= htmlspecialchars((string) $d->getDataCriacao()) ?></p>
+                                    <?= htmlspecialchars($dataCriacaoFormatada) ?></p>
                                 <p class="mb-3 painel-denuncia-resumo">
                                     <?= htmlspecialchars(mb_strimwidth((string) $d->getDescricao(), 0, 180, '...')) ?>
                                 </p>
@@ -245,10 +251,12 @@ foreach ($denuncias as $denunciaMetrica) {
                                         <button type="submit"
                                             class="p-0 border-0 bg-transparent shadow-none painel-icone-curtir <?= $resumoDenuncia['usuarioCurtiu'] ? 'is-active' : '' ?>"
                                             data-botao-curtir-denuncia data-curtir-icone="1"
+                                            data-curtir-icone-off="assets/fonts/material-symbols/thumb.svg"
+                                            data-curtir-icone-on="assets/fonts/material-symbols/thumb_up.svg"
                                             aria-label="<?= $resumoDenuncia['usuarioCurtiu'] ? 'Remover curtida' : 'Curtir' ?>"
                                             title="<?= $resumoDenuncia['usuarioCurtiu'] ? 'Remover curtida' : 'Curtir' ?>">
-                                            <img src="assets/fonts/material-symbols/thumb.svg" alt="curtir" class="nav-icon"
-                                                width="18" height="18">
+                                            <img src="<?= $resumoDenuncia['usuarioCurtiu'] ? 'assets/fonts/material-symbols/thumb_up.svg' : 'assets/fonts/material-symbols/thumb.svg' ?>"
+                                                alt="curtir" class="nav-icon" width="18" height="18">
                                         </button>
                                     </form>
                                     <div class="painel-denuncia-indicadores small">
@@ -270,16 +278,8 @@ foreach ($denuncias as $denunciaMetrica) {
 
                 <?php if ($totalPaginas > 1): ?>
                     <div class="d-flex flex-column gap-3 mt-4">
-                        <?php if ($paginaAtual < $totalPaginas): ?>
-                            <div>
-                                <a class="btn btn-success"
-                                    href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=' . ($paginaAtual + 1)) ?>">Ver
-                                    mais denuncias</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <nav aria-label="Paginacao das denuncias">
-                            <ul class="pagination flex-wrap mb-0">
+                        <nav class="painel-paginacao-nav" aria-label="Paginacao das denuncias">
+                            <ul class="pagination painel-paginacao flex-wrap mb-0">
                                 <?php if ($paginaAtual > 1): ?>
                                     <li class="page-item">
                                         <a class="page-link"
@@ -298,7 +298,7 @@ foreach ($denuncias as $denunciaMetrica) {
                                             href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=1') ?>">1</a>
                                     </li>
                                     <?php if ($inicioPaginacao > 2): ?>
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        <li class="page-item disabled painel-paginacao-ellipsis"><span class="page-link">...</span></li>
                                     <?php endif; ?>
                                 <?php endif; ?>
 
@@ -311,7 +311,7 @@ foreach ($denuncias as $denunciaMetrica) {
 
                                 <?php if ($fimPaginacao < $totalPaginas): ?>
                                     <?php if ($fimPaginacao < $totalPaginas - 1): ?>
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        <li class="page-item disabled painel-paginacao-ellipsis"><span class="page-link">...</span></li>
                                     <?php endif; ?>
                                     <li class="page-item">
                                         <a class="page-link"

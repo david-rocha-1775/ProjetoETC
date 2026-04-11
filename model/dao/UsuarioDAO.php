@@ -244,18 +244,62 @@ class UsuarioDAO
     }
 
     /**
-     * Lista usuários cadastrados em ordem de criação (mais recentes primeiro).
+     * Promove um usuário ativo para perfil administrativo.
      *
-     * @return UsuarioDTO[]
+     * @param int $idUsuario
+     * @return bool
      */
-    public function listarUsuarios()
+    public function promoverParaAdmin($idUsuario)
     {
-        $sql = "SELECT id_usuario, nome, email, tipo, ativo, data_cadastro
-            FROM usuarios
-            WHERE ativo = 1
-            ORDER BY id_usuario DESC";
+        $sql = "UPDATE usuarios
+                SET tipo = 'admin'
+                WHERE id_usuario = :id_usuario
+                  AND ativo = 1
+                  AND tipo <> 'admin'";
 
         $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    /**
+     * Lista usuários cadastrados em ordem de criação (mais recentes primeiro).
+     *
+     * @param string $busca
+     * @param string|null $papel
+     * @param string $status
+     * @return UsuarioDTO[]
+     */
+    public function listarUsuarios($busca = '', $papel = null, $status = 'ativo')
+    {
+        if ($status !== 'ativo') {
+            return [];
+        }
+
+        $sql = "SELECT id_usuario, nome, email, tipo, ativo, data_cadastro
+            FROM usuarios
+            WHERE ativo = 1";
+
+        $params = [];
+
+        if ($papel !== null && $papel !== '') {
+            $sql .= " AND tipo = :tipo";
+            $params[':tipo'] = (string) $papel;
+        }
+
+        if ($busca !== '') {
+            $sql .= " AND (nome LIKE :busca OR email LIKE :busca)";
+            $params[':busca'] = '%' . $busca . '%';
+        }
+
+        $sql .= " ORDER BY id_usuario DESC";
+
+        $stmt = $this->conexao->prepare($sql);
+        foreach ($params as $chave => $valor) {
+            $stmt->bindValue($chave, $valor);
+        }
         $stmt->execute();
 
         $usuarios = [];

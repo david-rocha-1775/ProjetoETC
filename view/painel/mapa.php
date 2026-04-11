@@ -37,7 +37,7 @@ $paginaJsHeadExtra = [
             </div>
         </div>
 
-        <div id="mapa-denuncias" style="height: 520px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+        <div id="mapa-denuncias" class="mapa-denuncias-canvas"></div>
     </section>
 </div>
 

@@ -108,8 +108,7 @@ class PainelInteracaoController extends PainelBaseController
                 ]);
             }
 
-            $_SESSION['mensagem'] = $mensagem;
-            $_SESSION['tipo_mensagem'] = 'sucesso';
+            unset($_SESSION['mensagem'], $_SESSION['tipo_mensagem']);
 
         } catch (Exception $e) {
             if ($this->requisicaoAceitaJson()) {
@@ -119,8 +118,7 @@ class PainelInteracaoController extends PainelBaseController
                 ], 400);
             }
 
-            $_SESSION['mensagem'] = 'Erro: ' . $e->getMessage();
-            $_SESSION['tipo_mensagem'] = 'erro';
+            unset($_SESSION['mensagem'], $_SESSION['tipo_mensagem']);
         }
 
         header("Location: index.php?" . $this->montarUrlRetornoPosAcao($idDenuncia ?? 0));

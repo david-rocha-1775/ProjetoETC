@@ -4,7 +4,7 @@ $ehAdminSidebar = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] 
 
 $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar): string {
     return in_array($rotaAtualSidebar, $rotasAtivas, true)
-        ? 'btn btn-primary w-100 text-start d-inline-flex align-items-center gap-2'
+        ? 'btn btn-primary w-100 text-start d-inline-flex align-items-center gap-2 painel-sidebar-item-ativo'
         : 'btn btn-outline-primary w-100 text-start d-inline-flex align-items-center gap-2';
 };
 ?>
@@ -19,14 +19,13 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarLogadoMobile"
     aria-labelledby="sidebarLogadoMobileLabel">
     <div class="offcanvas-header border-bottom">
-        <h3 class="offcanvas-title h5 mb-0" id="sidebarLogadoMobileLabel">Navegacao</h3>
+        <h3 class="offcanvas-title h5 mb-0" id="sidebarLogadoMobileLabel">Navegação</h3>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column gap-3">
         <a href="index.php?rota=painel" class="<?= $classeItemSidebar(['painel']) ?>">
-            <img src="assets/fonts/material-symbols/description.svg" alt="minhas denuncias" class="nav-icon" width="18"
-                height="18">
-            Minhas denuncias
+            <img src="assets/fonts/material-symbols/home.svg" alt="inicio" class="nav-icon" width="18" height="18">
+            Inicio
         </a>
         <a href="index.php?rota=nova_denuncia" class="<?= $classeItemSidebar(['nova_denuncia']) ?>">
             <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon" width="18"
@@ -42,24 +41,33 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
             Meu perfil
         </a>
         <?php if ($ehAdminSidebar): ?>
-            <a href="index.php?rota=admin_dashboard"
-                class="<?= $classeItemSidebar(['admin_dashboard', 'admin_denuncias', 'listar_usuarios', 'listar_categorias_admin']) ?>">
-                <img src="assets/fonts/material-symbols/group.svg" alt="administracao" class="nav-icon" width="18"
-                    height="18">
-                Administracao
-            </a>
+            <div class="pt-2 border-top">
+                <p class="small text-muted mb-2">Administracao</p>
+                <div class="d-grid gap-2">
+                    <a href="index.php?rota=admin_dashboard" class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
+                        <img src="assets/fonts/material-symbols/analytics4.svg" alt="dashboard admin" class="nav-icon"
+                            width="18" height="18">
+                        Dashboard Admin
+                    </a>
+                    <a href="index.php?rota=admin_denuncias" class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
+                        <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Denuncias
+                    </a>
+                    <a href="index.php?rota=listar_usuarios" class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
+                        <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Usuarios
+                    </a>
+                    <a href="index.php?rota=listar_categorias_admin"
+                        class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">
+                        <img src="assets/fonts/material-symbols/tune.svg" alt="gerenciar categorias" class="nav-icon"
+                            width="18" height="18">
+                        Gerenciar Categorias
+                    </a>
+                </div>
+            </div>
         <?php endif; ?>
-
-        <div class="mt-auto pt-2 d-grid gap-2">
-            <form action="index.php?rota=sair" method="POST" class="m-0">
-                <?= csrfField() ?>
-                <button type="submit" class="painel-sidebar-logout-link">
-                    <img src="assets/fonts/material-symbols/exit_to_app.svg" alt="sair" class="nav-icon" width="18"
-                        height="18">
-                    Sair
-                </button>
-            </form>
-        </div>
     </div>
 </div>
 
@@ -68,15 +76,15 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
         <div class="card-body painel-sidebar-body h-100">
             <div class="painel-sidebar-main d-flex flex-column gap-3">
                 <div>
-                    <h3 class="h5 mb-1">Painel do Cidadao</h3>
-                    <p class="text-muted small mb-0">Acompanhe solicitacoes e interacoes.</p>
+                    <h3 class="h5 mb-1">Navegação</h3>
+                    <p class="text-muted small mb-0">Acesse rapidamente suas principais acoes.</p>
                 </div>
 
                 <div class="d-grid gap-2">
                     <a href="index.php?rota=painel" class="<?= $classeItemSidebar(['painel']) ?>">
-                        <img src="assets/fonts/material-symbols/description.svg" alt="minhas denuncias" class="nav-icon"
-                            width="18" height="18">
-                        Minhas denuncias
+                        <img src="assets/fonts/material-symbols/home.svg" alt="inicio" class="nav-icon" width="18"
+                            height="18">
+                        Inicio
                     </a>
                     <a href="index.php?rota=nova_denuncia" class="<?= $classeItemSidebar(['nova_denuncia']) ?>">
                         <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
@@ -94,25 +102,37 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
                         Meu perfil
                     </a>
                     <?php if ($ehAdminSidebar): ?>
-                        <a href="index.php?rota=admin_dashboard"
-                            class="<?= $classeItemSidebar(['admin_dashboard', 'admin_denuncias', 'listar_usuarios', 'listar_categorias_admin']) ?>">
-                            <img src="assets/fonts/material-symbols/group.svg" alt="administracao" class="nav-icon"
-                                width="18" height="18">
-                            Administracao
-                        </a>
+                        <div class="pt-2 border-top">
+                            <p class="small text-muted mb-2">Administracao</p>
+                            <div class="d-grid gap-2">
+                                <a href="index.php?rota=admin_dashboard"
+                                    class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
+                                    <img src="assets/fonts/material-symbols/analytics4.svg" alt="dashboard admin"
+                                        class="nav-icon" width="18" height="18">
+                                    Dashboard Admin
+                                </a>
+                                <a href="index.php?rota=admin_denuncias"
+                                    class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
+                                    <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Denuncias
+                                </a>
+                                <a href="index.php?rota=listar_usuarios"
+                                    class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
+                                    <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Usuarios
+                                </a>
+                                <a href="index.php?rota=listar_categorias_admin"
+                                    class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">
+                                    <img src="assets/fonts/material-symbols/tune.svg" alt="gerenciar categorias"
+                                        class="nav-icon" width="18" height="18">
+                                    Gerenciar Categorias
+                                </a>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
-            </div>
-
-            <div class="painel-sidebar-exit">
-                <form action="index.php?rota=sair" method="POST" class="m-0">
-                    <?= csrfField() ?>
-                    <button type="submit" class="painel-sidebar-logout-link">
-                        <img src="assets/fonts/material-symbols/exit_to_app.svg" alt="sair" class="nav-icon" width="18"
-                            height="18">
-                        Sair
-                    </button>
-                </form>
             </div>
         </div>
     </div>

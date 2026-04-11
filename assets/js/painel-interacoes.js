@@ -78,6 +78,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 botao.setAttribute('aria-label', label);
                 botao.setAttribute('title', label);
                 botao.classList.toggle('is-active', Boolean(dados.usuario_curtiu));
+
+                const icone = botao.querySelector('img');
+                const iconeCurtido = botao.getAttribute('data-curtir-icone-on');
+                const iconeNaoCurtido = botao.getAttribute('data-curtir-icone-off');
+                if (icone && iconeCurtido && iconeNaoCurtido) {
+                    icone.src = dados.usuario_curtiu ? iconeCurtido : iconeNaoCurtido;
+                }
             } else {
                 botao.textContent = dados.usuario_curtiu ? 'Descurtir' : 'Curtir';
             }
@@ -236,9 +243,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 atualizarListaComentarios(formulario, dados);
             }
 
-            mostrarFeedback('success', dados.message || 'Operação concluída com sucesso.');
+            if (!formulario.classList.contains('js-curtir-denuncia')) {
+                mostrarFeedback('success', dados.message || 'Operação concluída com sucesso.');
+            }
         } catch (erro) {
-            mostrarFeedback('danger', erro.message || 'Não foi possível concluir a ação.');
+            if (!formulario.classList.contains('js-curtir-denuncia')) {
+                mostrarFeedback('danger', erro.message || 'Não foi possível concluir a ação.');
+            }
         } finally {
             if (botao) {
                 botao.disabled = false;

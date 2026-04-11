@@ -9,12 +9,9 @@ $tituloPagina = "Login";
         <div class="row g-0 auth-login-grid">
             <div class="col-lg-7 d-none d-lg-block">
                 <div class="auth-login-carousel-frame" data-auth-login-carousel>
-                    <div class="auth-login-slide is-active" data-auth-login-slide
-                        style="background-image: url('assets/images/Feira_Central_de_Ceilandia.png');"></div>
-                    <div class="auth-login-slide" data-auth-login-slide
-                        style="background-image: url('assets/images/ponte_jk.png');"></div>
-                    <div class="auth-login-slide" data-auth-login-slide
-                        style="background-image: url('assets/images/praca_relogio_taguatinga.png');"></div>
+                    <div class="auth-login-slide auth-login-slide-1 is-active" data-auth-login-slide></div>
+                    <div class="auth-login-slide auth-login-slide-2" data-auth-login-slide></div>
+                    <div class="auth-login-slide auth-login-slide-3" data-auth-login-slide></div>
 
                     <div class="auth-login-carousel-overlay">
                         <p class="auth-login-kicker mb-2">Portal Institucional</p>

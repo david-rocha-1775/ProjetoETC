@@ -58,6 +58,14 @@ return [
         'controller_method' => 'excluirUsuario',
         'http_method' => 'POST',
     ],
+    // Processa promoção de usuário para perfil admin.
+    'processar_promocao_usuario_admin' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'promoverUsuarioAdmin',
+        'http_method' => 'POST',
+    ],
     // Processa cadastro de nova categoria.
     'processar_cadastro_categoria' => [
         'type' => 'action',
