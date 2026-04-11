@@ -541,3 +541,156 @@ footer a:hover {
     color: #000000;
     filter: none;
 }
+
+/* ============================================
+   AUTH CADASTRO - LAYOUT EM CARDS
+   ============================================ */
+
+.auth-cadastro-header {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.auth-cadastro-header-icon {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(156, 202, 255, 0.22);
+    border: 1px solid rgba(156, 202, 255, 0.35);
+}
+
+.auth-cadastro-header-icon img,
+.auth-cadastro-card-title img {
+    filter: brightness(0) saturate(100%) invert(80%) sepia(32%) saturate(580%) hue-rotate(175deg) brightness(102%) contrast(102%);
+}
+
+.auth-cadastro-card {
+    background: linear-gradient(165deg, rgba(19, 27, 46, 0.95), rgba(15, 24, 42, 0.92));
+    border: 1px solid rgba(156, 202, 255, 0.16);
+    border-radius: 1.2rem;
+    padding: 1.3rem;
+    box-shadow: 0 18px 38px rgba(4, 8, 18, 0.34);
+}
+
+.auth-cadastro-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+}
+
+.auth-cadastro-card-title h3 {
+    color: #f3f6ff;
+}
+
+.auth-cadastro-card .form-floating>.form-control,
+.auth-cadastro-card .form-floating>.form-control {
+    border-radius: 0.85rem;
+    border-color: rgba(156, 202, 255, 0.18);
+    background-color: rgba(9, 15, 28, 0.72);
+}
+
+.auth-password-field>.form-control {
+    padding-right: 3.1rem;
+}
+
+.auth-password-toggle {
+    position: absolute;
+    right: 0.45rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    border: none;
+    border-radius: 0;
+    color: #dbeeff;
+    background-color: transparent;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-password-toggle:hover {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.auth-password-toggle img {
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
+    filter: brightness(0) saturate(100%) invert(88%) sepia(15%) saturate(442%) hue-rotate(177deg) brightness(106%) contrast(99%);
+}
+
+.auth-cadastro-card .form-check-label {
+    font-size: 0.9rem;
+}
+
+.auth-cadastro-card .form-check-input {
+    border-color: rgba(156, 202, 255, 0.5);
+}
+
+.auth-cadastro-card .form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.auth-cadastro-cta {
+    background: linear-gradient(165deg, rgba(20, 48, 78, 0.95), rgba(17, 41, 70, 0.88));
+}
+
+[data-bs-theme="light"] .auth-cadastro-header-icon {
+    background: rgba(0, 64, 128, 0.1);
+    border-color: rgba(0, 64, 128, 0.24);
+}
+
+[data-bs-theme="light"] .auth-cadastro-card {
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.95), rgba(247, 250, 255, 0.93));
+    border-color: rgba(0, 64, 128, 0.14);
+    box-shadow: 0 12px 28px rgba(0, 32, 64, 0.12);
+}
+
+[data-bs-theme="light"] .auth-cadastro-card-title h3 {
+    color: #0b1326;
+}
+
+[data-bs-theme="light"] .auth-cadastro-card .form-floating>.form-control,
+[data-bs-theme="light"] .auth-cadastro-card .form-floating>.form-control {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 64, 128, 0.22);
+}
+
+[data-bs-theme="light"] .auth-password-toggle {
+    color: #0b315c;
+    background-color: transparent;
+}
+
+[data-bs-theme="light"] .auth-password-toggle:hover {
+    color: #082949;
+    background-color: transparent;
+}
+
+[data-bs-theme="light"] .auth-password-toggle img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(46%) saturate(1553%) hue-rotate(190deg) brightness(90%) contrast(98%);
+}
+
+[data-bs-theme="light"] .auth-cadastro-header-icon img,
+[data-bs-theme="light"] .auth-cadastro-card-title img {
+    filter: brightness(0) saturate(100%) invert(18%) sepia(47%) saturate(1827%) hue-rotate(193deg) brightness(92%) contrast(101%);
+}
+
+[data-bs-theme="light"] .auth-cadastro-cta {
+    background: linear-gradient(165deg, rgba(233, 244, 255, 0.98), rgba(224, 238, 252, 0.95));
+}
+
+@media (max-width: 991.98px) {
+    .auth-cadastro-card {
+        padding: 1.1rem;
+    }
+}

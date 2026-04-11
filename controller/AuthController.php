@@ -35,9 +35,10 @@ class AuthController
             $nome = trim($_POST['nome'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $senha = $_POST['senha'] ?? '';
+            $confirmacaoSenha = $_POST['confirmacao_senha'] ?? '';
 
-            if ($nome === '' || $email === '' || $senha === '') {
-                throw new Exception("Nome, e-mail e senha são obrigatórios.");
+            if ($nome === '' || $email === '' || $senha === '' || $confirmacaoSenha === '') {
+                throw new Exception("Nome, e-mail, senha e confirmação de senha são obrigatórios.");
             }
 
             if (mb_strlen($nome) < 3 || mb_strlen($nome) > 100) {
@@ -54,6 +55,10 @@ class AuthController
 
             if (strlen($senha) > 72) {
                 throw new Exception('A senha deve ter no máximo 72 caracteres.');
+            }
+
+            if ($senha !== $confirmacaoSenha) {
+                throw new Exception("A confirmação de senha não confere.");
             }
 
             if ($this->usuarioDAO->emailJaCadastrado($email)) {
