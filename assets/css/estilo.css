@@ -1342,6 +1342,157 @@ footer a:hover {
 }
 
 /* ============================================
+   ADMIN USUARIOS - LAYOUT
+   ============================================ */
+
+.admin-usuarios-layout {
+    max-width: 1200px;
+}
+
+.admin-usuarios-eyebrow {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    color: rgba(224, 236, 255, 0.68);
+    font-weight: 700;
+}
+
+.admin-usuarios-titulo {
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
+    line-height: 1.05;
+    margin: 0;
+}
+
+.admin-usuarios-convidar {
+    min-width: 170px;
+    justify-content: center;
+}
+
+.admin-usuarios-filtros-card,
+.admin-usuarios-item,
+.admin-usuarios-resumo-card,
+.admin-usuarios-dica-card {
+    border: 1px solid rgba(156, 202, 255, 0.1);
+}
+
+.admin-usuarios-filtros-card .input-group-text,
+.admin-usuarios-filtros-card .form-control,
+.admin-usuarios-filtros-card .form-select {
+    background: rgba(0, 0, 0, 0.16);
+    border-color: rgba(156, 202, 255, 0.14);
+    color: inherit;
+}
+
+.admin-usuarios-filtros-card .form-select {
+    color-scheme: dark;
+}
+
+.admin-usuarios-filtros-card .form-select option,
+.admin-usuarios-filtros-card .form-select optgroup {
+    background-color: #0f1d3a;
+    color: #e5efff;
+}
+
+.admin-usuarios-filtros-card .form-control::placeholder {
+    color: rgba(224, 236, 255, 0.52);
+}
+
+.admin-usuarios-subtitulo {
+    letter-spacing: 0.08em;
+    color: rgba(224, 236, 255, 0.72);
+}
+
+.admin-usuarios-identificacao {
+    min-width: 0;
+}
+
+.admin-usuarios-papel {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.admin-usuarios-papel-admin {
+    background-color: rgba(78, 182, 255, 0.2);
+    color: #95d7ff;
+}
+
+.admin-usuarios-papel-cidadao {
+    background-color: rgba(192, 201, 216, 0.2);
+    color: #dde7f5;
+}
+
+.admin-usuarios-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #cfe7d8;
+}
+
+.admin-usuarios-status-dot {
+    width: 0.52rem;
+    height: 0.52rem;
+    border-radius: 50%;
+    background-color: #5bd8a9;
+    box-shadow: 0 0 0 4px rgba(91, 216, 169, 0.18);
+}
+
+[data-bs-theme="light"] .admin-usuarios-eyebrow {
+    color: rgba(28, 55, 95, 0.65);
+}
+
+[data-bs-theme="light"] .admin-usuarios-subtitulo {
+    color: rgba(28, 55, 95, 0.74);
+}
+
+[data-bs-theme="light"] .admin-usuarios-filtros-card .input-group-text,
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-control,
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-select {
+    background: #eef3fa;
+    border-color: #d3e1f0;
+}
+
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-select {
+    color-scheme: light;
+}
+
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-select option,
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-select optgroup {
+    background-color: #ffffff;
+    color: #0b1326;
+}
+
+[data-bs-theme="light"] .admin-usuarios-filtros-card .form-control::placeholder {
+    color: rgba(48, 72, 104, 0.6);
+}
+
+[data-bs-theme="light"] .admin-usuarios-filtros-card,
+[data-bs-theme="light"] .admin-usuarios-item,
+[data-bs-theme="light"] .admin-usuarios-resumo-card,
+[data-bs-theme="light"] .admin-usuarios-dica-card {
+    border-color: rgba(36, 84, 145, 0.18);
+}
+
+[data-bs-theme="light"] .admin-usuarios-status {
+    color: #26674d;
+}
+
+[data-bs-theme="light"] .admin-usuarios-papel-cidadao {
+    color: #4f6078;
+    background-color: rgba(92, 110, 134, 0.16);
+}
+
+@media (max-width: 991.98px) {
+    .admin-usuarios-convidar {
+        width: 100%;
+    }
+}
+
+/* ============================================
    AUTH LOGIN - CARROSSEL
    ============================================ */
 
