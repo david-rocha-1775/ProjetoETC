@@ -42,6 +42,8 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+    <?php $usuarioLogadoLayout = isset($_SESSION['logado']) && $_SESSION['logado'] === true; ?>
+
     <header class="border-bottom sticky-top w-100">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
@@ -115,7 +117,7 @@
         </div>
     </header>
 
-    <main class="flex-grow-1">
+    <main class="flex-grow-1<?= $usuarioLogadoLayout ? ' main-com-sidebar' : '' ?>">
 
         <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
         <?php if (isset($_SESSION['mensagem'])): ?>
@@ -129,4 +131,8 @@
             unset($_SESSION['mensagem']);
             unset($_SESSION['tipo_mensagem']);
             ?>
+        <?php endif; ?>
+
+        <?php if ($usuarioLogadoLayout): ?>
+            <?php include "view/templates/sidebar-logado.php"; ?>
         <?php endif; ?>

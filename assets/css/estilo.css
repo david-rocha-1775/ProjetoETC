@@ -247,19 +247,28 @@ main {
     isolation: isolate;
 }
 
+.painel-sidebar-mobile-toggle {
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
 .painel-sidebar-card {
     top: 6.4rem;
 }
 
 @media (min-width: 992px) {
+    .main-com-sidebar {
+        padding-left: 300px;
+    }
+
     .painel-layout {
         min-height: calc(100dvh - 6.4rem);
     }
 
     .painel-sidebar-col {
         position: fixed;
-        top: 6.4rem;
-        bottom: 2.7rem;
+        top: 2rem;
+        bottom: 9.5rem;
         left: 1rem;
         width: 280px;
         z-index: 1020;
@@ -269,23 +278,28 @@ main {
         height: 100%;
         width: 100%;
         margin-bottom: 0;
+        max-height: none;
     }
 
     .painel-sidebar-body {
-        display: grid;
-        grid-template-rows: 1fr auto;
-        min-height: 0;
-        padding: 0;
-    }
-
-    .painel-sidebar-main {
-        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: none;
         overflow: auto;
         padding: 1rem;
     }
 
+    .painel-sidebar-main {
+        min-height: auto;
+        overflow: visible;
+        padding: 0;
+    }
+
     .painel-sidebar-exit {
-        padding: 0.9rem 1rem;
+        margin-top: auto;
+        padding-top: 0;
+        border-top: 0;
     }
 
     .painel-sidebar-logout-link {
@@ -305,22 +319,32 @@ main {
         color: #7ba8d9;
     }
 
+    [data-bs-theme="light"] .painel-sidebar-logout-link {
+        color: #1f5f95;
+    }
+
+    [data-bs-theme="light"] .painel-sidebar-logout-link:hover {
+        color: #194f7d;
+    }
+
     .painel-conteudo-col {
-        margin-left: 300px;
-        width: calc(100% - 300px);
-        max-width: calc(100% - 300px);
+        width: 100%;
+        max-width: 100%;
     }
 }
 
 @media (min-width: 1200px) {
+    .main-com-sidebar {
+        padding-left: 320px;
+    }
+
     .painel-sidebar-col {
         width: 300px;
     }
 
     .painel-conteudo-col {
-        margin-left: 320px;
-        width: calc(100% - 320px);
-        max-width: calc(100% - 320px);
+        width: 100%;
+        max-width: 100%;
     }
 }
 
