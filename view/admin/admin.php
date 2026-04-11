@@ -16,7 +16,7 @@
                         <th>E-mail</th>
                         <th>Tipo</th>
                         <th>Data de Cadastro</th>
-                        <th style="width: 180px;">Ações</th>
+                        <th class="admin-col-acoes">Ações</th>
                     </tr>
                 </thead>
                 <tbody>

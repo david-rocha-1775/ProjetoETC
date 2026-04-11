@@ -138,6 +138,147 @@ main {
 }
 
 /* ============================================
+   HOME PÚBLICA
+   ============================================ */
+
+.home-hero {
+    position: relative;
+    min-height: 600px;
+    background: linear-gradient(135deg, rgba(11, 19, 38, 0.85) 0%, rgba(15, 20, 38, 0.75) 100%),
+        url('../images/fundo_home.png') center/cover;
+}
+
+.home-hero-overlay {
+    background: radial-gradient(circle at 40% 60%, rgba(156, 202, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.home-hero-content {
+    max-width: 800px;
+}
+
+.home-hero-title {
+    font-size: 3.5rem;
+    line-height: 1.2;
+}
+
+.home-cidadania-section {
+    background-color: var(--color-dark-bg);
+}
+
+.home-section-title {
+    font-size: 2.5rem;
+}
+
+.home-card-title {
+    font-size: 1.5rem;
+}
+
+.home-card-copy {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.home-feature-icon {
+    width: 48px;
+    height: 48px;
+}
+
+.home-map-icon {
+    width: 56px;
+    height: 56px;
+}
+
+.home-map-copy {
+    max-width: 250px;
+}
+
+.home-impact-icon {
+    width: 64px;
+    height: 64px;
+}
+
+.home-impact-title {
+    font-size: 2rem;
+}
+
+.home-impact-copy {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.home-stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.home-stat-primary {
+    color: var(--color-primary);
+    letter-spacing: 1px;
+}
+
+.home-stat-secondary {
+    color: var(--color-secondary);
+}
+
+.home-final-copy {
+    font-size: 1.15rem;
+    max-width: 600px;
+}
+
+@media (max-width: 991.98px) {
+    .home-hero {
+        min-height: 520px;
+    }
+
+    .home-hero-title {
+        font-size: 2.8rem;
+    }
+
+    .home-section-title {
+        font-size: 2rem;
+    }
+
+    .home-impact-title {
+        font-size: 1.75rem;
+    }
+
+    .home-stat {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .home-hero {
+        min-height: 460px;
+    }
+
+    .home-hero-title {
+        font-size: 2.1rem;
+    }
+
+    .home-section-title {
+        font-size: 1.7rem;
+    }
+
+    .home-final-copy {
+        font-size: 1rem;
+    }
+
+    .home-feature-icon,
+    .home-map-icon,
+    .home-impact-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .home-stat {
+        font-size: 1.8rem;
+    }
+}
+
+/* ============================================
    BOTÕES CUSTOMIZADOS
    ============================================ */
 
@@ -256,18 +397,16 @@ main {
     top: 6.4rem;
 }
 
-.painel-sidebar-item-ativo {
-    background-color: rgba(var(--bs-primary-rgb), 0.2);
-    border-color: rgba(var(--bs-primary-rgb), 0.35);
-    color: #d7e8ff;
-}
-
+.painel-sidebar-item-ativo,
 .painel-btn-nova-denuncia {
     background-color: rgba(var(--bs-primary-rgb), 0.2);
     border-color: rgba(var(--bs-primary-rgb), 0.35);
     color: #d7e8ff;
 }
 
+.painel-sidebar-item-ativo:hover,
+.painel-sidebar-item-ativo:focus,
+.painel-sidebar-item-ativo:active,
 .painel-btn-nova-denuncia:hover,
 .painel-btn-nova-denuncia:focus,
 .painel-btn-nova-denuncia:active {
@@ -276,20 +415,7 @@ main {
     color: #e8f2ff;
 }
 
-.painel-sidebar-item-ativo:hover,
-.painel-sidebar-item-ativo:focus,
-.painel-sidebar-item-ativo:active {
-    background-color: rgba(var(--bs-primary-rgb), 0.26);
-    border-color: rgba(var(--bs-primary-rgb), 0.4);
-    color: #e8f2ff;
-}
-
-[data-bs-theme="light"] .painel-sidebar-item-ativo {
-    background-color: rgba(var(--bs-primary-rgb), 0.14);
-    border-color: rgba(var(--bs-primary-rgb), 0.3);
-    color: #174b7a;
-}
-
+[data-bs-theme="light"] .painel-sidebar-item-ativo,
 [data-bs-theme="light"] .painel-btn-nova-denuncia {
     background-color: rgba(var(--bs-primary-rgb), 0.14);
     border-color: rgba(var(--bs-primary-rgb), 0.3);
@@ -298,12 +424,7 @@ main {
 
 [data-bs-theme="light"] .painel-sidebar-item-ativo:hover,
 [data-bs-theme="light"] .painel-sidebar-item-ativo:focus,
-[data-bs-theme="light"] .painel-sidebar-item-ativo:active {
-    background-color: rgba(var(--bs-primary-rgb), 0.2);
-    border-color: rgba(var(--bs-primary-rgb), 0.36);
-    color: #123f67;
-}
-
+[data-bs-theme="light"] .painel-sidebar-item-ativo:active,
 [data-bs-theme="light"] .painel-btn-nova-denuncia:hover,
 [data-bs-theme="light"] .painel-btn-nova-denuncia:focus,
 [data-bs-theme="light"] .painel-btn-nova-denuncia:active {
@@ -1290,6 +1411,38 @@ footer a:hover {
     color: #f3f6ff;
 }
 
+
+.theme-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.detalhe-denuncia-foto {
+    max-width: 420px;
+    max-height: 280px;
+}
+
+.detalhe-mapa-edicao {
+    height: 260px;
+    border: 1px solid #ddd;
+    border-radius: 0.375rem;
+    margin-bottom: 10px;
+}
+
+.mapa-denuncias-canvas {
+    height: 520px;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+}
+
+.admin-col-acoes {
+    width: 180px;
+}
+
+.admin-status-select {
+    min-width: 140px;
+}
+
 .auth-cadastro-card .form-floating>.form-control {
     border-radius: 0.85rem;
     border-color: rgba(156, 202, 255, 0.18);
@@ -1576,6 +1729,18 @@ footer a:hover {
     background-position: center;
     opacity: 0;
     transition: opacity 0.9s ease;
+}
+
+.auth-login-slide-1 {
+    background-image: url('../images/Feira_Central_de_Ceilandia.png');
+}
+
+.auth-login-slide-2 {
+    background-image: url('../images/ponte_jk.png');
+}
+
+.auth-login-slide-3 {
+    background-image: url('../images/praca_relogio_taguatinga.png');
 }
 
 .auth-login-slide.is-active {

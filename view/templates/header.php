@@ -68,19 +68,19 @@
 
                     <li><a href="index.php?rota=<?= (isset($_SESSION['logado']) && $_SESSION['logado'] === true) ? 'painel' : 'inicio' ?>"
                             class="nav-link px-2 d-flex align-items-center gap-2">
-                            <img src="assets/fonts/material-symbols/home.svg" alt="home" class="nav-icon"
-                                style="width: 20px; height: 20px;">
+                            <img src="assets/fonts/material-symbols/home.svg" alt="home" class="nav-icon" width="20"
+                                height="20">
                             Inicio
                         </a></li>
                     <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
                         <li><a href="index.php?rota=mapa" class="nav-link px-2 d-flex align-items-center gap-2">
                                 <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon"
-                                    style="width: 20px; height: 20px;">
+                                    width="20" height="20">
                                 Mapa
                             </a></li>
                         <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2 d-flex align-items-center gap-2">
                                 <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
-                                    style="width: 20px; height: 20px;">
+                                    width="20" height="20">
                                 Nova Denuncia
                             </a></li>
                     <?php endif; ?>

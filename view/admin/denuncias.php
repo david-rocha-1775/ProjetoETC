@@ -168,8 +168,7 @@
                                         <input type="hidden" name="retorno_filtros"
                                             value="<?= htmlspecialchars((string) $queryFiltrosComPaginaAtual, ENT_QUOTES, 'UTF-8') ?>">
 
-                                        <select name="status" class="form-select form-select-sm" style="min-width: 140px;"
-                                            required>
+                                        <select name="status" class="form-select form-select-sm admin-status-select" required>
                                             <option value="Aberto" <?= $denuncia->getStatus() === 'Aberto' ? 'selected' : '' ?>>
                                                 Aberto</option>
                                             <option value="Em Andamento" <?= $denuncia->getStatus() === 'Em Andamento' ? 'selected' : '' ?>>Em Andamento</option>

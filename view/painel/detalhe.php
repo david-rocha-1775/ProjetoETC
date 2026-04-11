@@ -52,7 +52,7 @@ $paginaJsHeadExtra = [
 
             <?php if ($denuncia->getFotoPath()): ?>
                 <img src="<?= htmlspecialchars($denuncia->getFotoPath()) ?>" alt="Foto da denuncia"
-                    class="img-fluid rounded border mb-3" style="max-width: 420px; max-height: 280px;">
+                    class="img-fluid rounded border mb-3 detalhe-denuncia-foto">
             <?php endif; ?>
 
             <?php if ($podeGerenciar): ?>
@@ -117,7 +117,7 @@ $paginaJsHeadExtra = [
                         <div class="mb-3">
                             <label class="form-label">Localizacao no mapa (clique para atualizar coordenadas):</label>
                             <div id="mapa-edicao-<?= htmlspecialchars((string) $denuncia->getId()) ?>"
-                                style="height: 260px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
+                                class="detalhe-mapa-edicao">
                             </div>
                             <div class="alert alert-info small">
                                 <strong>Dica:</strong> Clique no mapa para atualizar a localizacao.
