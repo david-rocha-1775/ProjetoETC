@@ -19,12 +19,12 @@ $paginaJsHeadExtra = [
 
         <div class="row g-2 mb-3" id="painel-centro-mapa">
             <div class="col-12 col-md-3">
-                <label for="mapa-centro-lat" class="form-label">Latitude do centro</label>
+                <label for="mapa-centro-lat" class="form-label">Latitude</label>
                 <input type="number" step="0.00000001" class="form-control" id="mapa-centro-lat"
                     placeholder="Ex: -15.793889">
             </div>
             <div class="col-12 col-md-3">
-                <label for="mapa-centro-lon" class="form-label">Longitude do centro</label>
+                <label for="mapa-centro-lon" class="form-label">Longitude</label>
                 <input type="number" step="0.00000001" class="form-control" id="mapa-centro-lon"
                     placeholder="Ex: -47.882778">
             </div>

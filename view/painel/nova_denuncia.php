@@ -40,6 +40,8 @@ $paginaJsHeadExtra = [
             <form id="form-nova-denuncia" action="index.php?rota=nova_denuncia" method="POST"
                 enctype="multipart/form-data" class="d-grid gap-4">
                 <?= csrfField() ?>
+                <input type="hidden" id="latitude" name="latitude" value="">
+                <input type="hidden" id="longitude" name="longitude" value="">
 
                 <div class="card shadow-sm nova-denuncia-card animate-in">
                     <div class="card-body">
@@ -81,8 +83,7 @@ $paginaJsHeadExtra = [
 
                         <div class="mb-0">
                             <label for="foto" class="form-label">Anexo *</label>
-                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*"
-                                required>
+                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*" required>
                             <p class="small text-muted mt-2 mb-0">Obrigatório: envie uma imagem de até 5MB.
                             </p>
 
@@ -114,24 +115,12 @@ $paginaJsHeadExtra = [
 
                         <div class="nova-denuncia-info mb-3">
                             <div>
-                                <strong>Dica:</strong> Clique no mapa para marcar a localização exata da denúncia.
+                                <strong>Dica:</strong> Arraste o pin no mapa ou use o botão de geolocalização para
+                                marcar a localização exata da denúncia.
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-primary" id="btn-geolocalizar">
                                 Usar minha localização
                             </button>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label for="latitude" class="form-label">Latitude</label>
-                                <input type="text" id="latitude" name="latitude" form="form-nova-denuncia"
-                                    class="form-control" placeholder="Ex: -15.793889" readonly>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="longitude" class="form-label">Longitude</label>
-                                <input type="text" id="longitude" name="longitude" form="form-nova-denuncia"
-                                    class="form-control" placeholder="Ex: -47.882778" readonly>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,6 +169,37 @@ $paginaJsHeadExtra = [
             previewArquivo.textContent = '';
         }
 
+        let marcador = null;
+
+        function atualizarMarcador(lat, lon, ajustarZoom = false) {
+            const latNumerica = Number(lat);
+            const lonNumerica = Number(lon);
+            const latFormatada = latNumerica.toFixed(8);
+            const lonFormatada = lonNumerica.toFixed(8);
+
+            if (latInput) {
+                latInput.value = latFormatada;
+            }
+
+            if (lonInput) {
+                lonInput.value = lonFormatada;
+            }
+
+            if (!marcador) {
+                marcador = L.marker([latNumerica, lonNumerica], { draggable: true }).addTo(mapa);
+                marcador.on('dragend', function (event) {
+                    const posicao = event.target.getLatLng();
+                    atualizarMarcador(posicao.lat, posicao.lng);
+                });
+            } else {
+                marcador.setLatLng([latNumerica, lonNumerica]);
+            }
+
+            if (ajustarZoom) {
+                mapa.setView([latNumerica, lonNumerica], 16);
+            }
+        }
+
         function renderizarPreviewAnexo(file) {
             if (!previewWrapper || !previewImagem || !previewArquivo) {
                 return;
@@ -220,21 +240,11 @@ $paginaJsHeadExtra = [
             zoom: 13,
         }).map;
 
-        let marcador = null;
+        atualizarMarcador(DEFAULT_LAT, DEFAULT_LON);
 
-        // Clique no mapa para marcar localização
+        // Clique no mapa ou arraste o pin para marcar a localização
         mapa.on('click', function (e) {
-            const lat = e.latlng.lat.toFixed(8);
-            const lon = e.latlng.lng.toFixed(8);
-
-            latInput.value = lat;
-            lonInput.value = lon;
-
-            if (marcador) {
-                mapa.removeLayer(marcador);
-            }
-
-            marcador = L.marker([lat, lon]).addTo(mapa);
+            atualizarMarcador(e.latlng.lat, e.latlng.lng);
         });
 
         // Botão de geolocalização
@@ -246,18 +256,7 @@ $paginaJsHeadExtra = [
 
                 navigator.geolocation.getCurrentPosition(
                     function (pos) {
-                        const lat = pos.coords.latitude.toFixed(8);
-                        const lon = pos.coords.longitude.toFixed(8);
-
-                        latInput.value = lat;
-                        lonInput.value = lon;
-
-                        if (marcador) {
-                            mapa.removeLayer(marcador);
-                        }
-
-                        marcador = L.marker([lat, lon]).addTo(mapa);
-                        mapa.setView([lat, lon], 16);
+                        atualizarMarcador(pos.coords.latitude, pos.coords.longitude, true);
                         btnGeo.disabled = false;
                         btnGeo.textContent = 'Usar minha localização';
                     },
@@ -266,7 +265,7 @@ $paginaJsHeadExtra = [
                         btnGeo.disabled = false;
                         btnGeo.textContent = 'Usar minha localização';
                     },
-                    { timeout: 8000 }
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
                 );
             } else {
                 alert('Geolocalização não suportada no seu navegador.');
