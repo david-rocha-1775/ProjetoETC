@@ -186,7 +186,14 @@ $paginaJsHeadExtra = [
             }
 
             if (!marcador) {
-                marcador = L.marker([latNumerica, lonNumerica], { draggable: true }).addTo(mapa);
+                marcador = L.marker([latNumerica, lonNumerica], {
+                    draggable: true,
+                    icon: L.divIcon({
+                        className: 'mapa-centro-icon',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32]
+                    })
+                }).addTo(mapa);
                 marcador.on('dragend', function (event) {
                     const posicao = event.target.getLatLng();
                     atualizarMarcador(posicao.lat, posicao.lng);
