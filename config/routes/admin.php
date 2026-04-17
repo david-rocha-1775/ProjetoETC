@@ -1,6 +1,6 @@
 <?php
 
-// Rotas administrativas (acesso restrito a usuários do tipo admin).
+// Rotas administrativas (acesso a admin e gestor, com ações específicas ainda restritas ao admin).
 return [
     // Exibe o dashboard administrativo com métricas básicas.
     'admin_dashboard' => [

@@ -80,7 +80,7 @@ class PainelListagemController extends PainelBaseController
             $nomeAutorDenuncia = $autorDenuncia ? $autorDenuncia->getNome() : 'Usuário';
 
             $usuarioLogadoId = (int) ($_SESSION['usuario_id'] ?? 0);
-            $usuarioAdmin = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin';
+            $usuarioAdmin = $this->usuarioPossuiAcessoAdministrativo();
             $podeGerenciar = $usuarioAdmin || $usuarioLogadoId === $idUsuarioDono;
 
             $tituloPagina = 'Detalhes da Denúncia';

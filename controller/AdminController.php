@@ -1,5 +1,5 @@
 <?php
-// Controller Administrativo (Ações restritas a administradores)
+// Controller Administrativo (Ações para administradores e gestores, com exceções específicas para admin)
 
 require_once "model/dao/UsuarioDAO.php";
 require_once "model/dao/CategoriaDAO.php";
@@ -25,7 +25,7 @@ class AdminController
         $this->denunciaDAO = new DenunciaDAO();
         $this->comentarioDAO = new ComentarioDAO();
 
-        $this->exigirAcessoAdmin();
+        $this->exigirAcessoAdministrativo();
     }
 
     /**
@@ -238,6 +238,7 @@ class AdminController
         try {
             $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
             $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+            $tipoUsuarioSessao = strtolower(trim((string) ($_SESSION['usuario_tipo'] ?? '')));
 
             if ($idUsuario === $idAdminSessao) {
                 throw new InvalidArgumentException('Não é permitido desativar a própria conta nesta tela.');
@@ -246,6 +247,11 @@ class AdminController
             $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
             if ($usuario === null) {
                 throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            $tipoUsuarioAlvo = strtolower(trim((string) $usuario->getTipo()));
+            if ($tipoUsuarioSessao === 'gestor' && $tipoUsuarioAlvo === 'admin') {
+                throw new InvalidArgumentException('Gestores não podem desativar contas administrativas.');
             }
 
             $excluiu = $this->usuarioDAO->excluirPorId($idUsuario);
@@ -269,6 +275,7 @@ class AdminController
     public function promoverUsuarioAdmin()
     {
         $this->exigirMetodoPost('listar_usuarios');
+        $this->exigirAcessoSomenteAdmin();
 
         try {
             $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
@@ -691,11 +698,29 @@ class AdminController
     /**
      * Garante que a sessão esteja autenticada e com perfil administrativo.
      */
-    private function exigirAcessoAdmin()
+    private function usuarioPossuiAcessoAdministrativo()
+    {
+        return isset($_SESSION['usuario_tipo']) && in_array($_SESSION['usuario_tipo'], ['admin', 'gestor'], true);
+    }
+
+    /**
+     * Garante que a sessão esteja autenticada e com perfil administrativo.
+     */
+    private function exigirAcessoAdministrativo()
     {
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['usuario_id'])) {
             $this->redirecionarComErro('Faça login para continuar.', 'login');
         }
+        if (!$this->usuarioPossuiAcessoAdministrativo()) {
+            $this->redirecionarComErro('Acesso restrito a administradores e gestores.', 'painel');
+        }
+    }
+
+    /**
+     * Garante acesso exclusivo ao perfil admin.
+     */
+    private function exigirAcessoSomenteAdmin()
+    {
         if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'admin') {
             $this->redirecionarComErro('Acesso restrito a administradores.', 'painel');
         }
