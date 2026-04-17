@@ -13,6 +13,7 @@
     </p>
 </footer>
 
+<script src="assets/js/bootstrap.bundle.min.js" defer></script>
 <script src="assets/js/painel-interacoes.js" defer></script>
 <script>
     function alternarTema() {

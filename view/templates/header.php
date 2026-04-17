@@ -32,8 +32,6 @@
     <?php foreach ($paginaCssExtra as $cssExtra): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssExtra) ?>">
     <?php endforeach; ?>
-    <!-- Bootstrap JS Bundle -->
-    <script src="assets/js/bootstrap.bundle.min.js" defer></script>
     <?php foreach ($paginaJsHeadExtra as $jsHeadExtra): ?>
         <script src="<?= htmlspecialchars((string) $jsHeadExtra) ?>" defer></script>
     <?php endforeach; ?>
@@ -70,7 +68,7 @@
                             class="nav-link px-2 d-flex align-items-center gap-2">
                             <img src="assets/fonts/material-symbols/home.svg" alt="home" class="nav-icon" width="20"
                                 height="20">
-                            Inicio
+                            Início
                         </a></li>
                     <?php if (isset($_SESSION['logado']) && $_SESSION['logado'] === true): ?>
                         <li><a href="index.php?rota=mapa" class="nav-link px-2 d-flex align-items-center gap-2">
@@ -79,9 +77,9 @@
                                 Mapa
                             </a></li>
                         <li><a href="index.php?rota=nova_denuncia" class="nav-link px-2 d-flex align-items-center gap-2">
-                                <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
+                                <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denúncia" class="nav-icon"
                                     width="20" height="20">
-                                Nova Denuncia
+                                Nova Denúncia
                             </a></li>
                     <?php endif; ?>
 

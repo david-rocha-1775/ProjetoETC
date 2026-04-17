@@ -43,7 +43,7 @@ $tituloPagina = "Início - Cidade Atenta";
                                 <div>
                                     <h3 class="home-card-title h4 mt-0 mb-3">Cuidado Coletivo
                                     </h3>
-                                    <p class="home-card-copy mb-0">Únimos a inteligência
+                                    <p class="home-card-copy mb-0">Unimos a inteligência
                                         dos moradores para cuidar de cada bairro, transformando problemas em soluções
                                         rápidas.</p>
                                 </div>

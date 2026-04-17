@@ -543,7 +543,7 @@ class AdminController
             return '';
         }
 
-        if (!in_array($papel, ['admin', 'cidadao'], true)) {
+        if (!in_array($papel, ['admin', 'cidadao', 'gestor'], true)) {
             throw new InvalidArgumentException('Filtro de papel inválido.');
         }
 

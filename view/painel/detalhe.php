@@ -13,7 +13,7 @@ $paginaJsHeadExtra = [
     <div id="painel-feedback" class="mb-3" aria-live="polite"></div>
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-        <h2 class="mb-0">Detalhes da denuncia</h2>
+        <h2 class="mb-0">Detalhes da denúncia</h2>
         <a href="index.php?<?= htmlspecialchars($painelQueryRetorno) ?>" class="btn btn-outline-secondary">Voltar ao
             painel</a>
     </div>
@@ -27,7 +27,7 @@ $paginaJsHeadExtra = [
             </div>
 
             <p class="mb-1"><strong>Status:</strong> <?= htmlspecialchars($denuncia->getStatus()) ?></p>
-            <p class="mb-1"><strong>Localizacao:</strong> <?= htmlspecialchars($denuncia->getLocalizacao()) ?></p>
+            <p class="mb-1"><strong>Localização:</strong> <?= htmlspecialchars($denuncia->getLocalizacao()) ?></p>
             <p class="mb-1"><strong>Autor:</strong> <?= htmlspecialchars($nomeAutorDenuncia) ?></p>
             <p class="mb-3"><strong>Criada em:</strong> <?= htmlspecialchars((string) $denuncia->getDataCriacao()) ?>
             </p>
@@ -51,13 +51,13 @@ $paginaJsHeadExtra = [
             </div>
 
             <?php if ($denuncia->getFotoPath()): ?>
-                <img src="<?= htmlspecialchars($denuncia->getFotoPath()) ?>" alt="Foto da denuncia"
+                <img src="<?= htmlspecialchars($denuncia->getFotoPath()) ?>" alt="Foto da denúncia"
                     class="img-fluid rounded border mb-3 detalhe-denuncia-foto">
             <?php endif; ?>
 
             <?php if ($podeGerenciar): ?>
                 <details class="mt-3">
-                    <summary><strong>Editar denuncia</strong></summary>
+                    <summary><strong>Editar denúncia</strong></summary>
                     <form action="index.php?rota=processar_edicao_denuncia" method="POST" enctype="multipart/form-data"
                         class="mt-3">
                         <?= csrfField() ?>
@@ -67,19 +67,19 @@ $paginaJsHeadExtra = [
                         <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
 
                         <div class="mb-3">
-                            <label class="form-label">Titulo</label>
+                            <label class="form-label">Título</label>
                             <input type="text" name="titulo" class="form-control"
                                 value="<?= htmlspecialchars($denuncia->getTitulo()) ?>" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Descricao</label>
+                            <label class="form-label">Descrição</label>
                             <textarea name="descricao" rows="3" class="form-control"
                                 required><?= htmlspecialchars($denuncia->getDescricao()) ?></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Localizacao</label>
+                            <label class="form-label">Localização</label>
                             <input type="text" name="localizacao" class="form-control"
                                 value="<?= htmlspecialchars($denuncia->getLocalizacao()) ?>" required>
                         </div>
@@ -115,15 +115,15 @@ $paginaJsHeadExtra = [
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Localizacao no mapa (clique para atualizar coordenadas):</label>
+                            <label class="form-label">Localização no mapa (clique para atualizar coordenadas):</label>
                             <div id="mapa-edicao-<?= htmlspecialchars((string) $denuncia->getId()) ?>"
                                 class="detalhe-mapa-edicao">
                             </div>
                             <div class="alert alert-info small">
-                                <strong>Dica:</strong> Clique no mapa para atualizar a localizacao.
+                                <strong>Dica:</strong> Clique no mapa para atualizar a localização.
                                 <button type="button" class="btn btn-sm btn-secondary btn-geo"
                                     data-id="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                                    Usar minha localizacao
+                                    Usar minha localização
                                 </button>
                             </div>
                             <div class="row">
@@ -143,17 +143,17 @@ $paginaJsHeadExtra = [
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success btn-sm">Salvar edicao</button>
+                        <button type="submit" class="btn btn-success btn-sm">Salvar edição</button>
                     </form>
                 </details>
 
                 <form action="index.php?rota=processar_exclusao_denuncia" method="POST" class="mt-3"
-                    onsubmit="return confirm('Tem certeza que deseja excluir esta denuncia?');">
+                    onsubmit="return confirm('Tem certeza que deseja excluir esta denúncia?');">
                     <?= csrfField() ?>
                     <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                     <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                     <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir denuncia</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir denúncia</button>
                 </form>
             <?php endif; ?>
         </div>
@@ -161,7 +161,7 @@ $paginaJsHeadExtra = [
 
     <section class="card shadow-sm">
         <div class="card-body">
-            <h4 class="card-title mb-3">Comentarios</h4>
+            <h4 class="card-title mb-3">Comentários</h4>
 
             <form action="index.php?rota=processar_comentario" method="POST" class="js-comentar-denuncia mb-3"
                 data-lista-comentarios="comentarios-denuncia-<?= htmlspecialchars((string) $denuncia->getId()) ?>">
@@ -169,7 +169,7 @@ $paginaJsHeadExtra = [
                 <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                 <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                 <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                <textarea name="texto" rows="3" placeholder="Escreva um comentario..." required
+                <textarea name="texto" rows="3" placeholder="Escreva um comentário..." required
                     class="form-control"></textarea>
                 <button type="submit" class="btn btn-primary btn-sm mt-2">Comentar</button>
             </form>
@@ -182,7 +182,7 @@ $paginaJsHeadExtra = [
                             data-comentario-id="<?= htmlspecialchars((string) $comentario->getId()) ?>" class="card mb-2">
                             <div class="card-body py-2 px-3">
                                 <p class="mb-1">
-                                    <strong><?= htmlspecialchars($comentario->getNomeUsuario() ?? 'Usuario') ?></strong>
+                                    <strong><?= htmlspecialchars($comentario->getNomeUsuario() ?? 'Usuário') ?></strong>
                                 </p>
                                 <p class="mb-1"><?= htmlspecialchars($comentario->getTexto()) ?></p>
                                 <small
@@ -197,7 +197,7 @@ $paginaJsHeadExtra = [
                                     <input type="hidden" name="retorno_id"
                                         value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                                     <button type="submit" class="btn btn-outline-secondary btn-sm" data-botao-curtir-comentario>
-                                        <?= $itemComentario['usuarioCurtiu'] ? 'Descurtir comentario' : 'Curtir comentario' ?>
+                                        <?= $itemComentario['usuarioCurtiu'] ? 'Descurtir comentário' : 'Curtir comentário' ?>
                                     </button>
                                 </form>
 
@@ -209,7 +209,7 @@ $paginaJsHeadExtra = [
                     <?php endforeach; ?>
                 <?php else: ?>
                     <p class="text-muted mb-0" data-sem-comentarios="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                        Nenhum comentario ainda.</p>
+                        Nenhum comentário ainda.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -266,7 +266,7 @@ $paginaJsHeadExtra = [
             e.preventDefault();
 
             if (!('geolocation' in navigator)) {
-                alert('Geolocalizacao nao suportada no seu navegador.');
+                alert('Geolocalização não suportada no seu navegador.');
                 return;
             }
 
@@ -292,7 +292,7 @@ $paginaJsHeadExtra = [
                     btnGeo.textContent = originalText;
                 },
                 function (err) {
-                    alert('Erro ao obter localizacao: ' + err.message);
+                    alert('Erro ao obter localização: ' + err.message);
                     btnGeo.disabled = false;
                     btnGeo.textContent = originalText;
                 },

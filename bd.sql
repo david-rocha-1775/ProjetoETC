@@ -2,19 +2,34 @@
 CREATE DATABASE IF NOT EXISTS plataforma_denuncias;
 USE plataforma_denuncias;
 
--- 2. Tabela de Usuários
+-- 2. Tabela de Perfis 
+CREATE TABLE IF NOT EXISTS perfis (
+    id_perfil INT AUTO_INCREMENT PRIMARY KEY,
+    nome_perfil VARCHAR(50) NOT NULL UNIQUE,
+    ativo TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
+-- 3. Tabela de Usuários 
 CREATE TABLE IF NOT EXISTS usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL,
-    tipo ENUM('cidadao', 'admin') DEFAULT 'cidadao',
+    fk_perfil INT NOT NULL,
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_usuarios_ativo (ativo)
+    INDEX idx_usuarios_ativo (ativo),
+    FOREIGN KEY (fk_perfil) REFERENCES perfis(id_perfil) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 3. Tabela de Categorias
+-- 4. Tabela de Logins 
+CREATE TABLE IF NOT EXISTS logins (
+    id_login INT AUTO_INCREMENT PRIMARY KEY,
+    fk_usuario INT NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- 5. Tabela de Categorias
 CREATE TABLE IF NOT EXISTS categorias (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
     nome_categoria VARCHAR(50) NOT NULL,
@@ -22,7 +37,7 @@ CREATE TABLE IF NOT EXISTS categorias (
     INDEX idx_categorias_ativo_nome (ativo, nome_categoria)
 ) ENGINE=InnoDB;
 
--- 4. Tabela de Denúncias
+-- 6. Tabela de Denúncias
 CREATE TABLE IF NOT EXISTS denuncias (
     id_denuncia INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
@@ -39,11 +54,11 @@ CREATE TABLE IF NOT EXISTS denuncias (
     INDEX idx_denuncias_ativo_geo (ativo, latitude, longitude),
     INDEX idx_denuncias_data_criacao (data_criacao),
     INDEX idx_denuncias_listagem (ativo, fk_categoria, data_criacao, id_denuncia),
-    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (fk_categoria) REFERENCES categorias(id_categoria) ON DELETE RESTRICT
+    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fk_categoria) REFERENCES categorias(id_categoria) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 5. Tabela de Comentários
+-- 7. Tabela de Comentários
 CREATE TABLE IF NOT EXISTS comentarios (
     id_comentario INT AUTO_INCREMENT PRIMARY KEY,
     texto TEXT NOT NULL,
@@ -52,11 +67,11 @@ CREATE TABLE IF NOT EXISTS comentarios (
     fk_usuario INT NOT NULL,
     fk_denuncia INT NOT NULL,
     INDEX idx_comentarios_denuncia_ativo_data (fk_denuncia, ativo, data_comentario),
-    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (fk_denuncia) REFERENCES denuncias(id_denuncia) ON DELETE CASCADE
+    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fk_denuncia) REFERENCES denuncias(id_denuncia) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 6. Tabela de Curtidas em Denúncias
+-- 8. Tabela de Curtidas em Denúncias
 CREATE TABLE IF NOT EXISTS curtida_denuncias (
     fk_usuario INT NOT NULL,
     fk_denuncia INT NOT NULL,
@@ -64,11 +79,11 @@ CREATE TABLE IF NOT EXISTS curtida_denuncias (
     data_curtida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_usuario, fk_denuncia),
     INDEX idx_curtida_denuncia_ativo_denuncia (ativo, fk_denuncia),
-    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (fk_denuncia) REFERENCES denuncias(id_denuncia) ON DELETE CASCADE
+    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fk_denuncia) REFERENCES denuncias(id_denuncia) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 7.Tabela: Curtidas em Comentários
+-- 9. Tabela de Curtidas em Comentários
 CREATE TABLE IF NOT EXISTS curtida_comentarios (
     fk_usuario INT NOT NULL,
     fk_comentario INT NOT NULL,
@@ -76,11 +91,19 @@ CREATE TABLE IF NOT EXISTS curtida_comentarios (
     data_curtida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (fk_usuario, fk_comentario),
     INDEX idx_curtida_comentario_ativo_comentario (ativo, fk_comentario),
-    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (fk_comentario) REFERENCES comentarios(id_comentario) ON DELETE CASCADE
+    FOREIGN KEY (fk_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fk_comentario) REFERENCES comentarios(id_comentario) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 8. Inserção de Categorias Iniciais
+-- 10. Inserções Iniciais (Setup do Sistema)
+
+-- Perfis
+INSERT INTO perfis (nome_perfil) VALUES 
+('cidadao'),
+('admin'),
+('gestor');
+
+-- Categorias
 INSERT INTO categorias (nome_categoria) VALUES 
 ('Iluminação Pública'),
 ('Asfalto e Buracos'),
