@@ -279,6 +279,30 @@ class DenunciaDAO
     }
 
     /**
+     * Busca uma denúncia pelo ID, independentemente de estar ativa ou não.
+     *
+     * @param int $idDenuncia
+     * @return DenunciaDTO|null
+     */
+    public function buscarPorIdAdmin($idDenuncia)
+    {
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
+            FROM denuncias
+            WHERE id_denuncia = :id_denuncia";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($dados === false) {
+            return null;
+        }
+
+        return $this->hidratarDenuncia($dados);
+    }
+
+    /**
      * Insere uma nova denúncia no banco.
      *
      * @param DenunciaDTO $denuncia
@@ -439,6 +463,22 @@ class DenunciaDAO
     public function excluirPorId($idDenuncia)
     {
         $sql = "UPDATE denuncias SET ativo = 0 WHERE id_denuncia = :id_denuncia AND ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Reativa uma denúncia pelo ID.
+     *
+     * @param int $idDenuncia
+     * @return bool
+     */
+    public function reativarPorId($idDenuncia)
+    {
+        $sql = "UPDATE denuncias SET ativo = 1 WHERE id_denuncia = :id_denuncia AND ativo = 0";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);

@@ -204,6 +204,69 @@ class AdminController
     }
 
     /**
+     * Alterna o estado ativo de uma denúncia (uso administrativo).
+     */
+    public function alternarAtivoDenuncia()
+    {
+        $this->exigirMetodoPost('admin_denuncias');
+
+        try {
+            $idDenuncia = $this->normalizarId($_POST['id_denuncia'] ?? null, 'Denúncia inválida.');
+            $acao = strtolower(trim((string) ($_POST['acao'] ?? '')));
+
+            if (!in_array($acao, ['desativar', 'reativar'], true)) {
+                throw new InvalidArgumentException('Ação inválida para denúncia.');
+            }
+
+            $denuncia = $this->denunciaDAO->buscarPorIdAdmin($idDenuncia);
+            if ($denuncia === null) {
+                throw new InvalidArgumentException('Denúncia não encontrada.');
+            }
+
+            $retornoFiltros = $this->normalizarQueryRetornoDenuncias($_POST['retorno_filtros'] ?? '');
+
+            if ($acao === 'desativar') {
+                if ((int) $denuncia->getAtivo() !== 1) {
+                    throw new InvalidArgumentException('A denúncia já está desativada.');
+                }
+
+                $processou = $this->denunciaDAO->excluirPorId($idDenuncia);
+                if (!$processou) {
+                    throw new RuntimeException('Falha ao desativar a denúncia.');
+                }
+
+                $this->redirecionarComSucesso(
+                    'Denúncia desativada com sucesso.',
+                    'admin_denuncias',
+                    $retornoFiltros
+                );
+            }
+
+            if ((int) $denuncia->getAtivo() !== 0) {
+                throw new InvalidArgumentException('A denúncia já está ativa.');
+            }
+
+            $processou = $this->denunciaDAO->reativarPorId($idDenuncia);
+            if (!$processou) {
+                throw new RuntimeException('Falha ao reativar a denúncia.');
+            }
+
+            $this->redirecionarComSucesso(
+                'Denúncia reativada com sucesso.',
+                'admin_denuncias',
+                $retornoFiltros
+            );
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível alterar o status de ativo da denúncia.'),
+                'admin_denuncias',
+                $this->normalizarQueryRetornoDenuncias($_POST['retorno_filtros'] ?? '')
+            );
+        }
+    }
+
+    /**
      * Exclui logicamente comentário (uso administrativo).
      */
     public function excluirComentario()

@@ -42,6 +42,14 @@ return [
         'controller_method' => 'atualizarStatusDenuncia',
         'http_method' => 'POST',
     ],
+    // Processa alternância de ativo de denúncia por admin.
+    'processar_alternancia_ativo_denuncia_admin' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'alternarAtivoDenuncia',
+        'http_method' => 'POST',
+    ],
     // Processa exclusão lógica de comentário por admin.
     'processar_exclusao_comentario_admin' => [
         'type' => 'action',
