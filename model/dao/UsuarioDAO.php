@@ -7,6 +7,8 @@ require_once "model/dto/UsuarioDTO.php";
 class UsuarioDAO
 {
     private $conexao;
+    private const PERFIL_CIDADAO = 'cidadao';
+    private const PERFIL_ADMIN = 'admin';
 
     public function __construct()
     {
@@ -20,19 +22,42 @@ class UsuarioDAO
      */
     public function cadastrar(UsuarioDTO $usuario)
     {
-        $sql = "INSERT INTO usuarios (nome, email, senha, ativo) VALUES (:nome, :email, :senha, 1)";
-
-        $stmt = $this->conexao->prepare($sql);
-
         $nome = $usuario->getNome();
         $email = $usuario->getEmail();
         $senha = $usuario->getSenha();
+        $idPerfil = $this->buscarIdPerfilPorNome(self::PERFIL_CIDADAO);
 
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':senha', $senha);
+        if ($idPerfil === null) {
+            throw new Exception('Perfil padrão de cidadão não encontrado.');
+        }
 
-        $stmt->execute();
+        try {
+            $this->conexao->beginTransaction();
+
+            $sqlUsuario = "INSERT INTO usuarios (nome, fk_perfil, ativo) VALUES (:nome, :fk_perfil, 1)";
+            $stmtUsuario = $this->conexao->prepare($sqlUsuario);
+            $stmtUsuario->bindParam(':nome', $nome);
+            $stmtUsuario->bindParam(':fk_perfil', $idPerfil, PDO::PARAM_INT);
+            $stmtUsuario->execute();
+
+            $idUsuario = (int) $this->conexao->lastInsertId();
+
+            $sqlLogin = "INSERT INTO logins (fk_usuario, email, senha) VALUES (:fk_usuario, :email, :senha)";
+            $stmtLogin = $this->conexao->prepare($sqlLogin);
+            $stmtLogin->bindParam(':fk_usuario', $idUsuario, PDO::PARAM_INT);
+            $stmtLogin->bindParam(':email', $email);
+            $stmtLogin->bindParam(':senha', $senha);
+            $stmtLogin->execute();
+
+            $this->conexao->commit();
+
+        } catch (Throwable $e) {
+            if ($this->conexao->inTransaction()) {
+                $this->conexao->rollBack();
+            }
+
+            throw new Exception('Falha ao cadastrar usuário.', 0, $e);
+        }
     }
 
     /**
@@ -43,22 +68,35 @@ class UsuarioDAO
      */
     public function buscarPorEmail($email)
     {
-        $sql = "SELECT id_usuario, nome, email, senha, tipo, ativo FROM usuarios WHERE email = :email AND ativo = 1";
+        $sql = "SELECT u.id_usuario,
+                       u.nome,
+                       u.ativo,
+                       u.data_cadastro,
+                       u.fk_perfil,
+                       p.nome_perfil,
+                       l.email,
+                       l.senha
+                FROM usuarios u
+                INNER JOIN logins l ON l.fk_usuario = u.id_usuario
+                INNER JOIN perfis p ON p.id_perfil = u.fk_perfil
+                WHERE l.email = :email AND u.ativo = 1
+                LIMIT 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
-        if ($stmt->rowCount() > 0) {
-            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($dados !== false) {
             $usuario = new UsuarioDTO();
             $usuario->setId($dados['id_usuario']);
             $usuario->setNome($dados['nome']);
             $usuario->setEmail($dados['email']);
             $usuario->setSenha($dados['senha']);
-            $usuario->setTipo($dados['tipo']);
+            $usuario->setFkPerfil($dados['fk_perfil']);
+            $usuario->setNomePerfil($dados['nome_perfil']);
             $usuario->setAtivo($dados['ativo']);
+            $usuario->setDataCadastro($dados['data_cadastro']);
 
             return $usuario;
         }
@@ -74,7 +112,19 @@ class UsuarioDAO
      */
     public function buscarPorId($idUsuario)
     {
-        $sql = "SELECT id_usuario, nome, email, senha, tipo, ativo, data_cadastro FROM usuarios WHERE id_usuario = :id_usuario AND ativo = 1";
+        $sql = "SELECT u.id_usuario,
+                       u.nome,
+                       u.ativo,
+                       u.data_cadastro,
+                       u.fk_perfil,
+                       p.nome_perfil,
+                       l.email,
+                       l.senha
+                FROM usuarios u
+                INNER JOIN logins l ON l.fk_usuario = u.id_usuario
+                INNER JOIN perfis p ON p.id_perfil = u.fk_perfil
+                WHERE u.id_usuario = :id_usuario AND u.ativo = 1
+                LIMIT 1";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
@@ -90,7 +140,8 @@ class UsuarioDAO
         $usuario->setNome($dados['nome']);
         $usuario->setEmail($dados['email']);
         $usuario->setSenha($dados['senha']);
-        $usuario->setTipo($dados['tipo']);
+        $usuario->setFkPerfil($dados['fk_perfil']);
+        $usuario->setNomePerfil($dados['nome_perfil']);
         $usuario->setAtivo($dados['ativo']);
         $usuario->setDataCadastro($dados['data_cadastro']);
 
@@ -143,12 +194,16 @@ class UsuarioDAO
     public function emailJaCadastrado($email, $ignorarIdUsuario = null)
     {
         if ($ignorarIdUsuario !== null) {
-            $sql = "SELECT 1 FROM usuarios WHERE email = :email AND id_usuario <> :id_usuario LIMIT 1";
+            $sql = "SELECT 1
+                    FROM logins
+                    WHERE email = :email
+                      AND fk_usuario <> :id_usuario
+                    LIMIT 1";
             $stmt = $this->conexao->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':id_usuario', $ignorarIdUsuario, PDO::PARAM_INT);
         } else {
-            $sql = "SELECT 1 FROM usuarios WHERE email = :email LIMIT 1";
+            $sql = "SELECT 1 FROM logins WHERE email = :email LIMIT 1";
             $stmt = $this->conexao->prepare($sql);
             $stmt->bindParam(':email', $email);
         }
@@ -165,25 +220,46 @@ class UsuarioDAO
      */
     public function atualizar(UsuarioDTO $usuario)
     {
-        $sql = "UPDATE usuarios
-                SET nome = :nome,
-                    email = :email,
-                    senha = :senha
-                WHERE id_usuario = :id_usuario AND ativo = 1";
-
-        $stmt = $this->conexao->prepare($sql);
-
         $idUsuario = $usuario->getId();
         $nome = $usuario->getNome();
         $email = $usuario->getEmail();
         $senha = $usuario->getSenha();
 
-        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':senha', $senha);
+        if ($this->buscarPorId($idUsuario) === null) {
+            throw new Exception('Usuário não encontrado para atualização.');
+        }
 
-        return $stmt->execute();
+        try {
+            $this->conexao->beginTransaction();
+
+            $sqlUsuario = "UPDATE usuarios
+                           SET nome = :nome
+                           WHERE id_usuario = :id_usuario AND ativo = 1";
+            $stmtUsuario = $this->conexao->prepare($sqlUsuario);
+            $stmtUsuario->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+            $stmtUsuario->bindParam(':nome', $nome);
+            $stmtUsuario->execute();
+
+            $sqlLogin = "UPDATE logins
+                         SET email = :email,
+                             senha = :senha
+                         WHERE fk_usuario = :id_usuario";
+            $stmtLogin = $this->conexao->prepare($sqlLogin);
+            $stmtLogin->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+            $stmtLogin->bindParam(':email', $email);
+            $stmtLogin->bindParam(':senha', $senha);
+            $stmtLogin->execute();
+
+            $this->conexao->commit();
+            return true;
+
+        } catch (Throwable $e) {
+            if ($this->conexao->inTransaction()) {
+                $this->conexao->rollBack();
+            }
+
+            throw new Exception('Falha ao atualizar dados do usuário.', 0, $e);
+        }
     }
 
     /**
@@ -251,13 +327,16 @@ class UsuarioDAO
      */
     public function promoverParaAdmin($idUsuario)
     {
-        $sql = "UPDATE usuarios
-                SET tipo = 'admin'
-                WHERE id_usuario = :id_usuario
-                  AND ativo = 1
-                  AND tipo <> 'admin'";
+        $sql = "UPDATE usuarios u
+            INNER JOIN perfis p ON p.nome_perfil = :perfil_admin
+            SET u.fk_perfil = p.id_perfil
+            WHERE u.id_usuario = :id_usuario
+              AND u.ativo = 1
+              AND u.fk_perfil <> p.id_perfil";
 
         $stmt = $this->conexao->prepare($sql);
+        $perfilAdmin = self::PERFIL_ADMIN;
+        $stmt->bindParam(':perfil_admin', $perfilAdmin);
         $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -278,23 +357,31 @@ class UsuarioDAO
             return [];
         }
 
-        $sql = "SELECT id_usuario, nome, email, tipo, ativo, data_cadastro
-            FROM usuarios
-            WHERE ativo = 1";
+        $sql = "SELECT u.id_usuario,
+                       u.nome,
+                       l.email,
+                       p.nome_perfil AS tipo,
+                       u.fk_perfil,
+                       u.ativo,
+                       u.data_cadastro
+                FROM usuarios u
+                INNER JOIN logins l ON l.fk_usuario = u.id_usuario
+                INNER JOIN perfis p ON p.id_perfil = u.fk_perfil
+                WHERE u.ativo = 1";
 
         $params = [];
 
         if ($papel !== null && $papel !== '') {
-            $sql .= " AND tipo = :tipo";
+            $sql .= " AND p.nome_perfil = :tipo";
             $params[':tipo'] = (string) $papel;
         }
 
         if ($busca !== '') {
-            $sql .= " AND (nome LIKE :busca OR email LIKE :busca)";
+            $sql .= " AND (u.nome LIKE :busca OR l.email LIKE :busca)";
             $params[':busca'] = '%' . $busca . '%';
         }
 
-        $sql .= " ORDER BY id_usuario DESC";
+        $sql .= " ORDER BY u.id_usuario DESC";
 
         $stmt = $this->conexao->prepare($sql);
         foreach ($params as $chave => $valor) {
@@ -309,6 +396,8 @@ class UsuarioDAO
             $usuario->setNome($dados['nome']);
             $usuario->setEmail($dados['email']);
             $usuario->setTipo($dados['tipo']);
+            $usuario->setFkPerfil($dados['fk_perfil']);
+            $usuario->setNomePerfil($dados['tipo']);
             $usuario->setAtivo($dados['ativo']);
             $usuario->setDataCadastro($dados['data_cadastro']);
 
@@ -331,6 +420,32 @@ class UsuarioDAO
         $stmt->execute();
 
         return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Busca o ID do perfil a partir do nome.
+     *
+     * @param string $nomePerfil
+     * @return int|null
+     */
+    private function buscarIdPerfilPorNome($nomePerfil)
+    {
+        $sql = "SELECT id_perfil
+                FROM perfis
+                WHERE nome_perfil = :nome_perfil
+                  AND ativo = 1
+                LIMIT 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':nome_perfil', $nomePerfil);
+        $stmt->execute();
+
+        $idPerfil = $stmt->fetchColumn();
+        if ($idPerfil === false) {
+            return null;
+        }
+
+        return (int) $idPerfil;
     }
 }
 ?>

@@ -10,6 +10,8 @@ class UsuarioDTO
     private $email;
     private $senha;
     private $tipo;
+    private $fkPerfil;
+    private $nomePerfil;
     private $ativo;
 
     private $dataCadastro;
@@ -38,7 +40,21 @@ class UsuarioDTO
 
     public function getTipo()
     {
-        return $this->tipo;
+        if ($this->tipo !== null && $this->tipo !== '') {
+            return $this->tipo;
+        }
+
+        return $this->nomePerfil;
+    }
+
+    public function getFkPerfil()
+    {
+        return $this->fkPerfil;
+    }
+
+    public function getNomePerfil()
+    {
+        return $this->nomePerfil;
     }
 
     public function getAtivo()
@@ -76,6 +92,17 @@ class UsuarioDTO
     public function setTipo($tipo)
     {
         $this->tipo = $tipo;
+    }
+
+    public function setFkPerfil($fkPerfil)
+    {
+        $this->fkPerfil = $fkPerfil;
+    }
+
+    public function setNomePerfil($nomePerfil)
+    {
+        $this->nomePerfil = $nomePerfil;
+        $this->tipo = $nomePerfil;
     }
 
     public function setAtivo($ativo)

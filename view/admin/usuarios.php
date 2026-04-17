@@ -8,6 +8,7 @@ $filtrosUsuariosAtuais = is_array($filtrosUsuariosAtuais ?? null) ? $filtrosUsua
 $totalUsuarios = count($usuariosLista);
 $totalAdmins = 0;
 $totalCidadaos = 0;
+$totalGestores = 0;
 
 foreach ($usuariosLista as $usuarioItem) {
     $tipoNormalizado = strtolower(trim((string) $usuarioItem->getTipo()));
@@ -16,6 +17,8 @@ foreach ($usuariosLista as $usuarioItem) {
         $totalAdmins++;
     } elseif ($tipoNormalizado === 'cidadao') {
         $totalCidadaos++;
+    } elseif ($tipoNormalizado === 'gestor') {
+        $totalGestores++;
     }
 }
 
@@ -23,6 +26,10 @@ $classePapel = static function (string $tipo): string {
     $tipoNormalizado = strtolower(trim($tipo));
 
     if ($tipoNormalizado === 'admin') {
+        return 'admin-usuarios-papel admin-usuarios-papel-admin';
+    }
+
+    if ($tipoNormalizado === 'gestor') {
         return 'admin-usuarios-papel admin-usuarios-papel-admin';
     }
 
@@ -71,6 +78,8 @@ $classePapel = static function (string $tipo): string {
                         <option value="admin" <?= (($filtrosUsuariosAtuais['papel'] ?? '') === 'admin') ? 'selected' : '' ?>>Administrador
                         </option>
                         <option value="cidadao" <?= (($filtrosUsuariosAtuais['papel'] ?? '') === 'cidadao') ? 'selected' : '' ?>>Cidadão
+                        </option>
+                        <option value="gestor" <?= (($filtrosUsuariosAtuais['papel'] ?? '') === 'gestor') ? 'selected' : '' ?>>Gestor
                         </option>
                     </select>
                 </div>
@@ -179,6 +188,10 @@ $classePapel = static function (string $tipo): string {
                         <li class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">Cidadãos</span>
                             <strong><?= htmlspecialchars((string) $totalCidadaos, ENT_QUOTES, 'UTF-8') ?></strong>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Gestores</span>
+                            <strong><?= htmlspecialchars((string) $totalGestores, ENT_QUOTES, 'UTF-8') ?></strong>
                         </li>
                     </ul>
                 </div>
