@@ -455,9 +455,10 @@ class DenunciaDAO
      * @param int $pagina
      * @param int $limite
      * @param string $ordenacao
+     * @param int|null $ativo
      * @return DenunciaDTO[]
      */
-    public function listarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $pagina = 1, $limite = 10, $ordenacao = 'recentes')
+    public function listarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $pagina = 1, $limite = 10, $ordenacao = 'recentes', $ativo = 1)
     {
         $pagina = (int) $pagina;
         $limite = (int) $limite;
@@ -476,7 +477,11 @@ class DenunciaDAO
 
         $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
                 FROM denuncias
-                WHERE ativo = 1";
+                WHERE 1 = 1";
+
+        if ($ativo !== null) {
+            $sql .= " AND ativo = :ativo";
+        }
 
         if ($status !== null) {
             $sql .= " AND status = :status";
@@ -493,6 +498,10 @@ class DenunciaDAO
         $sql .= " ORDER BY {$ordenacaoSql} LIMIT :limite OFFSET :offset";
 
         $stmt = $this->conexao->prepare($sql);
+
+        if ($ativo !== null) {
+            $stmt->bindValue(':ativo', (int) $ativo, PDO::PARAM_INT);
+        }
 
         if ($status !== null) {
             $stmt->bindValue(':status', $status);
@@ -525,15 +534,20 @@ class DenunciaDAO
      * @param string|null $status
      * @param int|null $idCategoria
      * @param string $termoBusca
+     * @param int|null $ativo
      * @return int
      */
-    public function contarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '')
+    public function contarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $ativo = 1)
     {
         $termoBusca = trim((string) $termoBusca);
 
         $sql = "SELECT COUNT(*) AS total
                 FROM denuncias
-                WHERE ativo = 1";
+                WHERE 1 = 1";
+
+        if ($ativo !== null) {
+            $sql .= " AND ativo = :ativo";
+        }
 
         if ($status !== null) {
             $sql .= " AND status = :status";
@@ -548,6 +562,10 @@ class DenunciaDAO
         }
 
         $stmt = $this->conexao->prepare($sql);
+
+        if ($ativo !== null) {
+            $stmt->bindValue(':ativo', (int) $ativo, PDO::PARAM_INT);
+        }
 
         if ($status !== null) {
             $stmt->bindValue(':status', $status);

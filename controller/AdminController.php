@@ -56,18 +56,18 @@ class AdminController
         try {
             $buscaFiltro = $this->normalizarBuscaFiltro($_GET['busca'] ?? '');
             $papelFiltro = $this->normalizarPapelUsuarioFiltro($_GET['papel'] ?? '');
-            $statusFiltro = $this->normalizarStatusUsuarioFiltro($_GET['status'] ?? 'ativo');
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
 
             $usuarios = $this->usuarioDAO->listarUsuarios(
                 $buscaFiltro,
                 $papelFiltro !== '' ? $papelFiltro : null,
-                $statusFiltro
+                $ativoFiltro
             );
 
             $filtrosUsuariosAtuais = [
                 'busca' => $buscaFiltro,
                 'papel' => $papelFiltro,
-                'status' => $statusFiltro,
+                'ativo' => $ativoFiltro,
             ];
 
             $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
@@ -89,7 +89,11 @@ class AdminController
     public function listarCategorias()
     {
         try {
-            $categorias = $this->categoriaDAO->listarTodas();
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
+            $categorias = $this->categoriaDAO->listarTodas($ativoFiltro);
+            $filtrosCategoriasAtuais = [
+                'ativo' => $ativoFiltro,
+            ];
             $tituloPagina = 'Gerenciamento de Categorias';
             include 'view/admin/categorias.php';
             return;
@@ -106,6 +110,7 @@ class AdminController
     {
         try {
             $statusFiltro = $this->normalizarStatusFiltro($_GET['status'] ?? '');
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
             $idCategoriaFiltro = $this->normalizarCategoriaFiltro($_GET['categoria'] ?? null);
             $buscaFiltro = $this->normalizarBuscaFiltro($_GET['busca'] ?? '');
             $paginaAtual = $this->normalizarPagina($_GET['pagina'] ?? 1);
@@ -115,7 +120,8 @@ class AdminController
             $totalDenuncias = $this->denunciaDAO->contarPaginadasAdmin(
                 $statusFiltro !== '' ? $statusFiltro : null,
                 $idCategoriaFiltro,
-                $buscaFiltro
+                $buscaFiltro,
+                $ativoFiltro
             );
 
             $totalPaginas = $totalDenuncias > 0 ? (int) ceil($totalDenuncias / $limitePagina) : 0;
@@ -129,7 +135,8 @@ class AdminController
                 $buscaFiltro,
                 $paginaAtual,
                 $limitePagina,
-                $ordemFiltro
+                $ordemFiltro,
+                $ativoFiltro
             );
 
             $categorias = $this->categoriaDAO->listarTodas();
@@ -139,6 +146,7 @@ class AdminController
 
             $filtrosAtuais = [
                 'status' => $statusFiltro,
+                'ativo' => $ativoFiltro,
                 'categoria' => $idCategoriaFiltro,
                 'busca' => $buscaFiltro,
                 'limite' => $limitePagina,
@@ -558,16 +566,36 @@ class AdminController
     }
 
     /**
-     * Normaliza filtro de status para listagem de usuários.
+     * Normaliza filtro ativo/inativo/todos.
+     *
+     * @param mixed $ativo
+     * @param int|null $padrao
+     * @return int|null
      */
-    private function normalizarStatusUsuarioFiltro($status)
+    private function normalizarFiltroAtivo($ativo, $padrao = null)
     {
-        $status = strtolower(trim((string) $status));
-        if ($status === '' || $status === 'ativo') {
-            return 'ativo';
+        if ($ativo === null || $ativo === '') {
+            return $padrao;
         }
 
-        throw new InvalidArgumentException('Filtro de status inválido.');
+        $ativo = trim((string) $ativo);
+        if ($ativo === '') {
+            return $padrao;
+        }
+
+        if ($ativo === 'todos') {
+            return null;
+        }
+
+        if ($ativo === '1') {
+            return 1;
+        }
+
+        if ($ativo === '0') {
+            return 0;
+        }
+
+        throw new InvalidArgumentException('Filtro de ativo inválido.');
     }
 
     /**
@@ -670,6 +698,15 @@ class AdminController
                 $retorno['status'] = $status;
             }
         } catch (Throwable $e) {
+        }
+
+        try {
+            $ativo = $this->normalizarFiltroAtivo($dados['ativo'] ?? '1', 1);
+            if ($ativo !== null) {
+                $retorno['ativo'] = $ativo;
+            }
+        } catch (Throwable $e) {
+            $retorno['ativo'] = 1;
         }
 
         try {

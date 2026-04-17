@@ -4,6 +4,7 @@ $usuariosLista = is_array($usuarios ?? null) ? $usuarios : [];
 $filtrosUsuariosAtuais = is_array($filtrosUsuariosAtuais ?? null) ? $filtrosUsuariosAtuais : [
     'busca' => '',
     'papel' => '',
+    'ativo' => 1,
 ];
 $totalUsuarios = count($usuariosLista);
 $totalAdmins = 0;
@@ -85,6 +86,18 @@ $classePapel = static function (string $tipo): string {
                     </select>
                 </div>
 
+                <div class="col-12 col-md-6 col-lg-3">
+                    <select class="form-select" name="ativo">
+                        <option value="">Todos os Status</option>
+                        <option value="1" <?= (string) ($filtrosUsuariosAtuais['ativo'] ?? 1) === '1' ? 'selected' : '' ?>>
+                            Ativos
+                        </option>
+                        <option value="0" <?= (string) ($filtrosUsuariosAtuais['ativo'] ?? 1) === '0' ? 'selected' : '' ?>>
+                            Inativos
+                        </option>
+                    </select>
+                </div>
+
                 <div class="col-12 d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Filtrar</button>
                     <a href="index.php?rota=listar_usuarios" class="btn btn-outline-secondary">Limpar filtros</a>
@@ -109,6 +122,7 @@ $classePapel = static function (string $tipo): string {
                         $nomeUsuario = trim((string) $usuario->getNome());
                         $tipoUsuario = (string) $usuario->getTipo();
                         $tipoUsuarioNormalizado = strtolower(trim($tipoUsuario));
+                        $usuarioAtivo = (int) $usuario->getAtivo() === 1;
                         $ehContaAtual = $idUsuario === (int) ($idUsuarioSessao ?? 0);
                         ?>
                         <article class="card shadow-sm admin-usuarios-item">
@@ -134,7 +148,7 @@ $classePapel = static function (string $tipo): string {
                                         <p class="small text-muted text-uppercase mb-1">Status</p>
                                         <span class="admin-usuarios-status">
                                             <span class="admin-usuarios-status-dot" aria-hidden="true"></span>
-                                            Ativo
+                                            <?= $usuarioAtivo ? 'Ativo' : 'Inativo' ?>
                                         </span>
                                     </div>
 
@@ -142,7 +156,7 @@ $classePapel = static function (string $tipo): string {
                                         <?php if ($ehContaAtual): ?>
                                             <span class="badge text-bg-secondary">Conta Atual</span>
                                         <?php else: ?>
-                                            <?php if ($ehAdminSessao && $tipoUsuarioNormalizado !== 'admin'): ?>
+                                            <?php if ($usuarioAtivo && $ehAdminSessao && $tipoUsuarioNormalizado !== 'admin'): ?>
                                                 <form action="index.php?rota=processar_promocao_usuario_admin" method="POST"
                                                     onsubmit="return confirm('Promover este usuário para administrador?');">
                                                     <?= csrfField() ?>
@@ -153,7 +167,7 @@ $classePapel = static function (string $tipo): string {
                                                 </form>
                                             <?php endif; ?>
 
-                                            <?php if ($ehAdminSessao || $tipoUsuarioNormalizado !== 'admin'): ?>
+                                            <?php if ($usuarioAtivo && ($ehAdminSessao || $tipoUsuarioNormalizado !== 'admin')): ?>
                                                 <form action="index.php?rota=processar_exclusao_usuario_admin" method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja desativar este usuário?');">
                                                     <?= csrfField() ?>
@@ -161,6 +175,10 @@ $classePapel = static function (string $tipo): string {
                                                         value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
                                                 </form>
+                                            <?php endif; ?>
+
+                                            <?php if (!$usuarioAtivo): ?>
+                                                <span class="badge text-bg-light border">Sem ações para contas inativas</span>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </div>

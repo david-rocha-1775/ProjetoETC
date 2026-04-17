@@ -27,7 +27,7 @@
                         <input type="hidden" name="rota" value="admin_denuncias">
 
                         <div class="row g-2 align-items-end">
-                            <div class="col-12 col-md-3">
+                            <div class="col-12 col-md-2">
                                 <label for="filtroStatus" class="form-label">Status</label>
                                 <select id="filtroStatus" name="status" class="form-select form-select-sm">
                                     <option value="">Todos</option>
@@ -35,6 +35,15 @@
                                         Aberto</option>
                                     <option value="Em Andamento" <?= ($filtrosAtuais['status'] ?? '') === 'Em Andamento' ? 'selected' : '' ?>>Em Andamento</option>
                                     <option value="Resolvido" <?= ($filtrosAtuais['status'] ?? '') === 'Resolvido' ? 'selected' : '' ?>>Resolvido</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-2">
+                                <label for="filtroAtivo" class="form-label">Ativo</label>
+                                <select id="filtroAtivo" name="ativo" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="1" <?= (string) ($filtrosAtuais['ativo'] ?? 1) === '1' ? 'selected' : '' ?>>Ativos</option>
+                                    <option value="0" <?= (string) ($filtrosAtuais['ativo'] ?? 1) === '0' ? 'selected' : '' ?>>Inativos</option>
                                 </select>
                             </div>
 
@@ -70,7 +79,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-6 col-md-2">
+                            <div class="col-6 col-md-1">
                                 <label for="filtroOrdem" class="form-label">Ordem</label>
                                 <select id="filtroOrdem" name="ordem" class="form-select form-select-sm">
                                     <option value="recentes" <?= ($filtrosAtuais['ordem'] ?? 'recentes') === 'recentes' ? 'selected' : '' ?>>Mais recentes</option>
