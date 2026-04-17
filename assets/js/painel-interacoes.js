@@ -95,6 +95,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function atualizarCurtidaComentario(formulario, dados) {
+        const comentarioId = formulario.querySelector('input[name="id_comentario"]')?.value;
+        if (!comentarioId) {
+            return;
+        }
+
+        const botao = formulario.querySelector('[data-botao-curtir-comentario]');
+        const contador = document.getElementById('total-curtidas-comentario-' + comentarioId);
+
+        if (botao) {
+            const ehBotaoIcone = botao.hasAttribute('data-curtir-icone');
+
+            if (ehBotaoIcone) {
+                const label = dados.usuario_curtiu ? 'Remover curtida do comentário' : 'Curtir comentário';
+                botao.setAttribute('aria-label', label);
+                botao.setAttribute('title', label);
+                botao.classList.toggle('is-active', Boolean(dados.usuario_curtiu));
+
+                const icone = botao.querySelector('img');
+                const iconeCurtido = botao.getAttribute('data-curtir-icone-on');
+                const iconeNaoCurtido = botao.getAttribute('data-curtir-icone-off');
+                if (icone && iconeCurtido && iconeNaoCurtido) {
+                    icone.src = dados.usuario_curtiu ? iconeCurtido : iconeNaoCurtido;
+                }
+            } else {
+                botao.textContent = dados.usuario_curtiu ? 'Descurtir comentário' : 'Curtir comentário';
+            }
+        }
+
+        if (contador) {
+            contador.textContent = dados.total_curtidas;
+        }
+    }
+
     function criarBlocoComentario(comentario) {
         const wrapper = document.createElement('div');
         wrapper.id = 'comentario-' + comentario.id;
@@ -228,26 +262,16 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formulario.classList.contains('js-curtir-denuncia')) {
                 atualizarCurtidaDenuncia(formulario, dados);
             } else if (formulario.classList.contains('js-curtir-comentario')) {
-                const comentarioId = formulario.querySelector('input[name="id_comentario"]')?.value;
-                const contador = document.getElementById('total-curtidas-comentario-' + comentarioId);
-                const botaoCurtida = formulario.querySelector('[data-botao-curtir-comentario]');
-
-                if (contador) {
-                    contador.textContent = dados.total_curtidas;
-                }
-
-                if (botaoCurtida) {
-                    botaoCurtida.textContent = dados.usuario_curtiu ? 'Descurtir comentário' : 'Curtir comentário';
-                }
+                atualizarCurtidaComentario(formulario, dados);
             } else if (formulario.classList.contains('js-comentar-denuncia')) {
                 atualizarListaComentarios(formulario, dados);
             }
 
-            if (!formulario.classList.contains('js-curtir-denuncia')) {
+            if (!formulario.classList.contains('js-curtir-denuncia') && !formulario.classList.contains('js-curtir-comentario')) {
                 mostrarFeedback('success', dados.message || 'Operação concluída com sucesso.');
             }
         } catch (erro) {
-            if (!formulario.classList.contains('js-curtir-denuncia')) {
+            if (!formulario.classList.contains('js-curtir-denuncia') && !formulario.classList.contains('js-curtir-comentario')) {
                 mostrarFeedback('danger', erro.message || 'Não foi possível concluir a ação.');
             }
         } finally {
