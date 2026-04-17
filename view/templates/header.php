@@ -32,8 +32,6 @@
     <?php foreach ($paginaCssExtra as $cssExtra): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssExtra) ?>">
     <?php endforeach; ?>
-    <!-- Bootstrap JS Bundle -->
-    <script src="assets/js/bootstrap.bundle.min.js" defer></script>
     <?php foreach ($paginaJsHeadExtra as $jsHeadExtra): ?>
         <script src="<?= htmlspecialchars((string) $jsHeadExtra) ?>" defer></script>
     <?php endforeach; ?>
