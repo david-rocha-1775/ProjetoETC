@@ -155,12 +155,12 @@ $paginaJsHeadExtra = [
                 </details>
 
                 <form action="index.php?rota=processar_exclusao_denuncia" method="POST" class="mt-3"
-                    onsubmit="return confirm('Tem certeza que deseja excluir esta denúncia?');">
+                    onsubmit="return confirm('Tem certeza que deseja desativar esta denúncia?');">
                     <?= csrfField() ?>
                     <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                     <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                     <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir denúncia</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Desativar denúncia</button>
                 </form>
             <?php endif; ?>
         </div>
