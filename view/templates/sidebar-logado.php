@@ -24,13 +24,13 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
     </div>
     <div class="offcanvas-body d-flex flex-column gap-3">
         <a href="index.php?rota=painel" class="<?= $classeItemSidebar(['painel']) ?>">
-            <img src="assets/fonts/material-symbols/home.svg" alt="inicio" class="nav-icon" width="18" height="18">
-            Inicio
+            <img src="assets/fonts/material-symbols/home.svg" alt="início" class="nav-icon" width="18" height="18">
+            Início
         </a>
         <a href="index.php?rota=nova_denuncia" class="<?= $classeItemSidebar(['nova_denuncia']) ?>">
-            <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon" width="18"
+            <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denúncia" class="nav-icon" width="18"
                 height="18">
-            Nova denuncia
+            Nova denúncia
         </a>
         <a href="index.php?rota=mapa" class="<?= $classeItemSidebar(['mapa']) ?>">
             <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon" width="18" height="18">
@@ -42,7 +42,7 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
         </a>
         <?php if ($ehAdminSidebar): ?>
             <div class="pt-2 border-top">
-                <p class="small text-muted mb-2">Administracao</p>
+                <p class="small text-muted mb-2">Administração</p>
                 <div class="d-grid gap-2">
                     <a href="index.php?rota=admin_dashboard" class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
                         <img src="assets/fonts/material-symbols/analytics4.svg" alt="dashboard admin" class="nav-icon"
@@ -50,14 +50,14 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
                         Dashboard Admin
                     </a>
                     <a href="index.php?rota=admin_denuncias" class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
-                        <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias" class="nav-icon"
+                        <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denúncias" class="nav-icon"
                             width="18" height="18">
-                        Gerenciar Denuncias
+                        Gerenciar Denúncias
                     </a>
                     <a href="index.php?rota=listar_usuarios" class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
-                        <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios" class="nav-icon"
+                        <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuários" class="nav-icon"
                             width="18" height="18">
-                        Gerenciar Usuarios
+                        Gerenciar Usuários
                     </a>
                     <a href="index.php?rota=listar_categorias_admin"
                         class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">
@@ -71,7 +71,7 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
     </div>
 </div>
 
-<aside class="d-none d-lg-block painel-sidebar-col" aria-label="Menu lateral do usuario">
+<aside class="d-none d-lg-block painel-sidebar-col" aria-label="Menu lateral do usuário">
     <div class="card shadow-sm painel-sidebar-card h-100">
         <div class="card-body painel-sidebar-body h-100">
             <div class="painel-sidebar-main d-flex flex-column gap-3">
@@ -82,14 +82,14 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
 
                 <div class="d-grid gap-2">
                     <a href="index.php?rota=painel" class="<?= $classeItemSidebar(['painel']) ?>">
-                        <img src="assets/fonts/material-symbols/home.svg" alt="inicio" class="nav-icon" width="18"
+                        <img src="assets/fonts/material-symbols/home.svg" alt="início" class="nav-icon" width="18"
                             height="18">
-                        Inicio
+                        Início
                     </a>
                     <a href="index.php?rota=nova_denuncia" class="<?= $classeItemSidebar(['nova_denuncia']) ?>">
-                        <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon"
+                        <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denúncia" class="nav-icon"
                             width="18" height="18">
-                        Nova denuncia
+                        Nova denúncia
                     </a>
                     <a href="index.php?rota=mapa" class="<?= $classeItemSidebar(['mapa']) ?>">
                         <img src="assets/fonts/material-symbols/map_search.svg" alt="mapa" class="nav-icon" width="18"
@@ -103,7 +103,7 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
                     </a>
                     <?php if ($ehAdminSidebar): ?>
                         <div class="pt-2 border-top">
-                            <p class="small text-muted mb-2">Administracao</p>
+                            <p class="small text-muted mb-2">Administração</p>
                             <div class="d-grid gap-2">
                                 <a href="index.php?rota=admin_dashboard"
                                     class="<?= $classeItemSidebar(['admin_dashboard']) ?>">
@@ -113,15 +113,15 @@ $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar
                                 </a>
                                 <a href="index.php?rota=admin_denuncias"
                                     class="<?= $classeItemSidebar(['admin_denuncias']) ?>">
-                                    <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denuncias"
+                                    <img src="assets/fonts/material-symbols/description.svg" alt="gerenciar denúncias"
                                         class="nav-icon" width="18" height="18">
-                                    Gerenciar Denuncias
+                                    Gerenciar Denúncias
                                 </a>
                                 <a href="index.php?rota=listar_usuarios"
                                     class="<?= $classeItemSidebar(['listar_usuarios']) ?>">
-                                    <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuarios"
+                                    <img src="assets/fonts/material-symbols/group.svg" alt="gerenciar usuários"
                                         class="nav-icon" width="18" height="18">
-                                    Gerenciar Usuarios
+                                    Gerenciar Usuários
                                 </a>
                                 <a href="index.php?rota=listar_categorias_admin"
                                     class="<?= $classeItemSidebar(['listar_categorias_admin']) ?>">

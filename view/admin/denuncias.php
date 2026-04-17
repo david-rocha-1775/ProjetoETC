@@ -96,13 +96,13 @@
 
         <section class="mb-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <h3 class="mb-0">Denuncias registradas</h3>
+                <h3 class="mb-0">Denúncias registradas</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="text-muted small">Total encontrado:
                         <strong><?= htmlspecialchars((string) $totalDenuncias, ENT_QUOTES, 'UTF-8') ?></strong></span>
                     <?php if ($totalPaginas > 1): ?>
-                        <span class="text-muted small">Pagina
+                        <span class="text-muted small">Página
                             <?= htmlspecialchars((string) $paginaAtual, ENT_QUOTES, 'UTF-8') ?> de
                             <?= htmlspecialchars((string) $totalPaginas, ENT_QUOTES, 'UTF-8') ?></span>
                     <?php endif; ?>
@@ -219,7 +219,7 @@
 
                 <?php if ($totalPaginas > 1): ?>
                     <div class="d-flex flex-column gap-3 mt-4">
-                        <nav class="painel-paginacao-nav" aria-label="Paginacao das denuncias">
+                        <nav class="painel-paginacao-nav" aria-label="Paginação das denúncias">
                             <ul class="pagination painel-paginacao flex-wrap mb-0">
                                 <?php
                                 $baseQuery = 'rota=admin_denuncias';
@@ -270,7 +270,7 @@
                                 <?php if ((int) $paginaAtual < (int) $totalPaginas): ?>
                                     <li class="page-item">
                                         <a class="page-link"
-                                            href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=' . ((int) $paginaAtual + 1), ENT_QUOTES, 'UTF-8') ?>">Proxima</a>
+                                            href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=' . ((int) $paginaAtual + 1), ENT_QUOTES, 'UTF-8') ?>">Próxima</a>
                                     </li>
                                 <?php endif; ?>
                             </ul>

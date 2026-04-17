@@ -72,12 +72,12 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                 <article class="card shadow-sm h-100 painel-metrica-card">
                     <div class="card-body d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-uppercase small text-muted mb-1">Em analise</p>
+                            <p class="text-uppercase small text-muted mb-1">Em análise</p>
                             <p class="display-6 mb-0 fw-semibold"><?= htmlspecialchars((string) $statusEmAnalise) ?>
                             </p>
                             <span class="small text-muted">total</span>
                         </div>
-                        <img src="assets/fonts/material-symbols/pending.svg" alt="em analise" width="24" height="24"
+                        <img src="assets/fonts/material-symbols/pending.svg" alt="em análise" width="24" height="24"
                             class="painel-metrica-icone">
                     </div>
                 </article>
@@ -109,9 +109,9 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
             </button>
             <a href="index.php?rota=nova_denuncia"
                 class="btn btn-primary btn-sm rounded-pill d-inline-flex align-items-center gap-2 painel-btn-nova-denuncia">
-                <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denuncia" class="nav-icon" width="16"
+                <img src="assets/fonts/material-symbols/add_circle.svg" alt="nova denúncia" class="nav-icon" width="16"
                     height="16">
-                Nova denuncia
+                Nova denúncia
             </a>
         </div>
 
@@ -140,7 +140,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
 
                             <div class="col-6 col-md-3">
                                 <label for="filtro-limite-card" class="form-label mb-0 small">Itens por
-                                    pagina</label>
+                                    página</label>
                                 <select name="limite" id="filtro-limite-card" class="form-select form-select-sm">
                                     <option value="10" <?= ($limiteSelecionado === 10) ? 'selected' : '' ?>>10</option>
                                     <option value="25" <?= ($limiteSelecionado === 25) ? 'selected' : '' ?>>25</option>
@@ -149,7 +149,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                             </div>
 
                             <div class="col-6 col-md-3">
-                                <label for="filtro-ordem-card" class="form-label mb-0 small">Ordenacao</label>
+                                <label for="filtro-ordem-card" class="form-label mb-0 small">Ordenação</label>
                                 <select name="ordem" id="filtro-ordem-card" class="form-select form-select-sm">
                                     <option value="recentes" <?= ($ordenacaoSelecionada === 'recentes') ? 'selected' : '' ?>>Mais recentes</option>
                                     <option value="antigas" <?= ($ordenacaoSelecionada === 'antigas') ? 'selected' : '' ?>>
@@ -165,7 +165,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                     </form>
 
                     <div class="mt-3 text-muted small">
-                        Total de denuncias encontradas:
+                        Total de denúncias encontradas:
                         <strong><?= htmlspecialchars((string) $totalDenuncias) ?></strong>
                     </div>
                 </div>
@@ -174,13 +174,13 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
 
         <section class="mb-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <h3 class="mb-0">Denuncias registradas</h3>
+                <h3 class="mb-0">Denúncias registradas</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="text-muted small">Total encontrado:
                         <strong><?= htmlspecialchars((string) $totalDenuncias) ?></strong></span>
                     <?php if ($totalPaginas > 1): ?>
-                        <span class="text-muted small">Pagina <?= htmlspecialchars((string) $paginaAtual) ?> de
+                        <span class="text-muted small">Página <?= htmlspecialchars((string) $paginaAtual) ?> de
                             <?= htmlspecialchars((string) $totalPaginas) ?></span>
                     <?php endif; ?>
                 </div>
@@ -196,7 +196,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                             'totalComentarios' => 0,
                             'usuarioCurtiu' => false,
                         ];
-                        $nomeAutor = $autoresPorDenuncia[$idDenuncia] ?? 'Usuario';
+                        $nomeAutor = $autoresPorDenuncia[$idDenuncia] ?? 'Usuário';
                         $nomeCategoria = $categoriasPorId[(int) $d->getIdCategoria()] ?? 'Sem categoria';
                         $urlDetalhe = 'index.php?rota=detalhe_denuncia&id=' . rawurlencode((string) $idDenuncia);
                         $dataCriacaoRaw = (string) $d->getDataCriacao();
@@ -210,7 +210,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                             class="card shadow-sm painel-denuncia-card">
                             <div class="painel-denuncia-thumb-wrap">
                                 <?php if ($d->getFotoPath()): ?>
-                                    <img src="<?= htmlspecialchars((string) $d->getFotoPath()) ?>" alt="Foto da denuncia"
+                                    <img src="<?= htmlspecialchars((string) $d->getFotoPath()) ?>" alt="Foto da denúncia"
                                         class="painel-denuncia-thumb">
                                 <?php else: ?>
                                     <div class="painel-denuncia-thumb painel-denuncia-thumb-placeholder" aria-hidden="true">
@@ -230,7 +230,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                                     </div>
                                 </div>
 
-                                <p class="mb-1 painel-denuncia-meta"><strong>Localizacao:</strong>
+                                <p class="mb-1 painel-denuncia-meta"><strong>Localização:</strong>
                                     <?= htmlspecialchars($d->getLocalizacao()) ?></p>
                                 <p class="mb-1 painel-denuncia-meta"><strong>Autor:</strong>
                                     <?= htmlspecialchars($nomeAutor) ?></p>
@@ -264,7 +264,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                                             <strong
                                                 id="total-curtidas-denuncia-<?= htmlspecialchars((string) $idDenuncia) ?>"><?= htmlspecialchars((string) $resumoDenuncia['totalCurtidas']) ?></strong></span>
                                         <span class="painel-indicador-comentarios d-inline-flex align-items-center gap-1">
-                                            <img src="assets/fonts/material-symbols/chat_bubble.svg" alt="comentarios"
+                                            <img src="assets/fonts/material-symbols/chat_bubble.svg" alt="comentários"
                                                 class="nav-icon" width="18" height="18">
                                             <strong><?= htmlspecialchars((string) $resumoDenuncia['totalComentarios']) ?></strong></span>
                                     </div>
@@ -278,7 +278,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
 
                 <?php if ($totalPaginas > 1): ?>
                     <div class="d-flex flex-column gap-3 mt-4">
-                        <nav class="painel-paginacao-nav" aria-label="Paginacao das denuncias">
+                        <nav class="painel-paginacao-nav" aria-label="Paginação das denúncias">
                             <ul class="pagination painel-paginacao flex-wrap mb-0">
                                 <?php if ($paginaAtual > 1): ?>
                                     <li class="page-item">
@@ -322,7 +322,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                                 <?php if ($paginaAtual < $totalPaginas): ?>
                                     <li class="page-item">
                                         <a class="page-link"
-                                            href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=' . ($paginaAtual + 1)) ?>">Proxima</a>
+                                            href="index.php?<?= htmlspecialchars($baseQuery . '&pagina=' . ($paginaAtual + 1)) ?>">Próxima</a>
                                     </li>
                                 <?php endif; ?>
                             </ul>
@@ -330,7 +330,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
                     </div>
                 <?php endif; ?>
             <?php else: ?>
-                <div class="alert alert-info">Nenhuma denuncia registrada ainda. Seja o primeiro!</div>
+                <div class="alert alert-info">Nenhuma denúncia registrada ainda. Seja o primeiro!</div>
             <?php endif; ?>
         </section>
 </div>

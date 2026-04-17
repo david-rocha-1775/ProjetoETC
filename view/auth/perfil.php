@@ -152,11 +152,11 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                     <article class="card shadow-sm h-100 painel-metrica-card">
                         <div class="card-body d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-uppercase small text-muted mb-1">Em analise</p>
+                                <p class="text-uppercase small text-muted mb-1">Em análise</p>
                                 <p class="display-6 mb-0 fw-semibold"><?= htmlspecialchars((string) $totalEmAnalise) ?></p>
                                 <span class="small text-muted">total</span>
                             </div>
-                            <img src="assets/fonts/material-symbols/pending.svg" alt="em analise" width="24" height="24"
+                            <img src="assets/fonts/material-symbols/pending.svg" alt="em análise" width="24" height="24"
                                 class="painel-metrica-icone">
                         </div>
                     </article>
@@ -192,7 +192,7 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                     <article class="card shadow-sm painel-denuncia-card animate-in">
                         <div class="painel-denuncia-thumb-wrap">
                             <?php if ($denuncia->getFotoPath()): ?>
-                                <img src="<?= htmlspecialchars((string) $denuncia->getFotoPath()) ?>" alt="Foto da denuncia"
+                                <img src="<?= htmlspecialchars((string) $denuncia->getFotoPath()) ?>" alt="Foto da denúncia"
                                     class="painel-denuncia-thumb">
                             <?php else: ?>
                                 <div class="painel-denuncia-thumb painel-denuncia-thumb-placeholder" aria-hidden="true"></div>
@@ -211,7 +211,7 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                                 </div>
                             </div>
 
-                            <p class="mb-1 painel-denuncia-meta"><strong>Localizacao:</strong>
+                            <p class="mb-1 painel-denuncia-meta"><strong>Localização:</strong>
                                 <?= htmlspecialchars((string) $denuncia->getLocalizacao()) ?></p>
                             <p class="mb-2 painel-denuncia-meta"><strong>Criada em:</strong>
                                 <?= htmlspecialchars($dataCriacaoFormatada) ?></p>
@@ -240,11 +240,11 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <span class="text-muted small">Total encontrado:
                             <strong><?= htmlspecialchars((string) $totalMinhas) ?></strong></span>
-                        <span class="text-muted small">Pagina <?= htmlspecialchars((string) $paginaAtualPerfil) ?> de
+                        <span class="text-muted small">Página <?= htmlspecialchars((string) $paginaAtualPerfil) ?> de
                             <?= htmlspecialchars((string) $totalPaginasPerfil) ?></span>
                     </div>
 
-                    <nav class="painel-paginacao-nav" aria-label="Paginacao das minhas denuncias">
+                    <nav class="painel-paginacao-nav" aria-label="Paginação das minhas denúncias">
                         <ul class="pagination painel-paginacao flex-wrap mb-0">
                             <?php if ($paginaAtualPerfil > 1): ?>
                                 <li class="page-item">
@@ -283,7 +283,7 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                             <?php if ($paginaAtualPerfil < $totalPaginasPerfil): ?>
                                 <li class="page-item">
                                     <a class="page-link"
-                                        href="index.php?<?= htmlspecialchars($baseQueryPerfil . '&minhas_pagina=' . ($paginaAtualPerfil + 1)) ?>">Proxima</a>
+                                        href="index.php?<?= htmlspecialchars($baseQueryPerfil . '&minhas_pagina=' . ($paginaAtualPerfil + 1)) ?>">Próxima</a>
                                 </li>
                             <?php endif; ?>
                         </ul>

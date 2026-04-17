@@ -1,5 +1,5 @@
 <?php
-$tituloPagina = 'Mapa de Denuncias';
+$tituloPagina = 'Mapa de Denúncias';
 $paginaCssExtra = [
     'assets/vendor/leaflet/leaflet.css',
 ];
@@ -12,8 +12,8 @@ $paginaJsHeadExtra = [
 
 <div class="container mt-4 mb-4">
     <section aria-labelledby="titulo-mapa">
-        <h2 id="titulo-mapa">Mapa de Denuncias</h2>
-        <p>Visualizacao de denuncias por proximidade (raio de 10 km e limite de 50 pins).</p>
+        <h2 id="titulo-mapa">Mapa de Denúncias</h2>
+        <p>Visualização de denúncias por proximidade (raio de 10 km e limite de 50 pins).</p>
 
         <p id="mapa-status" aria-live="polite">Carregando mapa...</p>
 
@@ -163,7 +163,7 @@ $paginaJsHeadExtra = [
 
             var dados = await resposta.json();
             if (!resposta.ok || !dados.success) {
-                throw new Error(dados.message || 'Nao foi possivel carregar as denuncias do mapa.');
+                throw new Error(dados.message || 'Não foi possível carregar as denúncias do mapa.');
             }
 
             var centro = dados.centro_usado;
@@ -178,7 +178,7 @@ $paginaJsHeadExtra = [
 
         function carregarComFallback() {
             if (!navigator.geolocation) {
-                atualizarStatus('Geolocalizacao indisponivel. Carregando ponto padrao.');
+                atualizarStatus('Geolocalização indisponível. Carregando ponto padrão.');
                 carregarDenuncias();
                 return;
             }
@@ -189,7 +189,7 @@ $paginaJsHeadExtra = [
                         atualizarStatus(erro.message);
                     });
             }, function () {
-                atualizarStatus('Nao foi possivel obter sua localizacao. Carregando ponto padrao.');
+                atualizarStatus('Não foi possível obter sua localização. Carregando ponto padrão.');
                 carregarDenuncias().catch(function (erro) {
                     atualizarStatus(erro.message);
                 });
@@ -219,7 +219,7 @@ $paginaJsHeadExtra = [
                 navigator.geolocation.getCurrentPosition(function (posicao) {
                     atualizarCentroMapa(posicao.coords.latitude, posicao.coords.longitude, true);
                 }, function () {
-                    atualizarStatus('Nao foi possivel obter sua localizacao.');
+                    atualizarStatus('Não foi possível obter sua localização.');
                 }, {
                     enableHighAccuracy: true,
                     timeout: 8000,
