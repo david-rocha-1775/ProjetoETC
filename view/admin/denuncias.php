@@ -155,7 +155,8 @@
                                             class="badge bg-transparent border border-secondary-subtle text-body"><?= htmlspecialchars((string) $nomeCategoria, ENT_QUOTES, 'UTF-8') ?></span>
                                         <span
                                             class="badge bg-transparent border border-info-subtle text-info-emphasis"><?= htmlspecialchars((string) $denuncia->getStatus(), ENT_QUOTES, 'UTF-8') ?></span>
-                                        <span class="badge <?= $denunciaAtiva ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-body-secondary' ?>">
+                                        <span
+                                            class="badge <?= $denunciaAtiva ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-body-secondary' ?>">
                                             <?= $denunciaAtiva ? 'Ativa' : 'Inativa' ?>
                                         </span>
                                     </div>
