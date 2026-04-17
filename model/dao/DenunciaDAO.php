@@ -198,7 +198,7 @@ class DenunciaDAO
     {
         $sql = "SELECT
                     SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
-                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%em andamento%' THEN 1 ELSE 0 END) AS total_em_analise
                 FROM denuncias
                 WHERE ativo = 1";
 
@@ -239,7 +239,7 @@ class DenunciaDAO
 
         $sql = "SELECT
                     SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
-                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%em andamento%' THEN 1 ELSE 0 END) AS total_em_analise
                 FROM denuncias
                 WHERE ativo = 1 AND fk_usuario = :fk_usuario";
 
