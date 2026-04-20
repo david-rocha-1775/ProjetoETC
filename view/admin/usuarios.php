@@ -4,11 +4,13 @@ $usuariosLista = is_array($usuarios ?? null) ? $usuarios : [];
 $filtrosUsuariosAtuais = is_array($filtrosUsuariosAtuais ?? null) ? $filtrosUsuariosAtuais : [
     'busca' => '',
     'papel' => '',
+    'ativo' => 1,
 ];
 $totalUsuarios = count($usuariosLista);
 $totalAdmins = 0;
 $totalCidadaos = 0;
 $totalGestores = 0;
+$ehAdminSessao = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin';
 
 foreach ($usuariosLista as $usuarioItem) {
     $tipoNormalizado = strtolower(trim((string) $usuarioItem->getTipo()));
@@ -47,10 +49,10 @@ $classePapel = static function (string $tipo): string {
                 Atenta.</p>
         </div>
         <a href="index.php?rota=cadastrar"
-            class="btn btn-primary d-inline-flex align-items-center gap-2 admin-usuarios-convidar">
-            <img src="assets/fonts/material-symbols/how_to_reg.svg" alt="convidar novo" class="nav-icon" width="18"
+            class="btn btn-primary d-inline-flex align-items-center gap-2 admin-usuarios-convidar painel-sidebar-item-ativo">
+            <img src="assets/fonts/material-symbols/how_to_reg.svg" alt="adicionar usuario" class="nav-icon" width="18"
                 height="18">
-            Convidar Novo
+            Adicionar Usuário
         </a>
     </div>
 
@@ -84,6 +86,18 @@ $classePapel = static function (string $tipo): string {
                     </select>
                 </div>
 
+                <div class="col-12 col-md-6 col-lg-3">
+                    <select class="form-select" name="ativo">
+                        <option value="">Todos os Status</option>
+                        <option value="1" <?= (string) ($filtrosUsuariosAtuais['ativo'] ?? 1) === '1' ? 'selected' : '' ?>>
+                            Ativos
+                        </option>
+                        <option value="0" <?= (string) ($filtrosUsuariosAtuais['ativo'] ?? 1) === '0' ? 'selected' : '' ?>>
+                            Inativos
+                        </option>
+                    </select>
+                </div>
+
                 <div class="col-12 d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Filtrar</button>
                     <a href="index.php?rota=listar_usuarios" class="btn btn-outline-secondary">Limpar filtros</a>
@@ -107,6 +121,8 @@ $classePapel = static function (string $tipo): string {
                         $idUsuario = (int) $usuario->getId();
                         $nomeUsuario = trim((string) $usuario->getNome());
                         $tipoUsuario = (string) $usuario->getTipo();
+                        $tipoUsuarioNormalizado = strtolower(trim($tipoUsuario));
+                        $usuarioAtivo = (int) $usuario->getAtivo() === 1;
                         $ehContaAtual = $idUsuario === (int) ($idUsuarioSessao ?? 0);
                         ?>
                         <article class="card shadow-sm admin-usuarios-item">
@@ -132,7 +148,7 @@ $classePapel = static function (string $tipo): string {
                                         <p class="small text-muted text-uppercase mb-1">Status</p>
                                         <span class="admin-usuarios-status">
                                             <span class="admin-usuarios-status-dot" aria-hidden="true"></span>
-                                            Ativo
+                                            <?= $usuarioAtivo ? 'Ativo' : 'Inativo' ?>
                                         </span>
                                     </div>
 
@@ -140,7 +156,7 @@ $classePapel = static function (string $tipo): string {
                                         <?php if ($ehContaAtual): ?>
                                             <span class="badge text-bg-secondary">Conta Atual</span>
                                         <?php else: ?>
-                                            <?php if (strtolower($tipoUsuario) !== 'admin'): ?>
+                                            <?php if ($usuarioAtivo && $ehAdminSessao && $tipoUsuarioNormalizado !== 'admin'): ?>
                                                 <form action="index.php?rota=processar_promocao_usuario_admin" method="POST"
                                                     onsubmit="return confirm('Promover este usuário para administrador?');">
                                                     <?= csrfField() ?>
@@ -151,13 +167,19 @@ $classePapel = static function (string $tipo): string {
                                                 </form>
                                             <?php endif; ?>
 
-                                            <form action="index.php?rota=processar_exclusao_usuario_admin" method="POST"
-                                                onsubmit="return confirm('Tem certeza que deseja desativar este usuário?');">
-                                                <?= csrfField() ?>
-                                                <input type="hidden" name="id_usuario"
-                                                    value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
-                                            </form>
+                                            <?php if ($usuarioAtivo && ($ehAdminSessao || $tipoUsuarioNormalizado !== 'admin')): ?>
+                                                <form action="index.php?rota=processar_exclusao_usuario_admin" method="POST"
+                                                    onsubmit="return confirm('Tem certeza que deseja desativar este usuário?');">
+                                                    <?= csrfField() ?>
+                                                    <input type="hidden" name="id_usuario"
+                                                        value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
+                                                </form>
+                                            <?php endif; ?>
+
+                                            <?php if (!$usuarioAtivo): ?>
+                                                <span class="badge text-bg-light border">Sem ações para contas inativas</span>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 </div>

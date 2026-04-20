@@ -348,15 +348,11 @@ class UsuarioDAO
      *
      * @param string $busca
      * @param string|null $papel
-     * @param string $status
+     * @param int|null $ativo
      * @return UsuarioDTO[]
      */
-    public function listarUsuarios($busca = '', $papel = null, $status = 'ativo')
+    public function listarUsuarios($busca = '', $papel = null, $ativo = 1)
     {
-        if ($status !== 'ativo') {
-            return [];
-        }
-
         $sql = "SELECT u.id_usuario,
                        u.nome,
                        l.email,
@@ -367,9 +363,14 @@ class UsuarioDAO
                 FROM usuarios u
                 INNER JOIN logins l ON l.fk_usuario = u.id_usuario
                 INNER JOIN perfis p ON p.id_perfil = u.fk_perfil
-                WHERE u.ativo = 1";
+                WHERE 1 = 1";
 
         $params = [];
+
+        if ($ativo !== null) {
+            $sql .= " AND u.ativo = :ativo";
+            $params[':ativo'] = (int) $ativo;
+        }
 
         if ($papel !== null && $papel !== '') {
             $sql .= " AND p.nome_perfil = :tipo";
@@ -385,6 +386,11 @@ class UsuarioDAO
 
         $stmt = $this->conexao->prepare($sql);
         foreach ($params as $chave => $valor) {
+            if ($chave === ':ativo') {
+                $stmt->bindValue($chave, (int) $valor, PDO::PARAM_INT);
+                continue;
+            }
+
             $stmt->bindValue($chave, $valor);
         }
         $stmt->execute();

@@ -39,6 +39,11 @@ abstract class PainelBaseController
         $this->usuarioDAO = new UsuarioDAO();
     }
 
+    protected function usuarioPossuiAcessoAdministrativo()
+    {
+        return isset($_SESSION['usuario_tipo']) && in_array($_SESSION['usuario_tipo'], ['admin', 'gestor'], true);
+    }
+
     protected function montarUrlRetornoPosAcao($idDenunciaFallback = 0)
     {
         $retornoRota = isset($_POST['retorno_rota']) ? (string) $_POST['retorno_rota'] : '';
@@ -57,7 +62,7 @@ abstract class PainelBaseController
     protected function validarPermissaoDenuncia($idUsuarioDono)
     {
         $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
-        $usuarioAdmin = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin';
+        $usuarioAdmin = $this->usuarioPossuiAcessoAdministrativo();
 
         if (!$usuarioAdmin && $idUsuarioSessao !== (int) $idUsuarioDono) {
             throw new Exception("Você não tem permissão para alterar esta denúncia.");

@@ -19,12 +19,12 @@ $paginaJsHeadExtra = [
 
         <div class="row g-2 mb-3" id="painel-centro-mapa">
             <div class="col-12 col-md-3">
-                <label for="mapa-centro-lat" class="form-label">Latitude do centro</label>
+                <label for="mapa-centro-lat" class="form-label">Latitude</label>
                 <input type="number" step="0.00000001" class="form-control" id="mapa-centro-lat"
                     placeholder="Ex: -15.793889">
             </div>
             <div class="col-12 col-md-3">
-                <label for="mapa-centro-lon" class="form-label">Longitude do centro</label>
+                <label for="mapa-centro-lon" class="form-label">Longitude</label>
                 <input type="number" step="0.00000001" class="form-control" id="mapa-centro-lon"
                     placeholder="Ex: -47.882778">
             </div>
@@ -66,6 +66,16 @@ $paginaJsHeadExtra = [
         var marcadorCentro = null;
         var circuloRaio = null;
         var raioKm = 10;
+        var marcadorCentroIcone = L.divIcon({
+            className: 'mapa-centro-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+        var marcadorDenunciaIcone = L.divIcon({
+            className: 'mapa-denuncia-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
 
         function atualizarStatus(mensagem) {
             if (statusContainer) {
@@ -75,6 +85,20 @@ $paginaJsHeadExtra = [
 
         function limparMarcadores() {
             camadaMarcadores.clearLayers();
+        }
+
+        function normalizarClasseStatus(status) {
+            var texto = String(status || '').toLowerCase();
+
+            if (texto.indexOf('resolvido') !== -1) {
+                return 'resolvido';
+            }
+
+            if (texto.indexOf('andamento') !== -1) {
+                return 'andamento';
+            }
+
+            return 'aberto';
         }
 
         function atualizarPainelCentro(latitude, longitude) {
@@ -99,7 +123,10 @@ $paginaJsHeadExtra = [
                 mapa.removeLayer(circuloRaio);
             }
 
-            marcadorCentro = L.marker([latitude, longitude], { draggable: true }).addTo(mapa);
+            marcadorCentro = L.marker([latitude, longitude], {
+                draggable: true,
+                icon: marcadorCentroIcone
+            }).addTo(mapa);
             circuloRaio = L.circle([latitude, longitude], {
                 radius: raioKm * 1000,
                 color: '#0d6efd',
@@ -140,7 +167,13 @@ $paginaJsHeadExtra = [
                     'Status: ' + escaparHtml(denuncia.status) + '<br>' +
                     'Local: ' + escaparHtml(denuncia.localizacao);
 
-                L.marker([denuncia.latitude, denuncia.longitude])
+                L.marker([denuncia.latitude, denuncia.longitude], {
+                    icon: L.divIcon({
+                        className: 'mapa-denuncia-icon mapa-denuncia-status-' + normalizarClasseStatus(denuncia.status) + ' leaflet-div-icon',
+                        iconSize: marcadorDenunciaIcone.options.iconSize,
+                        iconAnchor: marcadorDenunciaIcone.options.iconAnchor
+                    })
+                })
                     .addTo(camadaMarcadores)
                     .bindPopup(popup);
             });

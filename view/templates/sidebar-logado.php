@@ -1,6 +1,6 @@
 <?php
 $rotaAtualSidebar = isset($_GET['rota']) ? (string) $_GET['rota'] : '';
-$ehAdminSidebar = isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] === 'admin';
+$ehAdminSidebar = isset($_SESSION['usuario_tipo']) && in_array($_SESSION['usuario_tipo'], ['admin', 'gestor'], true);
 
 $classeItemSidebar = static function (array $rotasAtivas) use ($rotaAtualSidebar): string {
     return in_array($rotaAtualSidebar, $rotasAtivas, true)

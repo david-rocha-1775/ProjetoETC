@@ -16,13 +16,25 @@ class CategoriaDAO
     /**
      * Retorna a lista de todas as categorias registradas.
      *
+     * @param int|null $ativo
      * @return CategoriaDTO[] Array de objetos CategoriaDTO.
      */
-    public function listarTodas()
+    public function listarTodas($ativo = 1)
     {
-        $sql = "SELECT id_categoria, nome_categoria, ativo FROM categorias WHERE ativo = 1 ORDER BY nome_categoria ASC";
+        $sql = "SELECT id_categoria, nome_categoria, ativo FROM categorias WHERE 1 = 1";
+
+        if ($ativo !== null) {
+            $sql .= " AND ativo = :ativo";
+        }
+
+        $sql .= " ORDER BY nome_categoria ASC";
 
         $stmt = $this->conexao->prepare($sql);
+
+        if ($ativo !== null) {
+            $stmt->bindValue(':ativo', (int) $ativo, PDO::PARAM_INT);
+        }
+
         $stmt->execute();
 
         $categorias = [];

@@ -1,6 +1,6 @@
 <?php
 
-// Rotas administrativas (acesso restrito a usuários do tipo admin).
+// Rotas administrativas (acesso a admin e gestor, com ações específicas ainda restritas ao admin).
 return [
     // Exibe o dashboard administrativo com métricas básicas.
     'admin_dashboard' => [
@@ -40,6 +40,14 @@ return [
         'controller_file' => 'controller/AdminController.php',
         'controller_class' => 'AdminController',
         'controller_method' => 'atualizarStatusDenuncia',
+        'http_method' => 'POST',
+    ],
+    // Processa alternância de ativo de denúncia por admin.
+    'processar_alternancia_ativo_denuncia_admin' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'alternarAtivoDenuncia',
         'http_method' => 'POST',
     ],
     // Processa exclusão lógica de comentário por admin.

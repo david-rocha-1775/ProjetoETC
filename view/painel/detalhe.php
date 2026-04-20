@@ -34,26 +34,33 @@ $paginaJsHeadExtra = [
 
             <p class="mb-3"><?= nl2br(htmlspecialchars($denuncia->getDescricao())) ?></p>
 
-            <div class="d-inline-flex align-items-center gap-2 mb-3 mt-1">
-                <form action="index.php?rota=processar_curtida_denuncia" method="POST" class="js-curtir-denuncia">
+            <?php if ($denuncia->getFotoPath()): ?>
+                <img src="<?= htmlspecialchars($denuncia->getFotoPath()) ?>" alt="Foto da denúncia"
+                    class="img-fluid rounded border mb-3 detalhe-denuncia-foto">
+            <?php endif; ?>
+
+            <div class="d-inline-flex align-items-center gap-2 mb-3 mt-1 flex-wrap">
+                <form action="index.php?rota=processar_curtida_denuncia" method="POST" class="js-curtir-denuncia mb-0">
                     <?= csrfField() ?>
                     <input type="hidden" name="id_denuncia"
                         value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                     <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                     <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                    <button type="submit" class="btn btn-outline-primary btn-sm" data-botao-curtir-denuncia>
-                        <?= $interacaoDenuncia['usuarioCurtiu'] ? 'Descurtir' : 'Curtir' ?>
+                    <button type="submit"
+                        class="p-0 border-0 bg-transparent shadow-none painel-icone-curtir <?= $interacaoDenuncia['usuarioCurtiu'] ? 'is-active' : '' ?>"
+                        data-botao-curtir-denuncia data-curtir-icone="1"
+                        data-curtir-icone-off="assets/fonts/material-symbols/thumb.svg"
+                        data-curtir-icone-on="assets/fonts/material-symbols/thumb_up.svg"
+                        aria-label="<?= $interacaoDenuncia['usuarioCurtiu'] ? 'Remover curtida' : 'Curtir' ?>"
+                        title="<?= $interacaoDenuncia['usuarioCurtiu'] ? 'Remover curtida' : 'Curtir' ?>">
+                        <img src="<?= $interacaoDenuncia['usuarioCurtiu'] ? 'assets/fonts/material-symbols/thumb_up.svg' : 'assets/fonts/material-symbols/thumb.svg' ?>"
+                            alt="curtir" class="nav-icon" width="18" height="18">
                     </button>
                 </form>
                 <span>Curtidas:
                     <strong
                         id="total-curtidas-denuncia-<?= htmlspecialchars((string) $denuncia->getId()) ?>"><?= htmlspecialchars((string) $interacaoDenuncia['totalCurtidas']) ?></strong></span>
             </div>
-
-            <?php if ($denuncia->getFotoPath()): ?>
-                <img src="<?= htmlspecialchars($denuncia->getFotoPath()) ?>" alt="Foto da denúncia"
-                    class="img-fluid rounded border mb-3 detalhe-denuncia-foto">
-            <?php endif; ?>
 
             <?php if ($podeGerenciar): ?>
                 <details class="mt-3">
@@ -148,12 +155,12 @@ $paginaJsHeadExtra = [
                 </details>
 
                 <form action="index.php?rota=processar_exclusao_denuncia" method="POST" class="mt-3"
-                    onsubmit="return confirm('Tem certeza que deseja excluir esta denúncia?');">
+                    onsubmit="return confirm('Tem certeza que deseja desativar esta denúncia?');">
                     <?= csrfField() ?>
                     <input type="hidden" name="id_denuncia" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
                     <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                     <input type="hidden" name="retorno_id" value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir denúncia</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Desativar denúncia</button>
                 </form>
             <?php endif; ?>
         </div>
@@ -189,21 +196,27 @@ $paginaJsHeadExtra = [
                                     class="text-muted"><?= htmlspecialchars((string) $comentario->getDataComentario()) ?></small>
 
                                 <form action="index.php?rota=processar_curtida_comentario" method="POST"
-                                    class="js-curtir-comentario mt-2 d-inline-block">
+                                    class="js-curtir-comentario mt-2 d-inline-flex align-items-center gap-2 flex-wrap">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="id_comentario"
                                         value="<?= htmlspecialchars((string) $comentario->getId()) ?>">
                                     <input type="hidden" name="retorno_rota" value="detalhe_denuncia">
                                     <input type="hidden" name="retorno_id"
                                         value="<?= htmlspecialchars((string) $denuncia->getId()) ?>">
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm" data-botao-curtir-comentario>
-                                        <?= $itemComentario['usuarioCurtiu'] ? 'Descurtir comentário' : 'Curtir comentário' ?>
+                                    <button type="submit"
+                                        class="p-0 border-0 bg-transparent shadow-none painel-icone-curtir <?= $itemComentario['usuarioCurtiu'] ? 'is-active' : '' ?>"
+                                        data-botao-curtir-comentario data-curtir-icone="1"
+                                        data-curtir-icone-off="assets/fonts/material-symbols/thumb.svg"
+                                        data-curtir-icone-on="assets/fonts/material-symbols/thumb_up.svg"
+                                        aria-label="<?= $itemComentario['usuarioCurtiu'] ? 'Remover curtida do comentário' : 'Curtir comentário' ?>"
+                                        title="<?= $itemComentario['usuarioCurtiu'] ? 'Remover curtida do comentário' : 'Curtir comentário' ?>">
+                                        <img src="<?= $itemComentario['usuarioCurtiu'] ? 'assets/fonts/material-symbols/thumb_up.svg' : 'assets/fonts/material-symbols/thumb.svg' ?>"
+                                            alt="curtir comentário" class="nav-icon" width="18" height="18">
                                     </button>
+                                    <span>Curtidas:
+                                        <strong
+                                            id="total-curtidas-comentario-<?= htmlspecialchars((string) $comentario->getId()) ?>"><?= htmlspecialchars((string) $itemComentario['totalCurtidas']) ?></strong></span>
                                 </form>
-
-                                <span class="ms-2">Curtidas:
-                                    <strong
-                                        id="total-curtidas-comentario-<?= htmlspecialchars((string) $comentario->getId()) ?>"><?= htmlspecialchars((string) $itemComentario['totalCurtidas']) ?></strong></span>
                             </div>
                         </div>
                     <?php endforeach; ?>

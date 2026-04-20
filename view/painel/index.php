@@ -37,7 +37,7 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
 
         if (str_contains($statusNormalizado, 'resolvido')) {
             $statusResolvido++;
-        } else {
+        } elseif (str_contains($statusNormalizado, 'em andamento')) {
             $statusEmAnalise++;
         }
     }

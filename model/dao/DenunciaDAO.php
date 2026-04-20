@@ -198,7 +198,7 @@ class DenunciaDAO
     {
         $sql = "SELECT
                     SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
-                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%em andamento%' THEN 1 ELSE 0 END) AS total_em_analise
                 FROM denuncias
                 WHERE ativo = 1";
 
@@ -239,7 +239,7 @@ class DenunciaDAO
 
         $sql = "SELECT
                     SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 1 ELSE 0 END) AS total_resolvido,
-                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%resolvido%' THEN 0 ELSE 1 END) AS total_em_analise
+                    SUM(CASE WHEN LOWER(TRIM(status)) LIKE '%em andamento%' THEN 1 ELSE 0 END) AS total_em_analise
                 FROM denuncias
                 WHERE ativo = 1 AND fk_usuario = :fk_usuario";
 
@@ -265,6 +265,30 @@ class DenunciaDAO
         $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
             FROM denuncias
             WHERE id_denuncia = :id_denuncia AND ativo = 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($dados === false) {
+            return null;
+        }
+
+        return $this->hidratarDenuncia($dados);
+    }
+
+    /**
+     * Busca uma denúncia pelo ID, independentemente de estar ativa ou não.
+     *
+     * @param int $idDenuncia
+     * @return DenunciaDTO|null
+     */
+    public function buscarPorIdAdmin($idDenuncia)
+    {
+        $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
+            FROM denuncias
+            WHERE id_denuncia = :id_denuncia";
 
         $stmt = $this->conexao->prepare($sql);
         $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
@@ -447,6 +471,22 @@ class DenunciaDAO
     }
 
     /**
+     * Reativa uma denúncia pelo ID.
+     *
+     * @param int $idDenuncia
+     * @return bool
+     */
+    public function reativarPorId($idDenuncia)
+    {
+        $sql = "UPDATE denuncias SET ativo = 1 WHERE id_denuncia = :id_denuncia AND ativo = 0";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':id_denuncia', $idDenuncia, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
      * Lista denúncias para uso administrativo com filtros opcionais.
      *
      * @param string|null $status
@@ -455,9 +495,10 @@ class DenunciaDAO
      * @param int $pagina
      * @param int $limite
      * @param string $ordenacao
+     * @param int|null $ativo
      * @return DenunciaDTO[]
      */
-    public function listarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $pagina = 1, $limite = 10, $ordenacao = 'recentes')
+    public function listarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $pagina = 1, $limite = 10, $ordenacao = 'recentes', $ativo = 1)
     {
         $pagina = (int) $pagina;
         $limite = (int) $limite;
@@ -476,7 +517,11 @@ class DenunciaDAO
 
         $sql = "SELECT id_denuncia, titulo, descricao, localizacao, latitude, longitude, foto_path, status, ativo, fk_usuario, fk_categoria, data_criacao
                 FROM denuncias
-                WHERE ativo = 1";
+                WHERE 1 = 1";
+
+        if ($ativo !== null) {
+            $sql .= " AND ativo = :ativo";
+        }
 
         if ($status !== null) {
             $sql .= " AND status = :status";
@@ -493,6 +538,10 @@ class DenunciaDAO
         $sql .= " ORDER BY {$ordenacaoSql} LIMIT :limite OFFSET :offset";
 
         $stmt = $this->conexao->prepare($sql);
+
+        if ($ativo !== null) {
+            $stmt->bindValue(':ativo', (int) $ativo, PDO::PARAM_INT);
+        }
 
         if ($status !== null) {
             $stmt->bindValue(':status', $status);
@@ -525,15 +574,20 @@ class DenunciaDAO
      * @param string|null $status
      * @param int|null $idCategoria
      * @param string $termoBusca
+     * @param int|null $ativo
      * @return int
      */
-    public function contarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '')
+    public function contarPaginadasAdmin($status = null, $idCategoria = null, $termoBusca = '', $ativo = 1)
     {
         $termoBusca = trim((string) $termoBusca);
 
         $sql = "SELECT COUNT(*) AS total
                 FROM denuncias
-                WHERE ativo = 1";
+                WHERE 1 = 1";
+
+        if ($ativo !== null) {
+            $sql .= " AND ativo = :ativo";
+        }
 
         if ($status !== null) {
             $sql .= " AND status = :status";
@@ -548,6 +602,10 @@ class DenunciaDAO
         }
 
         $stmt = $this->conexao->prepare($sql);
+
+        if ($ativo !== null) {
+            $stmt->bindValue(':ativo', (int) $ativo, PDO::PARAM_INT);
+        }
 
         if ($status !== null) {
             $stmt->bindValue(':status', $status);

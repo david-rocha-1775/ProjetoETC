@@ -1,5 +1,5 @@
 <?php
-// Controller Administrativo (Ações restritas a administradores)
+// Controller Administrativo (Ações para administradores e gestores, com exceções específicas para admin)
 
 require_once "model/dao/UsuarioDAO.php";
 require_once "model/dao/CategoriaDAO.php";
@@ -25,7 +25,7 @@ class AdminController
         $this->denunciaDAO = new DenunciaDAO();
         $this->comentarioDAO = new ComentarioDAO();
 
-        $this->exigirAcessoAdmin();
+        $this->exigirAcessoAdministrativo();
     }
 
     /**
@@ -56,18 +56,18 @@ class AdminController
         try {
             $buscaFiltro = $this->normalizarBuscaFiltro($_GET['busca'] ?? '');
             $papelFiltro = $this->normalizarPapelUsuarioFiltro($_GET['papel'] ?? '');
-            $statusFiltro = $this->normalizarStatusUsuarioFiltro($_GET['status'] ?? 'ativo');
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
 
             $usuarios = $this->usuarioDAO->listarUsuarios(
                 $buscaFiltro,
                 $papelFiltro !== '' ? $papelFiltro : null,
-                $statusFiltro
+                $ativoFiltro
             );
 
             $filtrosUsuariosAtuais = [
                 'busca' => $buscaFiltro,
                 'papel' => $papelFiltro,
-                'status' => $statusFiltro,
+                'ativo' => $ativoFiltro,
             ];
 
             $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
@@ -89,7 +89,11 @@ class AdminController
     public function listarCategorias()
     {
         try {
-            $categorias = $this->categoriaDAO->listarTodas();
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
+            $categorias = $this->categoriaDAO->listarTodas($ativoFiltro);
+            $filtrosCategoriasAtuais = [
+                'ativo' => $ativoFiltro,
+            ];
             $tituloPagina = 'Gerenciamento de Categorias';
             include 'view/admin/categorias.php';
             return;
@@ -106,6 +110,7 @@ class AdminController
     {
         try {
             $statusFiltro = $this->normalizarStatusFiltro($_GET['status'] ?? '');
+            $ativoFiltro = $this->normalizarFiltroAtivo($_GET['ativo'] ?? '1', 1);
             $idCategoriaFiltro = $this->normalizarCategoriaFiltro($_GET['categoria'] ?? null);
             $buscaFiltro = $this->normalizarBuscaFiltro($_GET['busca'] ?? '');
             $paginaAtual = $this->normalizarPagina($_GET['pagina'] ?? 1);
@@ -115,7 +120,8 @@ class AdminController
             $totalDenuncias = $this->denunciaDAO->contarPaginadasAdmin(
                 $statusFiltro !== '' ? $statusFiltro : null,
                 $idCategoriaFiltro,
-                $buscaFiltro
+                $buscaFiltro,
+                $ativoFiltro
             );
 
             $totalPaginas = $totalDenuncias > 0 ? (int) ceil($totalDenuncias / $limitePagina) : 0;
@@ -129,7 +135,8 @@ class AdminController
                 $buscaFiltro,
                 $paginaAtual,
                 $limitePagina,
-                $ordemFiltro
+                $ordemFiltro,
+                $ativoFiltro
             );
 
             $categorias = $this->categoriaDAO->listarTodas();
@@ -139,6 +146,7 @@ class AdminController
 
             $filtrosAtuais = [
                 'status' => $statusFiltro,
+                'ativo' => $ativoFiltro,
                 'categoria' => $idCategoriaFiltro,
                 'busca' => $buscaFiltro,
                 'limite' => $limitePagina,
@@ -196,6 +204,69 @@ class AdminController
     }
 
     /**
+     * Alterna o estado ativo de uma denúncia (uso administrativo).
+     */
+    public function alternarAtivoDenuncia()
+    {
+        $this->exigirMetodoPost('admin_denuncias');
+
+        try {
+            $idDenuncia = $this->normalizarId($_POST['id_denuncia'] ?? null, 'Denúncia inválida.');
+            $acao = strtolower(trim((string) ($_POST['acao'] ?? '')));
+
+            if (!in_array($acao, ['desativar', 'reativar'], true)) {
+                throw new InvalidArgumentException('Ação inválida para denúncia.');
+            }
+
+            $denuncia = $this->denunciaDAO->buscarPorIdAdmin($idDenuncia);
+            if ($denuncia === null) {
+                throw new InvalidArgumentException('Denúncia não encontrada.');
+            }
+
+            $retornoFiltros = $this->normalizarQueryRetornoDenuncias($_POST['retorno_filtros'] ?? '');
+
+            if ($acao === 'desativar') {
+                if ((int) $denuncia->getAtivo() !== 1) {
+                    throw new InvalidArgumentException('A denúncia já está desativada.');
+                }
+
+                $processou = $this->denunciaDAO->excluirPorId($idDenuncia);
+                if (!$processou) {
+                    throw new RuntimeException('Falha ao desativar a denúncia.');
+                }
+
+                $this->redirecionarComSucesso(
+                    'Denúncia desativada com sucesso.',
+                    'admin_denuncias',
+                    $retornoFiltros
+                );
+            }
+
+            if ((int) $denuncia->getAtivo() !== 0) {
+                throw new InvalidArgumentException('A denúncia já está ativa.');
+            }
+
+            $processou = $this->denunciaDAO->reativarPorId($idDenuncia);
+            if (!$processou) {
+                throw new RuntimeException('Falha ao reativar a denúncia.');
+            }
+
+            $this->redirecionarComSucesso(
+                'Denúncia reativada com sucesso.',
+                'admin_denuncias',
+                $retornoFiltros
+            );
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível alterar o status de ativo da denúncia.'),
+                'admin_denuncias',
+                $this->normalizarQueryRetornoDenuncias($_POST['retorno_filtros'] ?? '')
+            );
+        }
+    }
+
+    /**
      * Exclui logicamente comentário (uso administrativo).
      */
     public function excluirComentario()
@@ -238,6 +309,7 @@ class AdminController
         try {
             $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
             $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+            $tipoUsuarioSessao = strtolower(trim((string) ($_SESSION['usuario_tipo'] ?? '')));
 
             if ($idUsuario === $idAdminSessao) {
                 throw new InvalidArgumentException('Não é permitido desativar a própria conta nesta tela.');
@@ -246,6 +318,11 @@ class AdminController
             $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
             if ($usuario === null) {
                 throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            $tipoUsuarioAlvo = strtolower(trim((string) $usuario->getTipo()));
+            if ($tipoUsuarioSessao === 'gestor' && $tipoUsuarioAlvo === 'admin') {
+                throw new InvalidArgumentException('Gestores não podem desativar contas administrativas.');
             }
 
             $excluiu = $this->usuarioDAO->excluirPorId($idUsuario);
@@ -269,6 +346,7 @@ class AdminController
     public function promoverUsuarioAdmin()
     {
         $this->exigirMetodoPost('listar_usuarios');
+        $this->exigirAcessoSomenteAdmin();
 
         try {
             $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
@@ -551,16 +629,36 @@ class AdminController
     }
 
     /**
-     * Normaliza filtro de status para listagem de usuários.
+     * Normaliza filtro ativo/inativo/todos.
+     *
+     * @param mixed $ativo
+     * @param int|null $padrao
+     * @return int|null
      */
-    private function normalizarStatusUsuarioFiltro($status)
+    private function normalizarFiltroAtivo($ativo, $padrao = null)
     {
-        $status = strtolower(trim((string) $status));
-        if ($status === '' || $status === 'ativo') {
-            return 'ativo';
+        if ($ativo === null || $ativo === '') {
+            return $padrao;
         }
 
-        throw new InvalidArgumentException('Filtro de status inválido.');
+        $ativo = trim((string) $ativo);
+        if ($ativo === '') {
+            return $padrao;
+        }
+
+        if ($ativo === 'todos') {
+            return null;
+        }
+
+        if ($ativo === '1') {
+            return 1;
+        }
+
+        if ($ativo === '0') {
+            return 0;
+        }
+
+        throw new InvalidArgumentException('Filtro de ativo inválido.');
     }
 
     /**
@@ -666,6 +764,15 @@ class AdminController
         }
 
         try {
+            $ativo = $this->normalizarFiltroAtivo($dados['ativo'] ?? '1', 1);
+            if ($ativo !== null) {
+                $retorno['ativo'] = $ativo;
+            }
+        } catch (Throwable $e) {
+            $retorno['ativo'] = 1;
+        }
+
+        try {
             $categoria = $this->normalizarCategoriaFiltro($dados['categoria'] ?? null);
             if ($categoria !== null) {
                 $retorno['categoria'] = $categoria;
@@ -691,11 +798,29 @@ class AdminController
     /**
      * Garante que a sessão esteja autenticada e com perfil administrativo.
      */
-    private function exigirAcessoAdmin()
+    private function usuarioPossuiAcessoAdministrativo()
+    {
+        return isset($_SESSION['usuario_tipo']) && in_array($_SESSION['usuario_tipo'], ['admin', 'gestor'], true);
+    }
+
+    /**
+     * Garante que a sessão esteja autenticada e com perfil administrativo.
+     */
+    private function exigirAcessoAdministrativo()
     {
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['usuario_id'])) {
             $this->redirecionarComErro('Faça login para continuar.', 'login');
         }
+        if (!$this->usuarioPossuiAcessoAdministrativo()) {
+            $this->redirecionarComErro('Acesso restrito a administradores e gestores.', 'painel');
+        }
+    }
+
+    /**
+     * Garante acesso exclusivo ao perfil admin.
+     */
+    private function exigirAcessoSomenteAdmin()
+    {
         if (!isset($_SESSION['usuario_tipo']) || $_SESSION['usuario_tipo'] !== 'admin') {
             $this->redirecionarComErro('Acesso restrito a administradores.', 'painel');
         }

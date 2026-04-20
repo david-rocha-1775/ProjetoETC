@@ -27,7 +27,7 @@
                         <input type="hidden" name="rota" value="admin_denuncias">
 
                         <div class="row g-2 align-items-end">
-                            <div class="col-12 col-md-3">
+                            <div class="col-12 col-md-2">
                                 <label for="filtroStatus" class="form-label">Status</label>
                                 <select id="filtroStatus" name="status" class="form-select form-select-sm">
                                     <option value="">Todos</option>
@@ -35,6 +35,15 @@
                                         Aberto</option>
                                     <option value="Em Andamento" <?= ($filtrosAtuais['status'] ?? '') === 'Em Andamento' ? 'selected' : '' ?>>Em Andamento</option>
                                     <option value="Resolvido" <?= ($filtrosAtuais['status'] ?? '') === 'Resolvido' ? 'selected' : '' ?>>Resolvido</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-2">
+                                <label for="filtroAtivo" class="form-label">Ativo</label>
+                                <select id="filtroAtivo" name="ativo" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="1" <?= (string) ($filtrosAtuais['ativo'] ?? 1) === '1' ? 'selected' : '' ?>>Ativos</option>
+                                    <option value="0" <?= (string) ($filtrosAtuais['ativo'] ?? 1) === '0' ? 'selected' : '' ?>>Inativos</option>
                                 </select>
                             </div>
 
@@ -70,7 +79,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-6 col-md-2">
+                            <div class="col-6 col-md-1">
                                 <label for="filtroOrdem" class="form-label">Ordem</label>
                                 <select id="filtroOrdem" name="ordem" class="form-select form-select-sm">
                                     <option value="recentes" <?= ($filtrosAtuais['ordem'] ?? 'recentes') === 'recentes' ? 'selected' : '' ?>>Mais recentes</option>
@@ -116,6 +125,7 @@
                         $idDenuncia = (int) $denuncia->getId();
                         $idUsuario = (int) $denuncia->getIdUsuario();
                         $idCategoria = (int) $denuncia->getIdCategoria();
+                        $denunciaAtiva = (int) $denuncia->getAtivo() === 1;
                         $nomeUsuario = $mapaUsuarios[$idUsuario] ?? 'Usuário não identificado';
                         $nomeCategoria = $mapaCategorias[$idCategoria] ?? 'Categoria indisponível';
                         $comentarios = $interacoesDenuncias[$idDenuncia] ?? [];
@@ -145,6 +155,10 @@
                                             class="badge bg-transparent border border-secondary-subtle text-body"><?= htmlspecialchars((string) $nomeCategoria, ENT_QUOTES, 'UTF-8') ?></span>
                                         <span
                                             class="badge bg-transparent border border-info-subtle text-info-emphasis"><?= htmlspecialchars((string) $denuncia->getStatus(), ENT_QUOTES, 'UTF-8') ?></span>
+                                        <span
+                                            class="badge <?= $denunciaAtiva ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-body-secondary' ?>">
+                                            <?= $denunciaAtiva ? 'Ativa' : 'Inativa' ?>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -160,21 +174,43 @@
                                 </p>
 
                                 <div class="mt-auto pt-2 border-top painel-denuncia-rodape">
-                                    <form action="index.php?rota=processar_status_denuncia_admin" method="POST"
-                                        class="d-flex flex-wrap gap-2 mb-2">
+                                    <?php if ($denunciaAtiva): ?>
+                                        <form action="index.php?rota=processar_status_denuncia_admin" method="POST"
+                                            class="d-flex flex-wrap gap-2 mb-2">
+                                            <?= csrfField() ?>
+                                            <input type="hidden" name="id_denuncia"
+                                                value="<?= htmlspecialchars((string) $idDenuncia, ENT_QUOTES, 'UTF-8') ?>">
+                                            <input type="hidden" name="retorno_filtros"
+                                                value="<?= htmlspecialchars((string) $queryFiltrosComPaginaAtual, ENT_QUOTES, 'UTF-8') ?>">
+
+                                            <select name="status" class="form-select form-select-sm admin-status-select" required>
+                                                <option value="Aberto" <?= $denuncia->getStatus() === 'Aberto' ? 'selected' : '' ?>>
+                                                    Aberto</option>
+                                                <option value="Em Andamento" <?= $denuncia->getStatus() === 'Em Andamento' ? 'selected' : '' ?>>Em Andamento</option>
+                                                <option value="Resolvido" <?= $denuncia->getStatus() === 'Resolvido' ? 'selected' : '' ?>>Resolvido</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Salvar Status</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <div class="alert alert-secondary py-2 px-3 small mb-2" role="status">
+                                            Denúncia inativa. Reative para alterar o status.
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <form action="index.php?rota=processar_alternancia_ativo_denuncia_admin" method="POST"
+                                        class="d-flex flex-wrap gap-2 mb-2"
+                                        onsubmit="return confirm('<?= $denunciaAtiva ? 'Desativar esta denúncia?' : 'Reativar esta denúncia?' ?>');">
                                         <?= csrfField() ?>
                                         <input type="hidden" name="id_denuncia"
                                             value="<?= htmlspecialchars((string) $idDenuncia, ENT_QUOTES, 'UTF-8') ?>">
+                                        <input type="hidden" name="acao"
+                                            value="<?= $denunciaAtiva ? 'desativar' : 'reativar' ?>">
                                         <input type="hidden" name="retorno_filtros"
                                             value="<?= htmlspecialchars((string) $queryFiltrosComPaginaAtual, ENT_QUOTES, 'UTF-8') ?>">
-
-                                        <select name="status" class="form-select form-select-sm admin-status-select" required>
-                                            <option value="Aberto" <?= $denuncia->getStatus() === 'Aberto' ? 'selected' : '' ?>>
-                                                Aberto</option>
-                                            <option value="Em Andamento" <?= $denuncia->getStatus() === 'Em Andamento' ? 'selected' : '' ?>>Em Andamento</option>
-                                            <option value="Resolvido" <?= $denuncia->getStatus() === 'Resolvido' ? 'selected' : '' ?>>Resolvido</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-outline-primary btn-sm">Salvar Status</button>
+                                        <button type="submit"
+                                            class="btn <?= $denunciaAtiva ? 'btn-outline-danger' : 'btn-outline-success' ?> btn-sm">
+                                            <?= $denunciaAtiva ? 'Desativar Denúncia' : 'Reativar Denúncia' ?>
+                                        </button>
                                     </form>
 
                                     <details>
