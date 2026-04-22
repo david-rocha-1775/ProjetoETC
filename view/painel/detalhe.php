@@ -29,7 +29,18 @@ $paginaJsHeadExtra = [
             <p class="mb-1"><strong>Status:</strong> <?= htmlspecialchars($denuncia->getStatus()) ?></p>
             <p class="mb-1"><strong>Localização:</strong> <?= htmlspecialchars($denuncia->getLocalizacao()) ?></p>
             <p class="mb-1"><strong>Autor:</strong> <?= htmlspecialchars($nomeAutorDenuncia) ?></p>
-            <p class="mb-3"><strong>Criada em:</strong> <?= htmlspecialchars((string) $denuncia->getDataCriacao()) ?>
+            <?php
+            $dataCriacaoBr = '';
+            $dataCriacaoRaw = (string) $denuncia->getDataCriacao();
+            $dataCriacaoObj = DateTime::createFromFormat('Y-m-d H:i:s', $dataCriacaoRaw);
+            if ($dataCriacaoObj instanceof DateTime) {
+                $dataCriacaoBr = $dataCriacaoObj->format('d/m/Y');
+            } else {
+                $timestampCriacao = strtotime($dataCriacaoRaw);
+                $dataCriacaoBr = $timestampCriacao ? date('d/m/Y', $timestampCriacao) : $dataCriacaoRaw;
+            }
+            ?>
+            <p class="mb-3"><strong>Criada em:</strong> <?= htmlspecialchars($dataCriacaoBr) ?>
             </p>
 
             <p class="mb-3"><?= nl2br(htmlspecialchars($denuncia->getDescricao())) ?></p>
