@@ -163,9 +163,27 @@ $paginaJsHeadExtra = [
                     return;
                 }
 
-                var popup = '<strong>' + escaparHtml(denuncia.titulo) + '</strong><br>' +
-                    'Status: ' + escaparHtml(denuncia.status) + '<br>' +
-                    'Local: ' + escaparHtml(denuncia.localizacao);
+                var detalheUrl = 'index.php?rota=detalhe_denuncia&id=' + encodeURIComponent(String(denuncia.id || ''));
+                var googleMapsUrl = 'https://www.google.com/maps?q=' + encodeURIComponent(denuncia.latitude + ',' + denuncia.longitude);
+                var fotoPath = denuncia.foto_path ? String(denuncia.foto_path).trim() : '';
+                var miniatura = '';
+
+                if (fotoPath !== '') {
+                    miniatura = '<div class="mapa-popup-thumb-wrapper">' +
+                        '<img src="' + escaparHtml(fotoPath) + '" alt="Foto da denúncia" class="mapa-popup-thumb">' +
+                        '</div>';
+                }
+
+                var popup = '<div class="mapa-popup-content">' +
+                    miniatura +
+                    '<strong class="mapa-popup-titulo">' + escaparHtml(denuncia.titulo) + '</strong>' +
+                    '<div class="mapa-popup-meta">Status: ' + escaparHtml(denuncia.status) + '</div>' +
+                    '<div class="mapa-popup-meta">Local: ' + escaparHtml(denuncia.localizacao) + '</div>' +
+                    '<div class="mapa-popup-acoes">' +
+                    '<a href="' + escaparHtml(detalheUrl) + '" class="mapa-popup-link">Ver detalhe</a>' +
+                    '<a href="' + escaparHtml(googleMapsUrl) + '" class="mapa-popup-link" target="_blank" rel="noopener noreferrer">Como chegar</a>' +
+                    '</div>' +
+                    '</div>';
 
                 L.marker([denuncia.latitude, denuncia.longitude], {
                     icon: L.divIcon({

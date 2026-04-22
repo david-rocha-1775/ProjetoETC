@@ -1487,6 +1487,52 @@ footer a:hover {
     color: #198754;
 }
 
+.mapa-popup-content {
+    min-width: 200px;
+    max-width: 240px;
+}
+
+.mapa-popup-thumb-wrapper {
+    margin-bottom: 0.5rem;
+}
+
+.mapa-popup-thumb {
+    width: 100%;
+    max-height: 110px;
+    object-fit: cover;
+    border-radius: 0.35rem;
+    border: 1px solid #ced4da;
+}
+
+.mapa-popup-titulo {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.mapa-popup-meta {
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.mapa-popup-acoes {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.55rem;
+    flex-wrap: wrap;
+}
+
+.mapa-popup-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    .mapa-popup-content {
+        min-width: 180px;
+        max-width: 200px;
+    }
+}
+
 .admin-col-acoes {
     width: 180px;
 }
