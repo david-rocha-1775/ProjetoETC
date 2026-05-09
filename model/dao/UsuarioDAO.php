@@ -105,6 +105,25 @@ class UsuarioDAO
     }
 
     /**
+     * Atualiza a senha do usuário identificado pelo e-mail.
+     * Retorna true se pelo menos uma linha foi atualizada.
+     *
+     * @param string $email
+     * @param string $senhaHash
+     * @return bool
+     */
+    public function atualizarSenhaPorEmail($email, $senhaHash)
+    {
+        $sql = "UPDATE logins SET senha = :senha WHERE email = :email";
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bindParam(':senha', $senhaHash);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
      * Busca um usuário pelo ID.
      *
      * @param int $idUsuario
