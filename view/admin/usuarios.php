@@ -139,8 +139,14 @@ $classePapel = static function (string $tipo): string {
 
                                     <div>
                                         <p class="small text-muted text-uppercase mb-1">Papel</p>
+                                        <?php $tipoNormalizadoBadge = strtolower(trim($tipoUsuario)); ?>
+                                        <?php $isPrimeiroAdmin = isset($primeiroAdminId) && $primeiroAdminId === $idUsuario; ?>
                                         <span class="<?= $classePapel($tipoUsuario) ?>">
-                                            <?= htmlspecialchars(ucfirst($tipoUsuario), ENT_QUOTES, 'UTF-8') ?>
+                                            <?php if ($ehAdminSessao && $tipoNormalizadoBadge === 'admin'): ?>
+                                                <?= htmlspecialchars($isPrimeiroAdmin ? 'Super-Admin' : 'Admin', ENT_QUOTES, 'UTF-8') ?>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars(ucfirst($tipoUsuario), ENT_QUOTES, 'UTF-8') ?>
+                                            <?php endif; ?>
                                         </span>
                                     </div>
 
@@ -167,6 +173,17 @@ $classePapel = static function (string $tipo): string {
                                                 </form>
                                             <?php endif; ?>
 
+                                            <?php if ($usuarioAtivo && $ehAdminSessao && $tipoUsuarioNormalizado === 'cidadao'): ?>
+                                                <form action="index.php?rota=processar_promocao_usuario_gestor" method="POST"
+                                                    onsubmit="return confirm('Promover este usuário para gestor?');">
+                                                    <?= csrfField() ?>
+                                                    <input type="hidden" name="id_usuario"
+                                                        value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Promover a
+                                                        Gestor</button>
+                                                </form>
+                                            <?php endif; ?>
+
                                             <?php if ($usuarioAtivo && ($ehAdminSessao || $tipoUsuarioNormalizado !== 'admin')): ?>
                                                 <form action="index.php?rota=processar_exclusao_usuario_admin" method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja desativar este usuário?');">
@@ -174,6 +191,27 @@ $classePapel = static function (string $tipo): string {
                                                     <input type="hidden" name="id_usuario"
                                                         value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm">Desativar</button>
+                                                </form>
+                                            <?php endif; ?>
+
+                                            <?php if ($ehAdminSessao && $tipoUsuarioNormalizado === 'admin' && (!isset($primeiroAdminId) || $primeiroAdminId !== $idUsuario)): ?>
+                                                <form action="index.php?rota=processar_despromocao_usuario_admin" method="POST"
+                                                    onsubmit="return confirm('Remover permissão de administrador deste usuário?');">
+                                                    <?= csrfField() ?>
+                                                    <input type="hidden" name="id_usuario"
+                                                        value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                                    <button type="submit" class="btn btn-outline-warning btn-sm">Remover Admin</button>
+                                                </form>
+                                            <?php endif; ?>
+
+                                            <?php if ($ehAdminSessao && $tipoUsuarioNormalizado === 'gestor'): ?>
+                                                <form action="index.php?rota=processar_despromocao_usuario_gestor" method="POST"
+                                                    onsubmit="return confirm('Remover permissão de gestor deste usuário?');">
+                                                    <?= csrfField() ?>
+                                                    <input type="hidden" name="id_usuario"
+                                                        value="<?= htmlspecialchars((string) $usuario->getId(), ENT_QUOTES, 'UTF-8') ?>">
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Remover
+                                                        Gestor</button>
                                                 </form>
                                             <?php endif; ?>
 

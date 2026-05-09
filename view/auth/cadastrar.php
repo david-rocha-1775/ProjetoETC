@@ -45,6 +45,11 @@
                             <h3 class="h5 mb-0">Segurança</h3>
                         </div>
 
+                        <p class="small text-body-secondary mb-3">
+                            A senha deve ter no mínimo 8 caracteres, com letra maiúscula, letra minúscula, número e
+                            caractere especial.
+                        </p>
+
                         <div class="form-floating mb-3 auth-password-field">
                             <input type="password" class="form-control" name="senha" id="senha" required
                                 autocomplete="new-password" placeholder="Digite sua senha">

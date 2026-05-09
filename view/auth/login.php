@@ -58,6 +58,8 @@ $tituloPagina = "Login";
 
                         <p class="mt-4 mb-0 text-body-secondary text-center">Ainda não tem conta? <a
                                 href="index.php?rota=cadastrar">Criar Conta</a></p>
+                        <p class="mt-2 mb-0 text-body-secondary text-center"><a
+                                href="index.php?rota=recuperar_senha">Esqueci a senha</a></p>
                     </div>
                 </div>
             </div>

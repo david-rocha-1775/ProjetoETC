@@ -49,6 +49,10 @@ $totalResolvidas = isset($totaisMinhasDenunciasStatus['resolvido'])
                 <article class="card perfil-card-form animate-in h-100">
                     <div class="card-body">
                         <h3 class="perfil-section-title mb-3">Troca de senha</h3>
+                        <p class="small text-body-secondary mb-3">
+                            A nova senha deve ter no mínimo 8 caracteres, com letra maiúscula, letra minúscula, número e
+                            caractere especial.
+                        </p>
                         <div class="row g-3">
                             <div class="col-12">
                                 <label for="senha_atual" class="form-label">Senha atual</label>
