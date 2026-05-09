@@ -71,6 +71,7 @@ class AdminController
             ];
 
             $idUsuarioSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+            $primeiroAdminId = $this->usuarioDAO->buscarPrimeiroAdminId();
             $tituloPagina = 'Usuários Cadastrados';
             include 'view/admin/usuarios.php';
             return;
@@ -325,6 +326,11 @@ class AdminController
                 throw new InvalidArgumentException('Gestores não podem desativar contas administrativas.');
             }
 
+            $primeiroAdmin = $this->usuarioDAO->buscarPrimeiroAdminId();
+            if ($primeiroAdmin !== null && $idUsuario === $primeiroAdmin) {
+                throw new InvalidArgumentException('Este administrador é o super-admin e não pode ser desativado.');
+            }
+
             $excluiu = $this->usuarioDAO->excluirPorId($idUsuario);
             if (!$excluiu) {
                 throw new RuntimeException('Falha ao desativar usuário.');
@@ -375,6 +381,131 @@ class AdminController
         } catch (Throwable $e) {
             $this->redirecionarComErro(
                 $this->mensagemErroExibivel($e, 'Não foi possível promover o usuário para administrador.'),
+                'listar_usuarios'
+            );
+        }
+    }
+
+    /**
+     * Promove usuário para perfil gestor (uso administrativo).
+     */
+    public function promoverUsuarioGestor()
+    {
+        $this->exigirMetodoPost('listar_usuarios');
+        $this->exigirAcessoSomenteAdmin();
+
+        try {
+            $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
+            $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idUsuario === $idAdminSessao) {
+                throw new InvalidArgumentException('Não é possível alterar o próprio perfil nesta tela.');
+            }
+
+            $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
+            if ($usuario === null) {
+                throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            if ((string) $usuario->getTipo() === 'gestor') {
+                throw new InvalidArgumentException('Este usuário já é gestor.');
+            }
+
+            $promoveu = $this->usuarioDAO->promoverParaGestor($idUsuario);
+            if (!$promoveu) {
+                throw new RuntimeException('Falha ao promover usuário para gestor.');
+            }
+
+            $this->redirecionarComSucesso('Usuário promovido para gestor com sucesso.', 'listar_usuarios');
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível promover o usuário para gestor.'),
+                'listar_usuarios'
+            );
+        }
+    }
+
+    /**
+     * Remove perfil de administrador, retornando o usuário para `cidadao`.
+     */
+    public function despromoverUsuarioAdmin()
+    {
+        $this->exigirMetodoPost('listar_usuarios');
+        $this->exigirAcessoSomenteAdmin();
+
+        try {
+            $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
+            $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idUsuario === $idAdminSessao) {
+                throw new InvalidArgumentException('Não é permitido alterar o próprio perfil nesta tela.');
+            }
+
+            $primeiroAdmin = $this->usuarioDAO->buscarPrimeiroAdminId();
+            if ($primeiroAdmin !== null && $idUsuario === $primeiroAdmin) {
+                throw new InvalidArgumentException('Este administrador é o super-admin e não pode ser despromovido.');
+            }
+
+            $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
+            if ($usuario === null) {
+                throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            if ((string) $usuario->getTipo() !== 'admin') {
+                throw new InvalidArgumentException('Este usuário não é administrador.');
+            }
+
+            $despromoveu = $this->usuarioDAO->despromoverParaCidadao($idUsuario);
+            if (!$despromoveu) {
+                throw new RuntimeException('Falha ao remover o perfil de administrador.');
+            }
+
+            $this->redirecionarComSucesso('Perfil de administrador removido com sucesso.', 'listar_usuarios');
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível remover o perfil de administrador.'),
+                'listar_usuarios'
+            );
+        }
+    }
+
+    /**
+     * Remove perfil de gestor, retornando o usuário para `cidadao`.
+     */
+    public function despromoverUsuarioGestor()
+    {
+        $this->exigirMetodoPost('listar_usuarios');
+        $this->exigirAcessoSomenteAdmin();
+
+        try {
+            $idUsuario = $this->normalizarId($_POST['id_usuario'] ?? null, 'Usuário inválido.');
+            $idAdminSessao = (int) ($_SESSION['usuario_id'] ?? 0);
+
+            if ($idUsuario === $idAdminSessao) {
+                throw new InvalidArgumentException('Não é permitido alterar o próprio perfil nesta tela.');
+            }
+
+            $usuario = $this->usuarioDAO->buscarPorId($idUsuario);
+            if ($usuario === null) {
+                throw new InvalidArgumentException('Usuário não encontrado.');
+            }
+
+            if ((string) $usuario->getTipo() !== 'gestor') {
+                throw new InvalidArgumentException('Este usuário não é gestor.');
+            }
+
+            $despromoveu = $this->usuarioDAO->despromoverParaCidadao($idUsuario);
+            if (!$despromoveu) {
+                throw new RuntimeException('Falha ao remover o perfil de gestor.');
+            }
+
+            $this->redirecionarComSucesso('Perfil de gestor removido com sucesso.', 'listar_usuarios');
+
+        } catch (Throwable $e) {
+            $this->redirecionarComErro(
+                $this->mensagemErroExibivel($e, 'Não foi possível remover o perfil de gestor.'),
                 'listar_usuarios'
             );
         }

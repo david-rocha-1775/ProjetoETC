@@ -74,6 +74,30 @@ return [
         'controller_method' => 'promoverUsuarioAdmin',
         'http_method' => 'POST',
     ],
+    // Processa promoção de usuário para perfil gestor.
+    'processar_promocao_usuario_gestor' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'promoverUsuarioGestor',
+        'http_method' => 'POST',
+    ],
+    // Remove promoção de usuário para perfil admin.
+    'processar_despromocao_usuario_admin' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'despromoverUsuarioAdmin',
+        'http_method' => 'POST',
+    ],
+    // Remove promoção de usuário para perfil gestor.
+    'processar_despromocao_usuario_gestor' => [
+        'type' => 'action',
+        'controller_file' => 'controller/AdminController.php',
+        'controller_class' => 'AdminController',
+        'controller_method' => 'despromoverUsuarioGestor',
+        'http_method' => 'POST',
+    ],
     // Processa cadastro de nova categoria.
     'processar_cadastro_categoria' => [
         'type' => 'action',

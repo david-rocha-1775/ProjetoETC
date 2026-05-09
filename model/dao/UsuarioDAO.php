@@ -9,6 +9,7 @@ class UsuarioDAO
     private $conexao;
     private const PERFIL_CIDADAO = 'cidadao';
     private const PERFIL_ADMIN = 'admin';
+    private const PERFIL_GESTOR = 'gestor';
 
     public function __construct()
     {
@@ -363,6 +364,30 @@ class UsuarioDAO
     }
 
     /**
+     * Promove um usuário ativo para perfil gestor.
+     *
+     * @param int $idUsuario
+     * @return bool
+     */
+    public function promoverParaGestor($idUsuario)
+    {
+        $sql = "UPDATE usuarios u
+            INNER JOIN perfis p ON p.nome_perfil = :perfil_gestor
+            SET u.fk_perfil = p.id_perfil
+            WHERE u.id_usuario = :id_usuario
+              AND u.ativo = 1
+              AND u.fk_perfil <> p.id_perfil";
+
+        $stmt = $this->conexao->prepare($sql);
+        $perfilGestor = self::PERFIL_GESTOR;
+        $stmt->bindParam(':perfil_gestor', $perfilGestor);
+        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    /**
      * Lista usuários cadastrados em ordem de criação (mais recentes primeiro).
      *
      * @param string $busca
@@ -471,6 +496,59 @@ class UsuarioDAO
         }
 
         return (int) $idPerfil;
+    }
+
+    /**
+     * Despromove um usuário ativo para o perfil padrão de cidadão.
+     *
+     * @param int $idUsuario
+     * @return bool
+     */
+    public function despromoverParaCidadao($idUsuario)
+    {
+        $sql = "UPDATE usuarios u
+            INNER JOIN perfis p ON p.nome_perfil = :perfil_cidadao
+            SET u.fk_perfil = p.id_perfil
+            WHERE u.id_usuario = :id_usuario
+              AND u.ativo = 1
+              AND u.fk_perfil <> p.id_perfil";
+
+        $stmt = $this->conexao->prepare($sql);
+        $perfilCidadao = self::PERFIL_CIDADAO;
+        $stmt->bindParam(':perfil_cidadao', $perfilCidadao);
+        $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount() === 1;
+    }
+
+    /**
+     * Retorna o ID do primeiro usuário com perfil admin (menor id_usuario).
+     * Usado para proteger o "super admin" criado manualmente no banco.
+     *
+     * @return int|null
+     */
+    public function buscarPrimeiroAdminId()
+    {
+        $sql = "SELECT u.id_usuario
+                FROM usuarios u
+                INNER JOIN perfis p ON p.id_perfil = u.fk_perfil
+                WHERE p.nome_perfil = :perfil_admin
+                  AND u.ativo = 1
+                ORDER BY u.id_usuario ASC
+                LIMIT 1";
+
+        $stmt = $this->conexao->prepare($sql);
+        $perfilAdmin = self::PERFIL_ADMIN;
+        $stmt->bindParam(':perfil_admin', $perfilAdmin);
+        $stmt->execute();
+
+        $id = $stmt->fetchColumn();
+        if ($id === false) {
+            return null;
+        }
+
+        return (int) $id;
     }
 }
 ?>
