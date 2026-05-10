@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Toggle password visibility
     var toggles = document.querySelectorAll('[data-toggle-password]');
     var iconVisible = 'assets/fonts/material-symbols/visibility.svg';
     var iconHidden = 'assets/fonts/material-symbols/visibility_off.svg';
@@ -32,4 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleButton.setAttribute('title', actionText);
         });
     });
+
+    // Handle Terms of Use link (prevent default navigation)
+    var termsLink = document.getElementById('termsLink');
+    if (termsLink) {
+        termsLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Bootstrap Modal API handles the rest via data-bs-toggle and data-bs-target
+        });
+    }
 });

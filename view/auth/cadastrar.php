@@ -94,7 +94,9 @@
                             <input class="form-check-input" type="checkbox" value="1" name="aceite_termos"
                                 id="agreeTerms" required>
                             <label class="form-check-label" for="agreeTerms">
-                                Concordo com os termos de uso.
+                                Concordo com os
+                                <a href="#" class="text-decoration-none" id="termsLink" data-bs-toggle="modal"
+                                    data-bs-target="#termsModal">termos de uso</a>.
                             </label>
                         </div>
 
@@ -109,6 +111,24 @@
 
         </form>
     </section>
+</div>
+
+<!-- Modal de Termos de Uso -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Termos de Uso e Política de Privacidade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <?php include "view/public/termos-uso.php"; ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="assets/js/auth-cadastro.js" defer></script>
