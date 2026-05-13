@@ -137,6 +137,18 @@ main {
     background-color: inherit;
 }
 
+/* Normalize page container backgrounds to avoid an extra light band
+   and keep pages visually consistent */
+.container.py-4,
+section.container.py-4 {
+    background-color: transparent;
+}
+
+[data-bs-theme="light"] .container.py-4,
+[data-bs-theme="light"] section.container.py-4 {
+    background-color: transparent;
+}
+
 /* ============================================
    HOME PÚBLICA
    ============================================ */
@@ -869,6 +881,8 @@ main {
 .perfil-page {
     --perfil-card-border: rgba(156, 202, 255, 0.14);
     --perfil-input-bg: rgba(8, 15, 30, 0.68);
+    /* make the perfil section background transparent so it matches other pages */
+    background-color: transparent;
 }
 
 .perfil-header p {
@@ -915,15 +929,17 @@ main {
 .perfil-page .form-select {
     border-radius: 0.95rem;
     border-color: rgba(156, 202, 255, 0.2);
-    background-color: var(--perfil-input-bg);
-    color: #eff6ff;
+    /* use transparent so inputs visually inherit the card background
+       and follow the page theme (light/dark) consistently */
+    background-color: transparent;
+    color: inherit;
 }
 
 .perfil-page .form-control:focus,
 .perfil-page .form-select:focus {
     border-color: rgba(156, 202, 255, 0.46);
     box-shadow: 0 0 0 0.2rem rgba(156, 202, 255, 0.14);
-    background-color: rgba(10, 17, 32, 0.88);
+    background-color: rgba(10, 17, 32, 0.08);
 }
 
 .perfil-denuncia-item {
@@ -1203,6 +1219,8 @@ main {
 [data-bs-theme="light"] .perfil-page {
     --perfil-card-border: rgba(11, 19, 38, 0.12);
     --perfil-input-bg: #ffffff;
+    /* ensure light theme doesn't force an extra panel color */
+    background-color: transparent;
 }
 
 [data-bs-theme="light"] .perfil-card-resumo,
