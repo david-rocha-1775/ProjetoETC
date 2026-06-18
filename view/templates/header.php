@@ -150,10 +150,12 @@
                 data-toast-delay="<?= htmlspecialchars((string) $toastConfiguracao['delay'], ENT_QUOTES, 'UTF-8') ?>">
                 <div class="d-flex align-items-start">
                     <div class="toast-body flex-grow-1 pe-2">
-                        <div class="fw-semibold mb-1"><?= htmlspecialchars($toastConfiguracao['titulo'], ENT_QUOTES, 'UTF-8') ?></div>
+                        <div class="fw-semibold mb-1">
+                            <?= htmlspecialchars($toastConfiguracao['titulo'], ENT_QUOTES, 'UTF-8') ?></div>
                         <div><?= htmlspecialchars($mensagemSessao, ENT_QUOTES, 'UTF-8') ?></div>
                     </div>
-                    <button type="button" class="btn-close <?= htmlspecialchars($toastConfiguracao['fechar'], ENT_QUOTES, 'UTF-8') ?> me-3 mt-3"
+                    <button type="button"
+                        class="btn-close <?= htmlspecialchars($toastConfiguracao['fechar'], ENT_QUOTES, 'UTF-8') ?> me-3 mt-3"
                         aria-label="Fechar" data-feedback-toast-close="1"></button>
                 </div>
             </div>
