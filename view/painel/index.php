@@ -45,7 +45,8 @@ if (!isset($totalStatusEmAnalise) || !isset($totalStatusResolvido)) {
 ?>
 
 <div class="container py-4 painel-shell">
-    <div id="painel-feedback" class="toast-container position-fixed site-toast-container p-3" aria-live="assertive" aria-atomic="true"></div>
+    <div id="painel-feedback" class="toast-container position-fixed site-toast-container p-3" aria-live="assertive"
+        aria-atomic="true"></div>
 
     <section class="painel-conteudo-col">
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
