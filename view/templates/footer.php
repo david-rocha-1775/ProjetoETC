@@ -16,6 +16,41 @@
 <script src="assets/js/bootstrap.bundle.min.js" defer></script>
 <script src="assets/js/painel-interacoes.js" defer></script>
 <script>
+    function removerToast(elementoToast) {
+        if (!elementoToast) {
+            return;
+        }
+
+        elementoToast.classList.remove('show');
+        window.setTimeout(function () {
+            const containerToast = elementoToast.closest('.toast-container');
+            if (containerToast) {
+                containerToast.remove();
+            } else {
+                elementoToast.remove();
+            }
+        }, 180);
+    }
+
+    function inicializarToastMensagens() {
+        const toasts = document.querySelectorAll('[data-feedback-toast="1"]');
+
+        toasts.forEach(function (toastElement) {
+            const delay = parseInt(toastElement.getAttribute('data-toast-delay') || '6000', 10);
+            const botaoFechar = toastElement.querySelector('[data-feedback-toast-close="1"]');
+
+            if (botaoFechar) {
+                botaoFechar.addEventListener('click', function () {
+                    removerToast(toastElement);
+                });
+            }
+
+            window.setTimeout(function () {
+                removerToast(toastElement);
+            }, delay);
+        });
+    }
+
     function alternarTema() {
         const tema = document.documentElement.getAttribute('data-bs-theme') || 'dark';
         const novoTema = tema === 'dark' ? 'light' : 'dark';
@@ -37,7 +72,10 @@
     }
 
     // Inicializar ícone ao carregar a página
-    document.addEventListener('DOMContentLoaded', atualizarIconeTema);
+    document.addEventListener('DOMContentLoaded', function () {
+        atualizarIconeTema();
+        inicializarToastMensagens();
+    });
 </script>
 
 </body>

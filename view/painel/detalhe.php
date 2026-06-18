@@ -10,7 +10,7 @@ $paginaJsHeadExtra = [
 <?php include "view/templates/header.php"; ?>
 
 <div class="container py-4">
-    <div id="painel-feedback" class="mb-3" aria-live="polite"></div>
+    <div id="painel-feedback" class="toast-container position-fixed site-toast-container p-3" aria-live="assertive" aria-atomic="true"></div>
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <h2 class="mb-0">Detalhes da denúncia</h2>

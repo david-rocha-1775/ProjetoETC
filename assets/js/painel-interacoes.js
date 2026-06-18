@@ -18,18 +18,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const tipoNormalizado = ['success', 'danger', 'warning', 'info'].includes(tipo) ? tipo : 'info';
         feedbackContainer.textContent = '';
+        feedbackContainer.className = 'toast-container position-fixed site-toast-container p-3';
 
         const alerta = document.createElement('div');
-        alerta.className = 'alert alert-' + tipoNormalizado + ' alert-dismissible fade show';
+        const ehFundoEscuro = tipoNormalizado === 'success' || tipoNormalizado === 'danger';
+        alerta.className = 'toast show site-toast bg-' + tipoNormalizado + ' text-' + (ehFundoEscuro ? 'white' : 'dark') + ' border-0 shadow-lg';
         alerta.setAttribute('role', 'alert');
-        alerta.textContent = String(mensagem || 'Operação concluída.');
+        alerta.setAttribute('aria-live', 'assertive');
+        alerta.setAttribute('aria-atomic', 'true');
+
+        const corpo = document.createElement('div');
+        corpo.className = 'd-flex align-items-start';
+
+        const body = document.createElement('div');
+        body.className = 'toast-body flex-grow-1 pe-2';
+
+        const titulo = document.createElement('div');
+        titulo.className = 'fw-semibold mb-1';
+        titulo.textContent = tipoNormalizado === 'success' ? 'Sucesso' : (tipoNormalizado === 'danger' ? 'Erro' : (tipoNormalizado === 'warning' ? 'Atenção' : 'Informação'));
+
+        const texto = document.createElement('div');
+        texto.textContent = String(mensagem || 'Operação concluída.');
+
+        body.appendChild(titulo);
+        body.appendChild(texto);
 
         const botaoFechar = document.createElement('button');
         botaoFechar.type = 'button';
-        botaoFechar.className = 'btn-close';
-        botaoFechar.setAttribute('data-bs-dismiss', 'alert');
+        botaoFechar.className = 'btn-close ' + (ehFundoEscuro ? 'btn-close-white' : '') + ' me-3 mt-3';
         botaoFechar.setAttribute('aria-label', 'Fechar');
-        alerta.appendChild(botaoFechar);
+        botaoFechar.addEventListener('click', function () {
+            feedbackContainer.innerHTML = '';
+        });
+
+        corpo.appendChild(body);
+        corpo.appendChild(botaoFechar);
+        alerta.appendChild(corpo);
 
         feedbackContainer.appendChild(alerta);
 

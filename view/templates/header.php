@@ -110,21 +110,61 @@
         </div>
     </header>
 
-    <main class="flex-grow-1<?= $usuarioLogadoLayout ? ' main-com-sidebar' : '' ?>">
+    <?php
+    $mensagemSessao = isset($_SESSION['mensagem']) ? (string) $_SESSION['mensagem'] : '';
+    $tipoMensagemSessao = isset($_SESSION['tipo_mensagem']) ? (string) $_SESSION['tipo_mensagem'] : 'info';
+    $configuracoesToast = [
+        'sucesso' => [
+            'classe' => 'success',
+            'titulo' => 'Sucesso',
+            'fechar' => 'btn-close-white',
+            'delay' => 5500,
+        ],
+        'erro' => [
+            'classe' => 'danger',
+            'titulo' => 'Erro',
+            'fechar' => 'btn-close-white',
+            'delay' => 8500,
+        ],
+        'aviso' => [
+            'classe' => 'warning',
+            'titulo' => 'Atenção',
+            'fechar' => '',
+            'delay' => 7000,
+        ],
+        'info' => [
+            'classe' => 'info',
+            'titulo' => 'Informação',
+            'fechar' => '',
+            'delay' => 6000,
+        ],
+    ];
+    $toastConfiguracao = $configuracoesToast[$tipoMensagemSessao] ?? $configuracoesToast['info'];
+    $toastTextoClasse = $toastConfiguracao['classe'] === 'warning' ? 'dark' : 'white';
+    ?>
 
-        <!-- Exibe mensagens de sucesso/erro vindas do Controller via $_SESSION -->
-        <?php if (isset($_SESSION['mensagem'])): ?>
-            <div class="mensagem <?= $_SESSION['tipo_mensagem'] ?? '' ?>">
-                <p>
-                    <?= htmlspecialchars((string) $_SESSION['mensagem'], ENT_QUOTES, 'UTF-8') ?>
-                </p>
+    <?php if ($mensagemSessao !== ''): ?>
+        <div class="toast-container position-fixed site-toast-container p-3">
+            <div class="toast show site-toast bg-<?= htmlspecialchars($toastConfiguracao['classe'], ENT_QUOTES, 'UTF-8') ?> text-<?= htmlspecialchars($toastTextoClasse, ENT_QUOTES, 'UTF-8') ?> border-0 shadow-lg"
+                role="alert" aria-live="assertive" aria-atomic="true" data-feedback-toast="1"
+                data-toast-delay="<?= htmlspecialchars((string) $toastConfiguracao['delay'], ENT_QUOTES, 'UTF-8') ?>">
+                <div class="d-flex align-items-start">
+                    <div class="toast-body flex-grow-1 pe-2">
+                        <div class="fw-semibold mb-1"><?= htmlspecialchars($toastConfiguracao['titulo'], ENT_QUOTES, 'UTF-8') ?></div>
+                        <div><?= htmlspecialchars($mensagemSessao, ENT_QUOTES, 'UTF-8') ?></div>
+                    </div>
+                    <button type="button" class="btn-close <?= htmlspecialchars($toastConfiguracao['fechar'], ENT_QUOTES, 'UTF-8') ?> me-3 mt-3"
+                        aria-label="Fechar" data-feedback-toast-close="1"></button>
+                </div>
             </div>
-            <?php
-            // Limpa a mensagem para não aparecer de novo
-            unset($_SESSION['mensagem']);
-            unset($_SESSION['tipo_mensagem']);
-            ?>
-        <?php endif; ?>
+        </div>
+        <?php
+        unset($_SESSION['mensagem']);
+        unset($_SESSION['tipo_mensagem']);
+        ?>
+    <?php endif; ?>
+
+    <main class="flex-grow-1<?= $usuarioLogadoLayout ? ' main-com-sidebar' : '' ?>">
 
         <?php if ($usuarioLogadoLayout): ?>
             <?php include "view/templates/sidebar-logado.php"; ?>

@@ -1331,6 +1331,50 @@ svg {
 }
 
 /* ============================================
+   NOTIFICAÇÕES FLUTUANTES
+   ============================================ */
+
+.site-toast-container {
+    top: 5.25rem;
+    right: 1rem;
+    z-index: 1085;
+    width: min(26rem, calc(100vw - 2rem));
+}
+
+.site-toast {
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.site-toast .toast-body {
+    padding: 1rem 1.1rem;
+    word-break: break-word;
+}
+
+.site-toast .btn-close {
+    box-shadow: none;
+}
+
+[data-bs-theme="light"] .site-toast {
+    box-shadow: 0 1rem 2rem rgba(11, 19, 38, 0.16) !important;
+}
+
+@media (max-width: 576px) {
+    .site-toast-container {
+        top: 4.75rem;
+        left: 0.75rem;
+        right: 0.75rem;
+        width: auto;
+    }
+
+    .site-toast {
+        border-radius: 0.9rem;
+    }
+}
+
+/* ============================================
    FOOTER
    ============================================ */
 
